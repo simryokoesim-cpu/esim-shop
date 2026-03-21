@@ -1,12 +1,8 @@
 const categories = [
   { id: 'all', icon: '✨', label: '全部' },
-  { id: 'hot', icon: '🔥', label: '热门' },
-  { id: 'asia', icon: '🌏', label: '亚洲' },
-  { id: 'europe', icon: '🌍', label: '欧洲' },
-  { id: 'global', icon: '🌐', label: '全球' },
-  { id: 'regional', icon: '🗺️', label: '区域' },
-  { id: 'voice', icon: '📱', label: '含通话' },
-  { id: 'renewable', icon: '🔄', label: '可续费' },
+  { id: 'hot', icon: '🔥', label: '热门国家' },
+  { id: 'regional', icon: '🗺️', label: '区域套餐' },
+  { id: 'global', icon: '🌐', label: '全球套餐' },
 ]
 
 export default function CategoryBar({ active, onChange }) {
@@ -28,7 +24,7 @@ export default function CategoryBar({ active, onChange }) {
               display: 'flex',
               alignItems: 'center',
               gap: '5px',
-              padding: '8px 14px',
+              padding: '8px 16px',
               borderRadius: '20px',
               border: isActive ? '1px solid rgba(96, 165, 250, 0.6)' : '1px solid rgba(255,255,255,0.1)',
               background: isActive

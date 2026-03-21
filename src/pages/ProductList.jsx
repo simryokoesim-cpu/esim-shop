@@ -4,8 +4,8 @@ import { useAllProducts } from '../hooks/useProducts'
 import ProductCard from '../components/ProductCard'
 import CategoryBar from '../components/CategoryBar'
 
-const asiaCountryCodes = ['JP', 'KR', 'TH', 'SG', 'HK', 'TW', 'MY', 'CN', 'IN', 'ID', 'PH', 'VN', 'MO', 'BD', 'KH', 'LA', 'MM', 'NP', 'LK', 'PK', 'MN']
-const europeCountryCodes = ['GB', 'FR', 'DE', 'IT', 'ES', 'NL', 'CH', 'BE', 'PL', 'SE', 'NO', 'DK', 'FI', 'PT', 'AT', 'GR', 'CZ', 'HU', 'RO']
+// 热门单国套餐国家代码
+const hotCountryCodes = ['TH','JP','SG','MY','KR','HK','TW','ID','VN','PH','CN','MO','LK','IN','AE','GB','FR','DE','IT','ES','US','AU']
 
 export default function ProductList() {
   const { products, loading, error, progress } = useAllProducts()
@@ -35,25 +35,22 @@ export default function ProductList() {
     // Category filter
     switch (category) {
       case 'hot':
-        result = result.filter(p => p.isHot)
-        break
-      case 'asia':
-        result = result.filter(p => p.countries?.some(c => asiaCountryCodes.includes(c.code)))
-        break
-      case 'europe':
-        result = result.filter(p => p.countries?.some(c => europeCountryCodes.includes(c.code)))
-        break
-      case 'global':
-        result = result.filter(p => p.type === 'global')
+        // 热门国家：单国套餐，国家在热门列表里
+        result = result.filter(p => p.countries?.length === 1 && hotCountryCodes.includes(p.countries[0].code))
+        // 按热门国家优先级排序
+        result.sort((a, b) => {
+          const ai = hotCountryCodes.indexOf(a.countries[0].code)
+          const bi = hotCountryCodes.indexOf(b.countries[0].code)
+          return ai - bi
+        })
         break
       case 'regional':
-        result = result.filter(p => p.type === 'regional')
+        // 区域套餐：多国但不是全球
+        result = result.filter(p => p.type === 'regional' || (p.countries?.length > 1 && p.countries?.length <= 30 && p.type !== 'global'))
         break
-      case 'voice':
-        result = result.filter(p => p.hasVoice)
-        break
-      case 'renewable':
-        result = result.filter(p => p.isRenewable)
+      case 'global':
+        // 全球套餐
+        result = result.filter(p => p.type === 'global' || p.countries?.length > 30)
         break
     }
 
