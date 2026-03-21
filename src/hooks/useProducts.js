@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { fetchProducts } from '../api/esim'
-import cachedProducts from '../data/products-cache.json'
 
 // In-memory cache: { key -> { data, products, ts } }
 const cache = {}
@@ -15,8 +14,23 @@ function normalizeProduct(p) {
   return { ...p, isUnlimited }
 }
 
-// 本地缓存数据（已预处理，首屏秒开）
-const localProducts = cachedProducts.map(normalizeProduct)
+// 本地缓存数据（动态加载）
+let localProducts = []
+let localLoaded = false
+
+async function loadLocalProducts() {
+  if (localLoaded) return localProducts
+  try {
+    const mod = await import('../data/products-cache.json')
+    localProducts = (mod.default || []).map(normalizeProduct)
+    localLoaded = true
+  } catch (e) {
+    console.error('Failed to load local products:', e)
+    localProducts = []
+    localLoaded = true
+  }
+  return localProducts
+}
 
 export function useProducts({ page = 1, limit = 50, search = '', country = '' } = {}) {
   const key = cacheKey({ page, limit, search, country })
@@ -75,13 +89,23 @@ export function useProducts({ page = 1, limit = 50, search = '', country = '' } 
   return { products, total, loading, error }
 }
 
-// 全量产品 Hook — 直接返回本地缓存，秒开
+// 全量产品 Hook — 加载本地缓存
 export function useAllProducts() {
+  const [products, setProducts] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    loadLocalProducts().then(list => {
+      setProducts(list)
+      setLoading(false)
+    })
+  }, [])
+
   return {
-    products: localProducts,
-    total: localProducts.length,
-    loading: false,
+    products,
+    total: products.length,
+    loading,
     error: null,
-    progress: 100,
+    progress: loading ? 50 : 100,
   }
 }
