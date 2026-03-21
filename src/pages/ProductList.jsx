@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { useProducts } from '../hooks/useProducts'
+import { useAllProducts } from '../hooks/useProducts'
 import ProductCard from '../components/ProductCard'
 import CategoryBar from '../components/CategoryBar'
 
@@ -8,7 +8,7 @@ const asiaCountryCodes = ['JP', 'KR', 'TH', 'SG', 'HK', 'TW', 'MY', 'CN', 'IN', 
 const europeCountryCodes = ['GB', 'FR', 'DE', 'IT', 'ES', 'NL', 'CH', 'BE', 'PL', 'SE', 'NO', 'DK', 'FI', 'PT', 'AT', 'GR', 'CZ', 'HU', 'RO']
 
 export default function ProductList() {
-  const { products, loading } = useProducts()
+  const { products, loading, error, progress } = useAllProducts()
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
   
@@ -223,7 +223,7 @@ export default function ProductList() {
         fontSize: '12px',
         color: 'rgba(255,255,255,0.4)',
       }}>
-        {loading ? '加载中...' : `共 ${filtered.length} 个套餐`}
+        {loading ? `加载中... ${progress}%` : error ? `加载失败: ${error}` : `共 ${filtered.length} 个套餐`}
       </div>
 
       {/* Product list */}

@@ -1,23 +1,34 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { useProducts } from '../hooks/useProducts'
-import { formatData, formatDays, formatPrice, getCountryName, generateOrderId, USDT_ADDRESS } from '../utils/format'
+import { useAllProducts } from '../hooks/useProducts'
+import { useOrders, createOrder } from '../hooks/useOrders'
+import { formatData, formatDays, formatPrice, getCountryName, USDT_ADDRESS } from '../utils/format'
 
-const COUNTDOWN = 30 * 60 // 30 minutes in seconds
+const COUNTDOWN = 30 * 60 // 30 minutes
+const BOT_USERNAME = 'Esim_sal_bot'
 
 export default function Checkout() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const { products, loading } = useProducts()
+  const { products, loading } = useAllProducts()
+  const { addOrder } = useOrders()
 
-  const [orderId] = useState(() => generateOrderId())
+  // Create or restore order for this product
+  const [order, setOrder] = useState(null)
   const [timeLeft, setTimeLeft] = useState(COUNTDOWN)
   const [copied, setCopied] = useState(false)
   const [orderIdCopied, setOrderIdCopied] = useState(false)
-  const [status, setStatus] = useState('pending') // pending | checking | paid
   const intervalRef = useRef(null)
 
   const product = products.find(p => p.id === parseInt(id))
+
+  // Create order once product is loaded
+  useEffect(() => {
+    if (!product || order) return
+    const newOrder = createOrder(product)
+    setOrder(newOrder)
+    addOrder(newOrder)
+  }, [product, order, addOrder])
 
   useEffect(() => {
     intervalRef.current = setInterval(() => {
@@ -44,7 +55,6 @@ export default function Checkout() {
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     } catch {
-      // fallback
       const el = document.createElement('textarea')
       el.value = USDT_ADDRESS
       document.body.appendChild(el)
@@ -57,14 +67,28 @@ export default function Checkout() {
   }
 
   const copyOrderId = async () => {
+    if (!order) return
     try {
-      await navigator.clipboard.writeText(orderId)
+      await navigator.clipboard.writeText(order.id)
       setOrderIdCopied(true)
       setTimeout(() => setOrderIdCopied(false), 2000)
     } catch {}
   }
 
-  if (loading) return (
+  // Open Telegram bot with order info
+  const openTelegramBot = () => {
+    if (!order || !product) return
+    const price = formatPrice(product.agentPrice || product.price)
+    const msg = `order_${order.id}_${product.id}`
+    const url = `https://t.me/${BOT_USERNAME}?start=${msg}`
+    if (window.Telegram?.WebApp) {
+      window.Telegram.WebApp.openTelegramLink(url)
+    } else {
+      window.open(url, '_blank')
+    }
+  }
+
+  if (loading || !order) return (
     <div style={{ minHeight: '100vh', background: '#0a0a0f', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <div style={{ color: 'rgba(255,255,255,0.5)' }}>加载中...</div>
     </div>
@@ -79,6 +103,7 @@ export default function Checkout() {
   )
 
   const expired = timeLeft === 0
+  const price = formatPrice(product.agentPrice || product.price)
 
   return (
     <div style={{ minHeight: '100vh', background: '#0a0a0f', paddingBottom: '30px' }}>
@@ -131,14 +156,14 @@ export default function Checkout() {
               justifyContent: 'center',
               fontSize: '26px',
             }}>
-              {product.flag}
+              {order.productFlag}
             </div>
             <div style={{ flex: 1 }}>
               <div style={{ fontSize: '15px', fontWeight: 600, color: '#fff', marginBottom: '4px' }}>
                 {getCountryName(product)}
               </div>
               <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)' }}>
-                {formatData(product.dataSize, product.isUnlimited)} · {formatDays(product.validDays)}
+                {formatData(product.dataSize, product.isUnlimited || product.thirdPartyData?.isUnlimited)} · {formatDays(product.validDays)}
               </div>
             </div>
             <div style={{
@@ -148,7 +173,7 @@ export default function Checkout() {
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
             }}>
-              ${formatPrice(product.price)}
+              ${price}
             </div>
           </div>
         </div>
@@ -166,7 +191,7 @@ export default function Checkout() {
         }}>
           <div>
             <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', marginBottom: '4px' }}>订单号</div>
-            <div style={{ fontSize: '14px', fontWeight: 600, color: '#fff', fontFamily: 'monospace' }}>{orderId}</div>
+            <div style={{ fontSize: '14px', fontWeight: 600, color: '#fff', fontFamily: 'monospace' }}>{order.id}</div>
           </div>
           <button
             onClick={copyOrderId}
@@ -253,7 +278,7 @@ export default function Checkout() {
               </div>
             </div>
 
-            {/* Amount to pay */}
+            {/* Amount */}
             <div style={{
               background: 'rgba(59,130,246,0.1)',
               borderRadius: '12px',
@@ -265,7 +290,7 @@ export default function Checkout() {
             }}>
               <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)' }}>付款金额</span>
               <span style={{ fontSize: '20px', fontWeight: 700, color: '#60a5fa' }}>
-                {formatPrice(product.price)} USDT
+                {price} USDT
               </span>
             </div>
 
@@ -303,45 +328,52 @@ export default function Checkout() {
                 justifyContent: 'center',
                 gap: '8px',
                 WebkitTapHighlightColor: 'transparent',
-                transition: 'all 0.2s',
               }}
             >
-              {copied ? (
-                <>✓ 地址已复制</>
-              ) : (
-                <>📋 复制收款地址</>
-              )}
+              {copied ? <>✓ 地址已复制</> : <>📋 复制收款地址</>}
             </button>
           </div>
         )}
 
-        {/* Payment waiting animation */}
+        {/* Contact Bot CTA */}
         {!expired && (
           <div style={{
-            background: 'rgba(255,255,255,0.03)',
-            border: '1px solid rgba(255,255,255,0.06)',
+            background: 'linear-gradient(135deg, rgba(0,136,204,0.15), rgba(0,136,204,0.08))',
+            border: '1px solid rgba(0,136,204,0.3)',
             borderRadius: '20px',
-            padding: '24px',
-            textAlign: 'center',
+            padding: '20px',
             marginBottom: '16px',
+            textAlign: 'center',
           }}>
-            <div style={{
-              width: '60px',
-              height: '60px',
-              margin: '0 auto 16px',
-              borderRadius: '50%',
-              border: '3px solid transparent',
-              borderTopColor: '#3b82f6',
-              borderRightColor: '#8b5cf6',
-              animation: 'spin 1.5s linear infinite',
-            }} />
+            <div style={{ fontSize: '32px', marginBottom: '10px' }}>✈️</div>
             <div style={{ fontSize: '15px', fontWeight: 600, color: '#fff', marginBottom: '6px' }}>
-              等待付款确认
+              付款后联系客服
             </div>
-            <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)', lineHeight: 1.6 }}>
-              完成转账后，请联系客服并提供订单号<br />
+            <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', marginBottom: '16px', lineHeight: 1.6 }}>
+              转账完成后，将截图发送给客服机器人<br />
               eSIM 将在确认后发送到您的 Telegram
             </div>
+            <button
+              onClick={openTelegramBot}
+              style={{
+                width: '100%',
+                background: 'linear-gradient(135deg, #0088cc, #0066aa)',
+                border: 'none',
+                borderRadius: '12px',
+                color: '#fff',
+                fontSize: '14px',
+                fontWeight: 600,
+                padding: '13px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                WebkitTapHighlightColor: 'transparent',
+              }}
+            >
+              📱 联系客服 @{BOT_USERNAME}
+            </button>
           </div>
         )}
 
@@ -357,8 +389,8 @@ export default function Checkout() {
           </div>
           {[
             { step: '1', text: '复制上方 USDT (TRC20) 收款地址', done: copied },
-            { step: '2', text: `转账 ${formatPrice(product.price)} USDT 至该地址`, done: false },
-            { step: '3', text: '截图付款记录，联系 @Esim_sal_bot', done: false },
+            { step: '2', text: `转账 ${price} USDT 至该地址`, done: false },
+            { step: '3', text: `截图付款记录，点击"联系客服"按钮`, done: false },
             { step: '4', text: '收到 eSIM 二维码，扫码激活即用', done: false },
           ].map((s, i) => (
             <div key={i} style={{

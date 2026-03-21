@@ -1,11 +1,11 @@
 import { useNavigate, useParams } from 'react-router-dom'
-import { useProducts } from '../hooks/useProducts'
+import { useAllProducts } from '../hooks/useProducts'
 import { formatData, formatDays, formatPrice, getCountryName, getTypeLabel } from '../utils/format'
 
 export default function ProductDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const { products, loading } = useProducts()
+  const { products, loading } = useAllProducts()
 
   const product = products.find(p => p.id === parseInt(id))
 

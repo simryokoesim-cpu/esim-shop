@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useProducts } from '../hooks/useProducts'
+import { useAllProducts } from '../hooks/useProducts'
 import ProductCard from '../components/ProductCard'
 import { formatData, formatDays, formatPrice, getCountryName } from '../utils/format'
 
@@ -15,7 +15,7 @@ const asiaCountryCodes = ['JP', 'KR', 'TH', 'SG', 'HK', 'TW', 'MY', 'CN', 'IN', 
 const europeCountryCodes = ['GB', 'FR', 'DE', 'IT', 'ES', 'NL', 'CH', 'BE', 'PL', 'SE', 'NO', 'DK', 'FI', 'PT', 'AT', 'GR', 'CZ', 'HU', 'RO']
 
 export default function Home() {
-  const { products, loading } = useProducts()
+  const { products, total, loading } = useAllProducts()
   const navigate = useNavigate()
   const [search, setSearch] = useState('')
 
@@ -96,7 +96,7 @@ export default function Home() {
             你好，{userName} 👋
           </div>
           <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.45)', marginTop: '2px' }}>
-            全球2700+套餐，即买即用
+            全球{total > 0 ? `${total}+` : '2700+'}套餐，即买即用
           </div>
         </div>
 
