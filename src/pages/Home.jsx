@@ -14,6 +14,24 @@ const quickCategories = [
 const asiaCountryCodes = ['JP', 'KR', 'TH', 'SG', 'HK', 'TW', 'MY', 'CN', 'IN', 'ID', 'PH', 'VN', 'MO', 'BD', 'KH', 'LA', 'MM', 'NP', 'LK', 'PK', 'MN']
 const europeCountryCodes = ['GB', 'FR', 'DE', 'IT', 'ES', 'NL', 'CH', 'BE', 'PL', 'SE', 'NO', 'DK', 'FI', 'PT', 'AT', 'GR', 'CZ', 'HU', 'RO']
 
+// 热门旅游目的地优先级（数字越小越靠前）
+const hotCountryPriority = {
+  'TH': 1, 'JP': 2, 'SG': 3, 'MY': 4, 'KR': 5,
+  'HK': 6, 'TW': 7, 'ID': 8, 'VN': 9, 'PH': 10,
+  'CN': 11, 'MO': 12, 'LK': 13, 'IN': 14, 'AE': 15,
+  'GB': 16, 'FR': 17, 'DE': 18, 'IT': 19, 'ES': 20,
+}
+
+const getProductPriority = (p) => {
+  if (!p.countries?.length) return 999
+  const codes = p.countries.map(c => c.code)
+  const best = codes.reduce((min, code) => {
+    const rank = hotCountryPriority[code] || 999
+    return rank < min ? rank : min
+  }, 999)
+  return best
+}
+
 export default function Home() {
   const { products, total, loading } = useAllProducts()
   const navigate = useNavigate()
@@ -27,7 +45,8 @@ export default function Home() {
   const hotProducts = useMemo(() => {
     if (!products.length) return []
     return products
-      .filter(p => p.countries?.some(c => asiaCountryCodes.includes(c.code)) || p.type === 'global')
+      .filter(p => p.countries?.some(c => asiaCountryCodes.includes(c.code)))
+      .sort((a, b) => getProductPriority(a) - getProductPriority(b))
       .slice(0, 8)
   }, [products])
 
