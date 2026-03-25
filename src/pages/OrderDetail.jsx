@@ -74,8 +74,10 @@ export default function OrderDetail() {
         createdAt: dbOrder.created_at,
       }
     : localOrder
+    ? { ...localOrder, amount: localOrder.amount ?? localOrder.price }
+    : null
 
-  if (loading) return (
+  if (loading && !order) return (
     <div style={{ minHeight: '100vh', background: '#0a0a0f', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '14px' }}>加载中...</div>
     </div>
