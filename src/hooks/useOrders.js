@@ -59,29 +59,38 @@ function getReferralCode() {
   }
 }
 
-// Save order to Supabase (fire-and-forget, don't block UI)
-async function saveOrderToSupabase(order) {
-  try {
-    const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user
-    const refCode = getReferralCode()
-    const { error } = await supabase.from('miniapp_orders').insert({
-      id: order.id,
-      tg_id: tgUser?.id?.toString() || order.tgUserId || null,
-      tg_username: tgUser?.username || order.tgUsername || null,
-      product_id: String(order.productId),
-      product_name: order.productName,
-      amount: order.price,
-      currency: 'USDT',
-      status: 'pending',
-      created_at: order.createdAt ? new Date(order.createdAt).toISOString() : new Date().toISOString(),
-      referral_code: refCode,
-    })
-    if (error) {
-      console.warn('[useOrders] Supabase insert error:', error.message)
+// Save order to Supabase - 重试3次确保写入
+async function saveOrderToSupabase(order, retries = 3) {
+  for (let i = 0; i < retries; i++) {
+    try {
+      const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user
+      const refCode = getReferralCode()
+      const payload = {
+        id: order.id,
+        tg_id: tgUser?.id?.toString() || order.tgUserId || 'guest',
+        tg_username: tgUser?.username || order.tgUsername || 'unknown',
+        product_id: String(order.productId),
+        product_name: order.productName,
+        amount: String(order.price),
+        currency: 'USDT',
+        status: 'pending',
+        created_at: new Date().toISOString(),
+        referral_code: refCode || null,
+      }
+      const { error } = await supabase.from('miniapp_orders').upsert(payload, { onConflict: 'id' })
+      if (error) {
+        console.warn(`[useOrders] Supabase save attempt ${i+1} failed:`, error.message)
+        if (i < retries - 1) await new Promise(r => setTimeout(r, 1000))
+      } else {
+        console.log('[useOrders] ✅ 订单已写入 Supabase:', order.id)
+        return
+      }
+    } catch (e) {
+      console.warn(`[useOrders] Supabase save exception ${i+1}:`, e.message)
+      if (i < retries - 1) await new Promise(r => setTimeout(r, 1000))
     }
-  } catch (e) {
-    console.warn('[useOrders] Supabase save failed:', e)
   }
+  console.error('[useOrders] ❌ 订单写入 Supabase 失败（已重试3次）:', order.id)
 }
 
 export function useOrders() {
