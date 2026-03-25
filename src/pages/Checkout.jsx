@@ -23,16 +23,18 @@ export default function Checkout() {
   const [email, setEmail] = useState('')
   const [termsAccepted, setTermsAccepted] = useState(false)
   const intervalRef = useRef(null)
+  const orderCreatedRef = useRef(false) // 防止重复创建订单
 
   const product = products.find(p => p.id === parseInt(id))
 
-  // Create order once product is loaded
+  // Create order ONCE when product is loaded - never again
   useEffect(() => {
-    if (!product || order) return
+    if (!product || orderCreatedRef.current) return
+    orderCreatedRef.current = true
     const newOrder = createOrder(product)
     setOrder(newOrder)
     addOrder(newOrder)
-  }, [product, order, addOrder])
+  }, [product]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     intervalRef.current = setInterval(() => {
