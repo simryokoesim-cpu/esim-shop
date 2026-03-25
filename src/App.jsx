@@ -5,6 +5,7 @@ import ProductList from './pages/ProductList'
 import ProductDetail from './pages/ProductDetail'
 import Checkout from './pages/Checkout'
 import Orders from './pages/Orders'
+import OrderDetail from './pages/OrderDetail'
 import Profile from './pages/Profile'
 import NavBar from './components/NavBar'
 
@@ -29,6 +30,7 @@ function App() {
           <Route path="/product/:id" element={<ProductDetail />} />
           <Route path="/checkout/:id" element={<Checkout />} />
           <Route path="/orders" element={<Orders />} />
+          <Route path="/order/:orderId" element={<OrderDetail />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

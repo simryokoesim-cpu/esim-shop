@@ -50,6 +50,11 @@ export default function Checkout() {
     addOrder(newOrder)
   }, [product]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  // 跳转订单详情
+  const goToOrderDetail = () => {
+    if (order) navigate(`/order/${order.id}`)
+  }
+
   useEffect(() => {
     intervalRef.current = setInterval(() => {
       setTimeLeft(t => {
@@ -551,27 +556,25 @@ export default function Checkout() {
             </label>
 
             <button
-              onClick={openTelegramBot}
-              disabled={!termsAccepted}
+              onClick={goToOrderDetail}
               style={{
                 width: '100%',
-                background: termsAccepted ? 'linear-gradient(135deg, #0088cc, #0066aa)' : 'rgba(255,255,255,0.12)',
+                background: 'linear-gradient(135deg, #10b981, #059669)',
                 border: 'none',
                 borderRadius: '12px',
-                color: termsAccepted ? '#fff' : 'rgba(255,255,255,0.35)',
+                color: '#fff',
                 fontSize: '14px',
                 fontWeight: 600,
                 padding: '13px',
-                cursor: termsAccepted ? 'pointer' : 'not-allowed',
+                cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '8px',
                 WebkitTapHighlightColor: 'transparent',
-                transition: 'background 0.2s, color 0.2s',
               }}
             >
-              📱 联系客服 @{BOT_USERNAME}
+              📋 已付款？查看订单详情
             </button>
           </div>
         )}
