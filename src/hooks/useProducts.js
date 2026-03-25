@@ -15,8 +15,18 @@ function cacheKey(params) {
 }
 
 function normalizeProduct(p) {
-  const isUnlimited = p.thirdPartyData?.isUnlimited || p.dataSize === 0
-  return { ...p, isUnlimited }
+  // 兼容 Supabase 字段名（snake_case）和供应商API字段名（camelCase）
+  const normalized = {
+    ...p,
+    // 字段名映射
+    dataSize: p.dataSize ?? p.data_size ?? 0,
+    validDays: p.validDays ?? p.valid_days ?? 0,
+    countries: p.countries ?? (p.country ? [{ code: p.country, name: p.country }] : []),
+    price: p.price ?? p.retailPrice ?? 0,
+    name: p.name ?? '',
+  }
+  const isUnlimited = p.thirdPartyData?.isUnlimited || normalized.dataSize === 0
+  return { ...normalized, isUnlimited }
 }
 
 // 从 Supabase 分页拉取所有产品
