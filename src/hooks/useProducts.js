@@ -7,8 +7,13 @@ const CACHE_TTL = 10 * 60 * 1000 // 10 minutes
 
 const SUPABASE_URL = 'https://afdyzuohzwdvreyhnfdb.supabase.co'
 const SUPABASE_KEY = 'sb_publishable_FfMQeSJTbZPfsKtMF6nyqA_Fgo_gzun'
-const LS_CACHE_KEY = 'esim_products_cache_v4'
+const LS_CACHE_KEY = 'esim_products_cache_v5'
 const LS_CACHE_TTL = 60 * 60 * 1000 // 1 hour
+
+// 清理所有旧版本缓存
+;['v1','v2','v3','v4'].forEach(v => {
+  try { localStorage.removeItem(`esim_products_cache_${v}`) } catch(e) {}
+})
 
 function cacheKey(params) {
   return JSON.stringify(params)
