@@ -1,4 +1,4 @@
-import { MemoryRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { HashRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useEffect } from 'react'
 import Home from './pages/Home'
 import ProductList from './pages/ProductList'
@@ -22,7 +22,7 @@ function App() {
   }, [])
 
   return (
-    <MemoryRouter initialEntries={['/']} initialIndex={0}>
+    <HashRouter>
       <div className="min-h-screen" style={{ background: '#0a0a0f', paddingBottom: '70px' }}>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -36,7 +36,7 @@ function App() {
         </Routes>
         <NavBar />
       </div>
-    </MemoryRouter>
+    </HashRouter>
   )
 }
 
