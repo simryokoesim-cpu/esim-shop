@@ -31,28 +31,38 @@ function normalizeProduct(p) {
 
 // 从 Supabase 分页拉取所有产品
 async function fetchAllFromSupabase() {
-  const allProducts = []
-  let from = 0
-  const pageSize = 1000
+  // 使用供应商API拉取完整产品数据（含正确的countries数组格式）
+  const { fetchProducts: fetchFromApi } = await import('./useProducts').catch(() => ({}))
+  
+  // 直接调用供应商API
+  const API_BASE = 'https://ciuh32wky.xigrocoltd.com/api'
+  const CREDENTIALS = { username: 'tgesim', password: '123123' }
+  
+  // 登录获取token
+  const loginRes = await fetch(`${API_BASE}/agent/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(CREDENTIALS),
+  })
+  const loginData = await loginRes.json()
+  if (!loginData.success) throw new Error('Login failed')
+  const token = loginData.data.token
 
+  // 分页拉取所有产品
+  const allProducts = []
+  let page = 1
   while (true) {
-    const res = await fetch(
-      `${SUPABASE_URL}/rest/v1/miniapp_products?select=*&is_active=eq.true&order=id&offset=${from}&limit=${pageSize}`,
-      {
-        headers: {
-          apikey: SUPABASE_KEY,
-          Authorization: `Bearer ${SUPABASE_KEY}`,
-          'Content-Type': 'application/json',
-          Prefer: 'count=exact',
-        },
-      }
-    )
-    if (!res.ok) throw new Error(`Supabase error: ${res.status}`)
+    const res = await fetch(`${API_BASE}/agent/products?page=${page}&limit=100`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    if (!res.ok) break
     const data = await res.json()
-    if (!Array.isArray(data) || data.length === 0) break
-    allProducts.push(...data)
-    if (data.length < pageSize) break
-    from += pageSize
+    const list = data.data?.list || []
+    if (!list.length) break
+    allProducts.push(...list)
+    const total = data.data?.total || 0
+    if (allProducts.length >= total) break
+    page++
   }
 
   return allProducts
