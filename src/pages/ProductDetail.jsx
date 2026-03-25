@@ -33,13 +33,17 @@ export default function ProductDetail() {
   const dataLabel = formatData(product.dataSize, product.isUnlimited)
   const daysLabel = formatDays(product.validDays)
 
+    const activationPolicy = product.thirdPartyData?.activationPolicy
+  const validityNote = activationPolicy === 'first-usage' ? '首次使用后开始计算' : '购买后立即生效'
+
   const specs = [
     { label: '流量', value: dataLabel, icon: '📊' },
-    { label: '有效期', value: daysLabel, icon: '📅' },
-    { label: '类型', value: getTypeLabel(product.type), icon: '📦' },
-    { label: '运营商', value: product.thirdPartyData?.operatorTitle || '主流运营商', icon: '📡' },
-    { label: '激活方式', value: product.thirdPartyData?.activationPolicy === 'first-usage' ? '首次使用激活' : '购买后激活', icon: '⚡' },
-    { label: '覆盖国家', value: product.countries?.length > 1 ? `${product.countries.length}个国家/地区` : (product.countries?.[0]?.cn || '全球'), icon: '🌍' },
+    { label: `有效期（${validityNote}）`, value: daysLabel, icon: '📅' },
+    { label: '网络制式', value: product.thirdPartyData?.speed || '4G/LTE', icon: '📶' },
+    { label: '运营商', value: product.thirdPartyData?.operatorTitle || '当地主流运营商', icon: '📡' },
+    { label: '覆盖', value: product.countries?.length > 1 ? `${product.countries.length}个国家/地区` : (product.countries?.[0]?.cn || '全球'), icon: '🌍' },
+    { label: '兼容设备', value: 'iPhone XS+ / 支持eSIM的安卓', icon: '📱' },
+    { label: '退款政策', value: '未激活可退款', icon: '↩️' },
   ]
 
   const tags = []
@@ -241,6 +245,36 @@ export default function ProductDetail() {
           <div style={{ fontSize: '13px', fontWeight: 600, color: 'rgba(255,255,255,0.5)', marginBottom: '10px' }}>套餐说明</div>
           <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.6)', lineHeight: 1.6 }}>
             {product.description}
+          </div>
+        </div>
+      </div>
+
+      {/* 激活步骤 */}
+      <div style={{ padding: '0 16px 24px' }}>
+        <div style={{
+          background: 'rgba(59,130,246,0.06)',
+          border: '1px solid rgba(59,130,246,0.15)',
+          borderRadius: '20px',
+          padding: '16px',
+        }}>
+          <div style={{ fontSize: '13px', fontWeight: 600, color: '#93c5fd', marginBottom: '12px' }}>📱 如何激活使用</div>
+          {[
+            { step: '1', text: '购买后收到 eSIM 二维码' },
+            { step: '2', text: '手机设置 → 蜂窝网络 → 添加 eSIM → 扫描二维码' },
+            { step: '3', text: '到达目的地后开启该 eSIM 上网' },
+          ].map(s => (
+            <div key={s.step} style={{ display: 'flex', gap: '10px', alignItems: 'flex-start', marginBottom: '10px' }}>
+              <div style={{
+                width: '22px', height: '22px', borderRadius: '50%', flexShrink: 0,
+                background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: '11px', fontWeight: 700, color: '#fff',
+              }}>{s.step}</div>
+              <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.7)', lineHeight: 1.5, paddingTop: '2px' }}>{s.text}</div>
+            </div>
+          ))}
+          <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.35)', marginTop: '4px' }}>
+            ⚠️ 需要手机支持 eSIM 功能（iPhone XS及以上，多数新款安卓）
           </div>
         </div>
       </div>

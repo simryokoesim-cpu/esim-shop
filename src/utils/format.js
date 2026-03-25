@@ -56,4 +56,5 @@ export function generateOrderId() {
   return 'ESM' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).slice(2, 6).toUpperCase()
 }
 
-export const USDT_ADDRESS = 'TQn9Y2khEsLJW1ChVWFMSMeRDow5KcbLSE'
+export const USDT_ADDRESS = 'TBuhpRpFPV1HkdfaPEdxsKgTE43jV911rL'
+export const TON_ADDRESS = 'UQDkn3-Q4vHmPPkjoxRBvfzLx6pahWvDCHsnO9l138casAFy'

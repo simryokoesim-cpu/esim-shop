@@ -4,6 +4,7 @@ const tabs = [
   { path: '/', icon: '🏠', label: '首页' },
   { path: '/products', icon: '📦', label: '套餐' },
   { path: '/orders', icon: '📋', label: '订单' },
+  { path: '/profile', icon: '👤', label: '我的' },
 ]
 
 export default function NavBar() {

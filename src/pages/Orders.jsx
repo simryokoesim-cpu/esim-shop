@@ -5,10 +5,15 @@ import { useOrders } from '../hooks/useOrders'
 const BOT_USERNAME = 'Esim_sal_bot'
 
 const statusConfig = {
-  pending: { label: '待付款', color: '#f59e0b', bg: 'rgba(245,158,11,0.12)', icon: '⏳' },
-  active: { label: '已激活', color: '#10b981', bg: 'rgba(16,185,129,0.12)', icon: '✅' },
-  expired: { label: '已到期', color: 'rgba(255,255,255,0.3)', bg: 'rgba(255,255,255,0.05)', icon: '⌛' },
-  cancelled: { label: '已取消', color: 'rgba(255,255,255,0.3)', bg: 'rgba(255,255,255,0.05)', icon: '✗' },
+  pending:            { label: '待付款',   color: '#f59e0b', bg: 'rgba(245,158,11,0.12)',  icon: '⏳' },
+  paid:               { label: '已付款',   color: '#3b82f6', bg: 'rgba(59,130,246,0.12)',  icon: '💳' },
+  activating:         { label: '激活中',   color: '#8b5cf6', bg: 'rgba(139,92,246,0.12)',  icon: '⚡' },
+  activated:          { label: '已激活',   color: '#10b981', bg: 'rgba(16,185,129,0.12)',  icon: '✅' },
+  active:             { label: '已激活',   color: '#10b981', bg: 'rgba(16,185,129,0.12)',  icon: '✅' },
+  activation_failed:  { label: '激活失败', color: '#ef4444', bg: 'rgba(239,68,68,0.12)',   icon: '❌' },
+  expired:            { label: '已到期',   color: 'rgba(255,255,255,0.3)', bg: 'rgba(255,255,255,0.05)', icon: '⌛' },
+  cancelled:          { label: '已取消',   color: 'rgba(255,255,255,0.3)', bg: 'rgba(255,255,255,0.05)', icon: '✗' },
+  refunded:           { label: '已退款',   color: '#6b7280', bg: 'rgba(107,114,128,0.12)', icon: '↩️' },
 }
 
 export default function Orders() {

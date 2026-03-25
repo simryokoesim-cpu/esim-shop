@@ -1,7 +1,14 @@
-// Local order storage (persisted in localStorage by tgUserId)
+// Local order storage (persisted in localStorage by tgUserId) + Supabase sync
 import { useState, useCallback } from 'react'
+import { createClient } from '@supabase/supabase-js'
 
 const ORDERS_KEY = 'esim_orders'
+
+// Supabase client (anon key – read-only for orders, write on insert)
+const supabase = createClient(
+  'https://afdyzuohzwdvreyhnfdb.supabase.co',
+  'sb_publishable_FfMQeSJTbZPfsKtMF6nyqA_Fgo_gzun'
+)
 
 function getTgUserId() {
   try {
@@ -28,6 +35,55 @@ function saveOrders(orders) {
   } catch {}
 }
 
+// Get referral code from URL params or Telegram WebApp start_param
+function getReferralCode() {
+  try {
+    // 1. 从 URL 参数获取 (?ref=REF_XXXXXX)
+    const urlParams = new URLSearchParams(window.location.search)
+    const urlRef = urlParams.get('ref')
+    if (urlRef) {
+      localStorage.setItem('esim_ref', urlRef)
+      return urlRef
+    }
+    // 2. 从 Telegram WebApp start_param 获取 (start=ref_REF_XXXXXX)
+    const startParam = window.Telegram?.WebApp?.initDataUnsafe?.start_param
+    if (startParam && startParam.startsWith('ref_')) {
+      const code = startParam.replace('ref_', '')
+      localStorage.setItem('esim_ref', code)
+      return code
+    }
+    // 3. 从 localStorage 恢复（防止页面刷新丢失）
+    return localStorage.getItem('esim_ref') || null
+  } catch {
+    return null
+  }
+}
+
+// Save order to Supabase (fire-and-forget, don't block UI)
+async function saveOrderToSupabase(order) {
+  try {
+    const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user
+    const refCode = getReferralCode()
+    const { error } = await supabase.from('miniapp_orders').insert({
+      id: order.id,
+      tg_id: tgUser?.id?.toString() || order.tgUserId || null,
+      tg_username: tgUser?.username || order.tgUsername || null,
+      product_id: String(order.productId),
+      product_name: order.productName,
+      amount: order.price,
+      currency: 'USDT',
+      status: 'pending',
+      created_at: order.createdAt ? new Date(order.createdAt).toISOString() : new Date().toISOString(),
+      referral_code: refCode,
+    })
+    if (error) {
+      console.warn('[useOrders] Supabase insert error:', error.message)
+    }
+  } catch (e) {
+    console.warn('[useOrders] Supabase save failed:', e)
+  }
+}
+
 export function useOrders() {
   const [orders, setOrders] = useState(() => loadOrders())
 
@@ -37,6 +93,8 @@ export function useOrders() {
       saveOrders(next)
       return next
     })
+    // Async save to Supabase (non-blocking)
+    saveOrderToSupabase(order)
   }, [])
 
   const updateOrder = useCallback((orderId, updates) => {
