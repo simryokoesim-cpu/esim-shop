@@ -23,14 +23,28 @@ export default function Checkout() {
   const [email, setEmail] = useState('')
   const [termsAccepted, setTermsAccepted] = useState(false)
   const intervalRef = useRef(null)
-  const orderCreatedRef = useRef(false) // 防止重复创建订单
+  const orderCreatedRef = useRef(false)
 
   const product = products.find(p => p.id === parseInt(id))
 
-  // Create order ONCE when product is loaded - never again
+  // 复用已有订单，绝不重复创建
   useEffect(() => {
     if (!product || orderCreatedRef.current) return
     orderCreatedRef.current = true
+
+    // 先检查 localStorage 是否有该产品的未完成订单（复用，不重复创建）
+    try {
+      const tgUserId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 'guest'
+      const key = `esim_orders_${tgUserId}`
+      const existing = JSON.parse(localStorage.getItem(key) || '[]')
+      const found = existing.find(o => String(o.productId) === String(product.id) && o.status === 'pending')
+      if (found) {
+        setOrder(found)
+        return
+      }
+    } catch(e) {}
+
+    // 没有则新建
     const newOrder = createOrder(product)
     setOrder(newOrder)
     addOrder(newOrder)
