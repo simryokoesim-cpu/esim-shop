@@ -11,15 +11,15 @@ const quickCategories = [
   { id: 'hot', icon: '✈️', label: '出行首选', bg: 'linear-gradient(135deg, #92400e, #f59e0b)' },
 ]
 
-const asiaCountryCodes = ['JP', 'KR', 'TH', 'SG', 'HK', 'TW', 'MY', 'CN', 'IN', 'ID', 'PH', 'VN', 'MO', 'BD', 'KH', 'LA', 'MM', 'NP', 'LK', 'PK', 'MN']
+const asiaCountryCodes = ['JP', 'KR', 'TH', 'SG', 'HK', 'TW', 'MY', 'IN', 'ID', 'PH', 'VN', 'MO', 'BD', 'KH', 'LA', 'MM', 'NP', 'LK', 'PK', 'MN']
 const europeCountryCodes = ['GB', 'FR', 'DE', 'IT', 'ES', 'NL', 'CH', 'BE', 'PL', 'SE', 'NO', 'DK', 'FI', 'PT', 'AT', 'GR', 'CZ', 'HU', 'RO']
 
 // 热门旅游目的地优先级（数字越小越靠前）
 const hotCountryPriority = {
   'TH': 1, 'JP': 2, 'SG': 3, 'MY': 4, 'KR': 5,
   'HK': 6, 'TW': 7, 'ID': 8, 'VN': 9, 'PH': 10,
-  'CN': 11, 'MO': 12, 'LK': 13, 'IN': 14, 'AE': 15,
-  'GB': 16, 'FR': 17, 'DE': 18, 'IT': 19, 'ES': 20,
+  'MO': 11, 'LK': 12, 'IN': 13, 'AE': 14,
+  'GB': 15, 'FR': 16, 'DE': 17, 'IT': 18, 'ES': 19,
 }
 
 const getProductPriority = (p) => {

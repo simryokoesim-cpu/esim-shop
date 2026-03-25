@@ -103,7 +103,25 @@ async function getAllProducts() {
   if (allProductsLoading) return allProductsLoading
 
   allProductsLoading = (async () => {
-    // 1. 先检查 localStorage 缓存
+    // 1. 先用本地缓存文件立刻返回（最快，打包在内）
+    try {
+      const local = await loadLocalProducts()
+      if (local && local.length > 0) {
+        console.log(`[Products] Loaded ${local.length} from local bundle cache`)
+        allProductsCache = local
+        // 后台异步更新 localStorage（不阻塞UI）
+        fetchAllFromSupabase().then(raw => {
+          try {
+            localStorage.setItem(LS_CACHE_KEY, JSON.stringify({ ts: Date.now(), data: raw }))
+          } catch(e) {}
+        }).catch(() => {})
+        return allProductsCache
+      }
+    } catch (e) {
+      console.warn('[Products] Local bundle load failed:', e)
+    }
+
+    // 2. 检查 localStorage 缓存
     try {
       const raw = localStorage.getItem(LS_CACHE_KEY)
       if (raw) {
@@ -118,24 +136,19 @@ async function getAllProducts() {
       console.warn('[Products] localStorage read failed:', e)
     }
 
-    // 2. 从 Supabase 拉取
+    // 3. 从供应商API拉取（兜底）
     try {
-      console.log('[Products] Fetching from Supabase...')
+      console.log('[Products] Fetching from API...')
       const raw = await fetchAllFromSupabase()
-      console.log(`[Products] Fetched ${raw.length} from Supabase`)
+      console.log(`[Products] Fetched ${raw.length} from API`)
       const products = raw.map(normalizeProduct)
-
-      // 缓存到 localStorage
       try {
         localStorage.setItem(LS_CACHE_KEY, JSON.stringify({ ts: Date.now(), data: raw }))
-      } catch (e) {
-        console.warn('[Products] localStorage write failed:', e)
-      }
-
+      } catch (e) {}
       allProductsCache = products
       return products
     } catch (e) {
-      console.error('[Products] Supabase fetch failed, falling back to local cache:', e)
+      console.error('[Products] API fetch failed:', e)
     }
 
     // 3. 兜底：本地缓存
