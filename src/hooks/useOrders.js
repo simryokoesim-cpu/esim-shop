@@ -77,8 +77,25 @@ async function saveOrderToSupabase(order, retries = 3) {
         created_at: new Date().toISOString(),
         referral_code: refCode || null,
       }
-      const { error } = await supabase.from('miniapp_orders').upsert(payload, { onConflict: 'id' })
+      
+      // 先尝试查找订单，如果存在则不重复创建
+      const { data: existingOrder, error: selectError } = await supabase
+        .from('miniapp_orders')
+        .select('id')
+        .eq('id', order.id)
+        .single()
+      
+      if (existingOrder) {
+        console.log('[useOrders] 订单已存在，跳过创建:', order.id)
+        return
+      }
+      
+      const { error } = await supabase.from('miniapp_orders').insert(payload).select()
       if (error) {
+        if (error.code === '23505') { // 唯一约束冲突
+          console.log('[useOrders] 订单已存在（唯一约束），跳过创建:', order.id)
+          return
+        }
         console.warn(`[useOrders] Supabase save attempt ${i+1} failed:`, error.message)
         if (i < retries - 1) await new Promise(r => setTimeout(r, 1000))
       } else {

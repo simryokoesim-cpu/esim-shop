@@ -29,9 +29,8 @@ export default function Checkout() {
 
   // 复用已有订单，绝不重复创建
   useEffect(() => {
-    if (!product || orderCreatedRef.current) return
-    orderCreatedRef.current = true
-
+    if (!product) return
+    
     // 先检查 localStorage 是否有该产品的未完成订单（复用，不重复创建）
     try {
       const tgUserId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 'guest'
@@ -40,10 +39,17 @@ export default function Checkout() {
       const found = existing.find(o => String(o.productId) === String(product.id) && o.status === 'pending')
       if (found) {
         setOrder(found)
+        orderCreatedRef.current = true
         return
       }
-    } catch(e) {}
+    } catch(e) {
+      console.error('[Checkout] 检查现有订单时出错:', e)
+    }
 
+    // 防止重复创建：如果已经创建过则不再创建
+    if (orderCreatedRef.current) return
+    
+    orderCreatedRef.current = true
     // 没有则新建
     const newOrder = createOrder(product)
     setOrder(newOrder)

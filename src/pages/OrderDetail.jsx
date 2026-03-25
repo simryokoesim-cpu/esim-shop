@@ -44,7 +44,9 @@ export default function OrderDetail() {
         }
         return data[0].status
       }
-    } catch (e) {}
+    } catch (e) {
+      console.error('[OrderDetail] fetchFromDB error:', e)
+    }
     return null
   }
 
@@ -56,11 +58,17 @@ export default function OrderDetail() {
     pollRef.current = setInterval(async () => {
       const status = await fetchFromDB()
       if (status && ['delivered', 'activated', 'failed'].includes(status)) {
+        console.log(`[OrderDetail] 订单 ${orderId} 状态已更新为 ${status}，停止轮询`)
         clearInterval(pollRef.current)
       }
     }, 10000)
 
-    return () => clearInterval(pollRef.current)
+    // 清理函数
+    return () => {
+      if (pollRef.current) {
+        clearInterval(pollRef.current)
+      }
+    }
   }, [orderId])
 
   const order = dbOrder
@@ -152,10 +160,10 @@ export default function OrderDetail() {
             )}
 
             {/* 二维码图片 */}
-            {order.esimQrCode && (
+            {order.esimQrCode && typeof order.esimQrCode === 'string' && order.esimQrCode.trim() !== '' && (
               <div style={{ textAlign: 'center', marginBottom: 16 }}>
                 <img
-                  src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(order.esimQrCode)}`}
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(order.esimQrCode.trim())}`}
                   alt="eSIM QR Code"
                   style={{ width: 180, height: 180, borderRadius: 12, background: '#fff', padding: 8 }}
                 />
