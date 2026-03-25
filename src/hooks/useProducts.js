@@ -7,7 +7,7 @@ const CACHE_TTL = 10 * 60 * 1000 // 10 minutes
 
 const SUPABASE_URL = 'https://afdyzuohzwdvreyhnfdb.supabase.co'
 const SUPABASE_KEY = 'sb_publishable_FfMQeSJTbZPfsKtMF6nyqA_Fgo_gzun'
-const LS_CACHE_KEY = 'esim_products_cache_v2'
+const LS_CACHE_KEY = 'esim_products_cache_v3'
 const LS_CACHE_TTL = 60 * 60 * 1000 // 1 hour
 
 function cacheKey(params) {
