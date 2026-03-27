@@ -1,5 +1,50 @@
 [
   {
+    "id": 2722,
+    "name": "哥斯达黎加 5GB/30天",
+    "type": "local",
+    "countries": [
+      {
+        "cn": "哥斯达黎加",
+        "en": "Costa Rica",
+        "code": "CR"
+      }
+    ],
+    "dataSize": 5120.0,
+    "validDays": 30,
+    "price": 26.5
+  },
+  {
+    "id": 2723,
+    "name": "哥斯达黎加 10GB/30天",
+    "type": "local",
+    "countries": [
+      {
+        "cn": "哥斯达黎加",
+        "en": "Costa Rica",
+        "code": "CR"
+      }
+    ],
+    "dataSize": 10240.0,
+    "validDays": 30,
+    "price": 34.0
+  },
+  {
+    "id": 2724,
+    "name": "哥斯达黎加 20GB/30天",
+    "type": "local",
+    "countries": [
+      {
+        "cn": "哥斯达黎加",
+        "en": "Costa Rica",
+        "code": "CR"
+      }
+    ],
+    "dataSize": 20480.0,
+    "validDays": 30,
+    "price": 40.5
+  },
+  {
     "id": 2716,
     "name": "开曼群岛 1GB/7天",
     "type": "local",
@@ -42217,7 +42262,7 @@
     ],
     "dataSize": 1024.0,
     "validDays": 7,
-    "price": 9.5
+    "price": 7.5
   },
   {
     "id": 1577,
@@ -42232,7 +42277,7 @@
     ],
     "dataSize": 2048.0,
     "validDays": 15,
-    "price": 15.0
+    "price": 13.5
   },
   {
     "id": 1578,
