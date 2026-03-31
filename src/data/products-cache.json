@@ -34407,7 +34407,7 @@
     ],
     "dataSize": 2048.0,
     "validDays": 15,
-    "price": 22.0
+    "price": 9.5
   },
   {
     "id": 1887,
@@ -34422,7 +34422,7 @@
     ],
     "dataSize": 3072.0,
     "validDays": 30,
-    "price": 31.0
+    "price": 12.5
   },
   {
     "id": 1888,
@@ -42472,7 +42472,7 @@
     ],
     "dataSize": 1024.0,
     "validDays": 7,
-    "price": 9.0
+    "price": 7.0
   },
   {
     "id": 1563,
@@ -42487,7 +42487,7 @@
     ],
     "dataSize": 2048.0,
     "validDays": 15,
-    "price": 17.5
+    "price": 10.5
   },
   {
     "id": 1553,
@@ -42517,7 +42517,7 @@
     ],
     "dataSize": 2048.0,
     "validDays": 15,
-    "price": 13.5
+    "price": 11.5
   },
   {
     "id": 1555,
@@ -42532,7 +42532,7 @@
     ],
     "dataSize": 3072.0,
     "validDays": 30,
-    "price": 19.5
+    "price": 15.0
   },
   {
     "id": 1556,
@@ -42547,7 +42547,7 @@
     ],
     "dataSize": 5120.0,
     "validDays": 30,
-    "price": 32.0
+    "price": 23.0
   },
   {
     "id": 1551,
@@ -42577,7 +42577,7 @@
     ],
     "dataSize": 3072.0,
     "validDays": 30,
-    "price": 25.0
+    "price": 13.0
   },
   {
     "id": 1550,
@@ -47297,7 +47297,7 @@
     ],
     "dataSize": 0.0,
     "validDays": 5,
-    "price": 19.5
+    "price": 19.0
   },
   {
     "id": 1251,
@@ -47342,7 +47342,7 @@
     ],
     "dataSize": 0.0,
     "validDays": 30,
-    "price": 72.5
+    "price": 69.0
   },
   {
     "id": 1254,
@@ -74807,7 +74807,7 @@
     ],
     "dataSize": 1024.0,
     "validDays": 7,
-    "price": 9.0
+    "price": 7.0
   },
   {
     "id": 305,
@@ -74822,7 +74822,7 @@
     ],
     "dataSize": 2048.0,
     "validDays": 15,
-    "price": 15.0
+    "price": 12.5
   },
   {
     "id": 306,
@@ -74837,7 +74837,7 @@
     ],
     "dataSize": 3072.0,
     "validDays": 30,
-    "price": 20.0
+    "price": 17.0
   },
   {
     "id": 307,
@@ -74852,7 +74852,7 @@
     ],
     "dataSize": 5120.0,
     "validDays": 30,
-    "price": 35.0
+    "price": 27.0
   },
   {
     "id": 308,
@@ -74867,7 +74867,7 @@
     ],
     "dataSize": 1024.0,
     "validDays": 7,
-    "price": 12.0
+    "price": 5.5
   },
   {
     "id": 309,
@@ -74882,7 +74882,7 @@
     ],
     "dataSize": 5120.0,
     "validDays": 30,
-    "price": 49.0
+    "price": 20.5
   },
   {
     "id": 310,
