@@ -326,6 +326,12 @@ export default function ProductList() {
         {loading && (
           <div style={{ textAlign: 'center', color: 'rgba(255,255,255,0.3)', padding: '40px' }}>加载中...</div>
         )}
+        {!loading && !search && tab === 'hot' && selectedCountry && countryProducts.length === 0 && (
+          <div style={{ textAlign: 'center', color: 'rgba(255,255,255,0.4)', padding: '40px' }}>
+            <div style={{ fontSize: '40px', marginBottom: '12px' }}>😕</div>
+            <div>暂无该国家的套餐，请稍后再试</div>
+          </div>
+        )}
       </div>
     </div>
   )

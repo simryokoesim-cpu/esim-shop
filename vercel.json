@@ -1,0 +1,17 @@
+{
+  "version": 2,
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/dist/$1"
+    }
+  ],
+  "env": {
+    "ESIM_API_USERNAME": "@esim_api_username",
+    "ESIM_API_PASSWORD": "@esim_api_password"
+  }
+}

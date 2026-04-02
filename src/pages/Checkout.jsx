@@ -58,6 +58,10 @@ export default function Checkout() {
 
   // 跳转订单详情
   const goToOrderDetail = () => {
+    if (!termsAccepted) {
+      alert('请先阅读并同意服务条款和退款政策')
+      return
+    }
     if (order) navigate(`/order/${order.id}`)
   }
 
@@ -445,14 +449,16 @@ export default function Checkout() {
               borderRadius: '12px',
               padding: '12px 14px',
               marginBottom: '14px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
             }}>
-              <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)' }}>付款金额</span>
-              <span style={{ fontSize: '20px', fontWeight: 700, color: '#60a5fa' }}>
-                {price} TON
-              </span>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
+                <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)' }}>付款金额（USD等值）</span>
+                <span style={{ fontSize: '20px', fontWeight: 700, color: '#60a5fa' }}>
+                  ${price}
+                </span>
+              </div>
+              <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)' }}>
+                ⚠️ 请按当前 TON/USDT 汇率换算后转账对应数量的 TON
+              </div>
             </div>
 
             {/* Address */}
@@ -615,7 +621,7 @@ export default function Checkout() {
             { step: '4', text: '收到 eSIM 二维码，扫码激活即用', done: false },
           ] : [
             { step: '1', text: '复制上方 TON 收款地址', done: copiedTon },
-            { step: '2', text: `转账 ${price} TON 至该地址`, done: false },
+            { step: '2', text: `按实时汇率换算，转账等值 $${price} 的 TON 至该地址`, done: false },
             { step: '3', text: `截图付款记录，点击"联系客服"按钮`, done: false },
             { step: '4', text: '收到 eSIM 二维码，扫码激活即用', done: false },
           ]).map((s, i) => (

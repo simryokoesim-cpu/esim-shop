@@ -227,7 +227,7 @@ export default function Home() {
             fontSize: '18px',
           }}>
             {userAvatar ? (
-              <img src={userAvatar} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <img src={userAvatar} alt={`${userName}的头像`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             ) : (
               '👤'
             )}
