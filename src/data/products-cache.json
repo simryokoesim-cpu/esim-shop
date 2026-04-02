@@ -1,5 +1,105 @@
 [
   {
+    "id": 2744,
+    "name": "亚洲 100GB/180天 (覆盖18国)",
+    "type": "regional",
+    "countries": [
+      {
+        "cn": "孟加拉国",
+        "en": "Bangladesh",
+        "code": "BD"
+      },
+      {
+        "cn": "柬埔寨",
+        "en": "Cambodia",
+        "code": "KH"
+      },
+      {
+        "cn": "中国",
+        "en": "China",
+        "code": "CN"
+      },
+      {
+        "cn": "香港",
+        "en": "Hong Kong",
+        "code": "HK"
+      },
+      {
+        "cn": "印度",
+        "en": "India",
+        "code": "IN"
+      },
+      {
+        "cn": "印度尼西亚",
+        "en": "Indonesia",
+        "code": "ID"
+      },
+      {
+        "cn": "日本",
+        "en": "Japan",
+        "code": "JP"
+      },
+      {
+        "cn": "老挝",
+        "en": "Laos",
+        "code": "LA"
+      },
+      {
+        "cn": "澳门",
+        "en": "Macau",
+        "code": "MO"
+      },
+      {
+        "cn": "马来西亚",
+        "en": "Malaysia",
+        "code": "MY"
+      },
+      {
+        "cn": "巴基斯坦",
+        "en": "Pakistan",
+        "code": "PK"
+      },
+      {
+        "cn": "菲律宾",
+        "en": "Philippines",
+        "code": "PH"
+      },
+      {
+        "cn": "新加坡",
+        "en": "Singapore",
+        "code": "SG"
+      },
+      {
+        "cn": "韩国",
+        "en": "South Korea",
+        "code": "KR"
+      },
+      {
+        "cn": "斯里兰卡",
+        "en": "Sri Lanka",
+        "code": "LK"
+      },
+      {
+        "cn": "台湾",
+        "en": "Taiwan",
+        "code": "TW"
+      },
+      {
+        "cn": "泰国",
+        "en": "Thailand",
+        "code": "TH"
+      },
+      {
+        "cn": "越南",
+        "en": "Vietnam",
+        "code": "VN"
+      }
+    ],
+    "dataSize": 102400.0,
+    "validDays": 180,
+    "price": 185.0
+  },
+  {
     "id": 2732,
     "name": "以色列 1GB/7天",
     "type": "local",
