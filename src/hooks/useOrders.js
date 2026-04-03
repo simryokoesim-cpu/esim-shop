@@ -1,14 +1,16 @@
-// Local order storage (persisted in localStorage by tgUserId) + Supabase sync
+// Local order storage (persisted in localStorage by tgUserId) + backend proxy sync
 import { useState, useCallback } from 'react'
-import { createClient } from '@supabase/supabase-js'
 
 const ORDERS_KEY = 'esim_orders'
 
-// Supabase client (anon key – read-only for orders, write on insert)
-const supabase = createClient(
-  'https://afdyzuohzwdvreyhnfdb.supabase.co',
-  'sb_publishable_FfMQeSJTbZPfsKtMF6nyqA_Fgo_gzun'
-)
+// 获取 Telegram ID 用于后端代理认证
+function getTgIdHeader() {
+  try {
+    return window.Telegram?.WebApp?.initDataUnsafe?.user?.id?.toString() || '0'
+  } catch {
+    return '0'
+  }
+}
 
 function getTgUserId() {
   try {
@@ -59,55 +61,45 @@ function getReferralCode() {
   }
 }
 
-// Save order to Supabase - 重试3次确保写入
-async function saveOrderToSupabase(order, retries = 3) {
+// Save order via backend proxy - 重试3次确保写入
+async function saveOrderToBackend(order, retries = 3) {
+  const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user
+  const refCode = getReferralCode()
+  const payload = {
+    id: order.id,
+    tg_id: tgUser?.id?.toString() || order.tgUserId || 'guest',
+    tg_username: tgUser?.username || order.tgUsername || 'unknown',
+    product_id: String(order.productId),
+    product_name: order.productName,
+    amount: String(order.price),
+    currency: 'USDT',
+    status: 'pending',
+    created_at: new Date().toISOString(),
+    referral_code: refCode || null,
+  }
+
   for (let i = 0; i < retries; i++) {
     try {
-      const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user
-      const refCode = getReferralCode()
-      const payload = {
-        id: order.id,
-        tg_id: tgUser?.id?.toString() || order.tgUserId || 'guest',
-        tg_username: tgUser?.username || order.tgUsername || 'unknown',
-        product_id: String(order.productId),
-        product_name: order.productName,
-        amount: String(order.price),
-        currency: 'USDT',
-        status: 'pending',
-        created_at: new Date().toISOString(),
-        referral_code: refCode || null,
-      }
-      
-      // 先尝试查找订单，如果存在则不重复创建
-      const { data: existingOrder, error: selectError } = await supabase
-        .from('miniapp_orders')
-        .select('id')
-        .eq('id', order.id)
-        .single()
-      
-      if (existingOrder) {
-        console.log('[useOrders] 订单已存在，跳过创建:', order.id)
+      const r = await fetch('/api/orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Telegram-Id': getTgIdHeader()
+        },
+        body: JSON.stringify(payload)
+      })
+      if (r.ok || r.status === 409) {
+        console.log('[useOrders] ✅ 订单已写入:', order.id)
         return
       }
-      
-      const { error } = await supabase.from('miniapp_orders').insert(payload).select()
-      if (error) {
-        if (error.code === '23505') { // 唯一约束冲突
-          console.log('[useOrders] 订单已存在（唯一约束），跳过创建:', order.id)
-          return
-        }
-        console.warn(`[useOrders] Supabase save attempt ${i+1} failed:`, error.message)
-        if (i < retries - 1) await new Promise(r => setTimeout(r, 1000))
-      } else {
-        console.log('[useOrders] ✅ 订单已写入 Supabase:', order.id)
-        return
-      }
+      console.warn(`[useOrders] 写入尝试 ${i+1} 失败: ${r.status}`)
+      if (i < retries - 1) await new Promise(r => setTimeout(r, 1000))
     } catch (e) {
-      console.warn(`[useOrders] Supabase save exception ${i+1}:`, e.message)
+      console.warn(`[useOrders] 写入异常 ${i+1}:`, e.message)
       if (i < retries - 1) await new Promise(r => setTimeout(r, 1000))
     }
   }
-  console.error('[useOrders] ❌ 订单写入 Supabase 失败（已重试3次）:', order.id)
+  console.error('[useOrders] ❌ 订单写入失败（已重试3次）:', order.id)
 }
 
 export function useOrders() {
@@ -119,8 +111,8 @@ export function useOrders() {
       saveOrders(next)
       return next
     })
-    // Async save to Supabase (non-blocking)
-    saveOrderToSupabase(order)
+    // Async save via backend proxy (non-blocking)
+    saveOrderToBackend(order)
   }, [])
 
   const updateOrder = useCallback((orderId, updates) => {
