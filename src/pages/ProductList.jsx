@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useAllProducts } from '../hooks/useProducts'
 import ProductCard from '../components/ProductCard'
@@ -39,11 +39,38 @@ export default function ProductList() {
   const [searchParams] = useSearchParams()
   const [tab, setTab] = useState(searchParams.get('tab') || 'hot') // hot | regional | global
   const initCountryCode = searchParams.get('country')
-  const initCountry = initCountryCode ? HOT_COUNTRIES.find(c => c.code === initCountryCode) || null : null
+  const allCountries = useMemo(() => {
+    const matched = new Map()
+    products.forEach(p => {
+      if (p.countries?.length === 1) {
+        const c = p.countries[0]
+        if (c?.code && !matched.has(c.code)) {
+          matched.set(c.code, { code: c.code, cn: c.cn || c.en || c.code, en: c.en || c.cn || c.code })
+        }
+      }
+    })
+    return Array.from(matched.values()).sort((a, b) => {
+      const aHot = HOT_COUNTRIES.some(h => h.code === a.code)
+      const bHot = HOT_COUNTRIES.some(h => h.code === b.code)
+      if (aHot !== bHot) return aHot ? -1 : 1
+      return (a.cn || a.en || '').localeCompare(b.cn || b.en || '', 'zh-Hans-CN')
+    })
+  }, [products])
+  const initCountry = initCountryCode ? allCountries.find(c => c.code === initCountryCode) || HOT_COUNTRIES.find(c => c.code === initCountryCode) || null : null
   const [selectedCountry, setSelectedCountry] = useState(initCountry) // { code, cn }
   const [selectedRegion, setSelectedRegion] = useState(null) // region obj
+  const nonHotCountries = useMemo(
+    () => allCountries.filter(c => !HOT_COUNTRIES.some(h => h.code === c.code)),
+    [allCountries]
+  )
   const [globalFilter, setGlobalFilter] = useState('data') // data | voice | sms
   const [search, setSearch] = useState('')
+
+  useEffect(() => {
+    if (!initCountryCode || selectedCountry) return
+    const matched = allCountries.find(c => c.code === initCountryCode) || HOT_COUNTRIES.find(c => c.code === initCountryCode)
+    if (matched) setSelectedCountry(matched)
+  }, [initCountryCode, allCountries, selectedCountry])
 
   // 按国家筛选的套餐
   const countryProducts = useMemo(() => {
@@ -76,8 +103,9 @@ export default function ProductList() {
       }
     })
     result = Object.values(grouped)
-    if (globalFilter === 'voice') result = result.filter(p => p.hasVoice)
-    else result = result.filter(p => !p.hasVoice) // 纯数据
+    const isVoice = p => !!(p.hasVoice || (p.thirdPartyData?.voice) || /SMS|Min/i.test(p.nameEn || p.name || ''))
+    if (globalFilter === 'voice') result = result.filter(isVoice)
+    else result = result.filter(p => !isVoice(p))
     return result.sort((a, b) => parseFloat(a.price) - parseFloat(b.price))
   }, [products, globalFilter])
 
@@ -255,8 +283,26 @@ export default function ProductList() {
             // 国家网格
             <>
               <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.4)', marginBottom: '16px' }}>选择目的地国家</div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px' }}>
+
+              <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.35)', marginBottom: '10px' }}>热门国家</div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', marginBottom: '20px' }}>
                 {HOT_COUNTRIES.map(c => (
+                  <button key={c.code} onClick={() => setSelectedCountry(c)} style={{
+                    background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)',
+                    borderRadius: '14px', padding: '14px 8px', cursor: 'pointer', textAlign: 'center',
+                    transition: 'all 0.2s',
+                  }}>
+                    <div style={{ fontSize: '28px', marginBottom: '6px' }}>{getFlag(c.code)}</div>
+                    <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.8)', fontWeight: 500 }}>{c.cn}</div>
+                  </button>
+                ))}
+              </div>
+
+              <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.35)', marginBottom: '10px' }}>
+                其他国家 / 地区（共 {nonHotCountries.length} 个）
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px' }}>
+                {nonHotCountries.map(c => (
                   <button key={c.code} onClick={() => setSelectedCountry(c)} style={{
                     background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)',
                     borderRadius: '14px', padding: '14px 8px', cursor: 'pointer', textAlign: 'center',
