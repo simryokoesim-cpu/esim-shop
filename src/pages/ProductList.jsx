@@ -103,7 +103,7 @@ export default function ProductList() {
 
   // 全球套餐（按类型筛选）
   const globalProducts = useMemo(() => {
-    let result = products.filter(p => p.type === 'global' || p.countries?.length > 30)
+    let result = products.filter(p => p.type === 'global')
     // 去重：同价格+同流量+同天数只保留一个（保留覆盖国家最多的）
     const grouped = {}
     result.forEach(p => {
