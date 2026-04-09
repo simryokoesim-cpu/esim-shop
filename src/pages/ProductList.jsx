@@ -23,11 +23,11 @@ const HOT_COUNTRIES = [
 
 // 区域套餐分组
 const REGIONS = [
-  { id: 'asia', cn: '亚洲', icon: '🌏', keywords: ['亚洲'] },
+  { id: 'asia', cn: '亚洲', icon: '🌏', keywords: ['亚洲', '东南亚'] },
   { id: 'europe', cn: '欧洲', icon: '🏛️', keywords: ['欧洲'] },
   { id: 'mideast', cn: '中东', icon: '🕌', keywords: ['中东'] },
   { id: 'africa', cn: '非洲', icon: '🌍', keywords: ['非洲'] },
-  { id: 'americas', cn: '美洲', icon: '🌎', keywords: ['美洲'] },
+  { id: 'americas', cn: '美洲', icon: '🌎', keywords: ['美洲', '北美加勒比'] },
   { id: 'oceania', cn: '大洋洲', icon: '🏝️', keywords: ['大洋洲'] },
   { id: 'other', cn: '其他区域', icon: '🗺️', keywords: [] },
 ]
