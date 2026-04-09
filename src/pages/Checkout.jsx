@@ -204,7 +204,7 @@ export default function Checkout() {
                 {getCountryName(product)}
               </div>
               <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)' }}>
-                {formatData(product.dataSize, product.isUnlimited || product.thirdPartyData?.isUnlimited)} · {formatDays(product.validDays)}
+                {formatData(product.dataSize, product.isUnlimited)} · {formatDays(product.validDays)}
               </div>
             </div>
             <div style={{

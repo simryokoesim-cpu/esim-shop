@@ -165,7 +165,7 @@ function getProductFlag(product) {
 }
 
 function formatDataLabel(product) {
-  if (product.thirdPartyData?.isUnlimited || product.dataSize === 0) return '无限流量'
+  if (product.isUnlimited || product.dataSize === 0) return '无限流量'
   if (!product.dataSize) return '未知'
   const gb = product.dataSize / 1024
   if (gb < 1) return `${product.dataSize}MB`
