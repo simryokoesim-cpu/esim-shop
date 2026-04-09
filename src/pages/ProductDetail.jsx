@@ -109,7 +109,7 @@ export default function ProductDetail() {
 
         {/* Flag and name */}
         <div style={{ textAlign: 'center', position: 'relative', zIndex: 1 }}>
-          <div style={{ fontSize: '72px', marginBottom: '12px', lineHeight: 1 }}>{product.flag}</div>
+          <div style={{ fontSize: '72px', marginBottom: '12px', lineHeight: 1 }}>{heroFlag}</div>
           <div style={{ fontSize: '24px', fontWeight: 700, color: '#fff', marginBottom: '4px' }}>{countryName}</div>
           <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.4)', marginBottom: '16px' }}>{product.name}</div>
           

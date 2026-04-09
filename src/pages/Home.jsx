@@ -391,7 +391,7 @@ export default function Home() {
               background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
               borderRadius: '16px',
             }}>
-              <div style={{ fontSize: '20px', fontWeight: 800, color: '#60a5fa', marginBottom: '3px' }}>{s.value}</div>
+              <div style={{ fontSize: '20px', fontWeight: 800, color: '#60a5fa', marginBottom: '3px' }}>{s.label === '覆盖国家' ? `${allCountryCount || 200}+` : s.value}</div>
               <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)' }}>{s.label}</div>
             </div>
           ))}
