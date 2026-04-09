@@ -143,7 +143,7 @@ export function createOrder(product) {
     productName: product.name,
     productFlag: getProductFlag(product),
     dataLabel: formatDataLabel(product),
-    daysLabel: `${product.validDays}天`,
+    daysLabel: formatDaysLabel(product.validDays),
     price: product.agentPrice || product.price,
     status: 'pending',
     createdAt: new Date().toISOString().split('T')[0],
@@ -157,6 +157,7 @@ export function createOrder(product) {
 function getProductFlag(product) {
   if (!product.countries || product.countries.length === 0) return '🌐'
   if (product.type === 'global') return '🌐'
+  if (product.type === 'regional' || (product.countries?.length || 0) > 1) return '🗺️'
   const code = product.countries[0]?.code
   if (!code) return '🌐'
   // Convert country code to flag emoji
@@ -169,4 +170,12 @@ function formatDataLabel(product) {
   const gb = product.dataSize / 1024
   if (gb < 1) return `${product.dataSize}MB`
   return Number.isInteger(gb) ? `${gb}GB` : `${gb.toFixed(1)}GB`
+}
+
+function formatDaysLabel(days) {
+  if (!days) return '未知'
+  if (days >= 30 && days % 30 === 0) {
+    return `${days / 30}个月`
+  }
+  return `${days}天`
 }
