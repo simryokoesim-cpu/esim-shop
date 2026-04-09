@@ -37,8 +37,10 @@ export default function ProductList() {
   const navigate = useNavigate()
 
   const [searchParams] = useSearchParams()
-  const [tab, setTab] = useState(searchParams.get('tab') || 'hot') // hot | regional | global
+  const initTab = searchParams.get('tab') || 'hot'
   const initCountryCode = searchParams.get('country')
+  const initSearch = searchParams.get('search') || ''
+  const [tab, setTab] = useState(initTab) // hot | regional | global
   const allCountries = useMemo(() => {
     const matched = new Map()
     products.forEach(p => {
@@ -63,13 +65,21 @@ export default function ProductList() {
     () => allCountries.filter(c => !HOT_COUNTRIES.some(h => h.code === c.code)),
     [allCountries]
   )
-  const [globalFilter, setGlobalFilter] = useState('data') // data | voice | sms
-  const [search, setSearch] = useState('')
+  const [globalFilter, setGlobalFilter] = useState('data') // data | voice
+  const [search, setSearch] = useState(initSearch)
 
   useEffect(() => {
-    if (!initCountryCode || selectedCountry) return
+    setTab(initTab)
+    if (initSearch !== search) setSearch(initSearch)
+  }, [initTab, initSearch])
+
+  useEffect(() => {
+    if (!initCountryCode) {
+      setSelectedCountry(null)
+      return
+    }
     const matched = allCountries.find(c => c.code === initCountryCode) || HOT_COUNTRIES.find(c => c.code === initCountryCode)
-    if (matched) setSelectedCountry(matched)
+    if (matched && selectedCountry?.code !== matched.code) setSelectedCountry(matched)
   }, [initCountryCode, allCountries, selectedCountry])
 
   // 按国家筛选的套餐
@@ -123,7 +133,7 @@ export default function ProductList() {
         }
       }
     })
-    return Array.from(matched.values()).slice(0, 12)
+    return Array.from(matched.values()).sort((a, b) => (a.cn || a.en || '').localeCompare(b.cn || b.en || '', 'zh-Hans-CN'))
   }, [products, search])
 
   // 搜索匹配的区域/全球套餐
@@ -135,7 +145,7 @@ export default function ProductList() {
         p.name.toLowerCase().includes(q) ||
         p.countries?.some(c => c.cn?.toLowerCase().includes(q) || c.en?.toLowerCase().includes(q))
       )
-    ).slice(0, 20)
+    ).sort((a, b) => parseFloat(a.price) - parseFloat(b.price))
   }, [products, search])
 
   const tabs = [
