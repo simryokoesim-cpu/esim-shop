@@ -1,5 +1,3005 @@
 [
   {
+    "id": 2747,
+    "name": "全球通用 2GB/15天 (覆盖198+国)",
+    "type": "global",
+    "countries": [
+      {
+        "cn": "阿富汗",
+        "en": "Afghanistan",
+        "code": "AF"
+      },
+      {
+        "cn": "阿尔巴尼亚",
+        "en": "Albania",
+        "code": "AL"
+      },
+      {
+        "cn": "阿尔及利亚",
+        "en": "Algeria",
+        "code": "DZ"
+      },
+      {
+        "cn": "安道尔",
+        "en": "Andorra",
+        "code": "AD"
+      },
+      {
+        "cn": "安圭拉",
+        "en": "Anguilla",
+        "code": "AI"
+      },
+      {
+        "cn": "安提瓜和巴布达",
+        "en": "Antigua and Barbuda",
+        "code": "AG"
+      },
+      {
+        "cn": "荷属安的列斯",
+        "en": "Netherlands Antilles",
+        "code": "AN"
+      },
+      {
+        "cn": "阿根廷",
+        "en": "Argentina",
+        "code": "AR"
+      },
+      {
+        "cn": "亚美尼亚",
+        "en": "Armenia",
+        "code": "AM"
+      },
+      {
+        "cn": "阿鲁巴",
+        "en": "Aruba",
+        "code": "AW"
+      },
+      {
+        "cn": "澳大利亚",
+        "en": "Australia",
+        "code": "AU"
+      },
+      {
+        "cn": "奥地利",
+        "en": "Austria",
+        "code": "AT"
+      },
+      {
+        "cn": "阿塞拜疆",
+        "en": "Azerbaijan",
+        "code": "AZ"
+      },
+      {
+        "cn": "PT-AZ",
+        "en": "PT-AZ",
+        "code": "PT-AZ"
+      },
+      {
+        "cn": "巴哈马",
+        "en": "Bahamas",
+        "code": "BS"
+      },
+      {
+        "cn": "巴林",
+        "en": "Bahrain",
+        "code": "BH"
+      },
+      {
+        "cn": "孟加拉国",
+        "en": "Bangladesh",
+        "code": "BD"
+      },
+      {
+        "cn": "巴巴多斯",
+        "en": "Barbados",
+        "code": "BB"
+      },
+      {
+        "cn": "白俄罗斯",
+        "en": "Belarus",
+        "code": "BY"
+      },
+      {
+        "cn": "比利时",
+        "en": "Belgium",
+        "code": "BE"
+      },
+      {
+        "cn": "伯利兹",
+        "en": "Belize",
+        "code": "BZ"
+      },
+      {
+        "cn": "贝宁",
+        "en": "Benin",
+        "code": "BJ"
+      },
+      {
+        "cn": "百慕大",
+        "en": "Bermuda",
+        "code": "BM"
+      },
+      {
+        "cn": "玻利维亚",
+        "en": "Bolivia",
+        "code": "BO"
+      },
+      {
+        "cn": "荷兰加勒比区",
+        "en": "Bonaire, Sint Eustatius and Saba",
+        "code": "BQ"
+      },
+      {
+        "cn": "波黑",
+        "en": "Bosnia and Herzegovina",
+        "code": "BA"
+      },
+      {
+        "cn": "博茨瓦纳",
+        "en": "Botswana",
+        "code": "BW"
+      },
+      {
+        "cn": "巴西",
+        "en": "Brazil",
+        "code": "BR"
+      },
+      {
+        "cn": "英属维尔京群岛",
+        "en": "British Virgin Islands",
+        "code": "VG"
+      },
+      {
+        "cn": "文莱",
+        "en": "Brunei",
+        "code": "BN"
+      },
+      {
+        "cn": "布基纳法索",
+        "en": "Burkina Faso",
+        "code": "BF"
+      },
+      {
+        "cn": "柬埔寨",
+        "en": "Cambodia",
+        "code": "KH"
+      },
+      {
+        "cn": "喀麦隆",
+        "en": "Cameroon",
+        "code": "CM"
+      },
+      {
+        "cn": "加拿大",
+        "en": "Canada",
+        "code": "CA"
+      },
+      {
+        "cn": "ES-XCI",
+        "en": "ES-XCI",
+        "code": "ES-XCI"
+      },
+      {
+        "cn": "佛得角",
+        "en": "Cape Verde",
+        "code": "CV"
+      },
+      {
+        "cn": "开曼群岛",
+        "en": "Cayman Islands",
+        "code": "KY"
+      },
+      {
+        "cn": "中非共和国",
+        "en": "Central African Republic",
+        "code": "CF"
+      },
+      {
+        "cn": "乍得",
+        "en": "Chad",
+        "code": "TD"
+      },
+      {
+        "cn": "智利",
+        "en": "Chile",
+        "code": "CL"
+      },
+      {
+        "cn": "中国",
+        "en": "China",
+        "code": "CN"
+      },
+      {
+        "cn": "哥伦比亚",
+        "en": "Colombia",
+        "code": "CO"
+      },
+      {
+        "cn": "哥斯达黎加",
+        "en": "Costa Rica",
+        "code": "CR"
+      },
+      {
+        "cn": "科特迪瓦",
+        "en": "Ivory Coast",
+        "code": "CI"
+      },
+      {
+        "cn": "克罗地亚",
+        "en": "Croatia",
+        "code": "HR"
+      },
+      {
+        "cn": "库拉索",
+        "en": "Curacao",
+        "code": "CW"
+      },
+      {
+        "cn": "塞浦路斯",
+        "en": "Cyprus",
+        "code": "CY"
+      },
+      {
+        "cn": "捷克",
+        "en": "Czech Republic",
+        "code": "CZ"
+      },
+      {
+        "cn": "刚果(金)",
+        "en": "Congo, Democratic Republic",
+        "code": "CD"
+      },
+      {
+        "cn": "丹麦",
+        "en": "Denmark",
+        "code": "DK"
+      },
+      {
+        "cn": "多米尼克",
+        "en": "Dominica",
+        "code": "DM"
+      },
+      {
+        "cn": "多米尼加",
+        "en": "Dominican Republic",
+        "code": "DO"
+      },
+      {
+        "cn": "厄瓜多尔",
+        "en": "Ecuador",
+        "code": "EC"
+      },
+      {
+        "cn": "埃及",
+        "en": "Egypt",
+        "code": "EG"
+      },
+      {
+        "cn": "萨尔瓦多",
+        "en": "El Salvador",
+        "code": "SV"
+      },
+      {
+        "cn": "爱沙尼亚",
+        "en": "Estonia",
+        "code": "EE"
+      },
+      {
+        "cn": "斯威士兰",
+        "en": "Swaziland",
+        "code": "SZ"
+      },
+      {
+        "cn": "埃塞俄比亚",
+        "en": "Ethiopia",
+        "code": "ET"
+      },
+      {
+        "cn": "法罗群岛",
+        "en": "Faroe Islands",
+        "code": "FO"
+      },
+      {
+        "cn": "斐济",
+        "en": "Fiji",
+        "code": "FJ"
+      },
+      {
+        "cn": "芬兰",
+        "en": "Finland",
+        "code": "FI"
+      },
+      {
+        "cn": "法国",
+        "en": "France",
+        "code": "FR"
+      },
+      {
+        "cn": "法属圭亚那",
+        "en": "French Guiana",
+        "code": "GF"
+      },
+      {
+        "cn": "法属波利尼西亚",
+        "en": "French Polynesia",
+        "code": "PF"
+      },
+      {
+        "cn": "FR-GP",
+        "en": "FR-GP",
+        "code": "FR-GP"
+      },
+      {
+        "cn": "加蓬",
+        "en": "Gabon",
+        "code": "GA"
+      },
+      {
+        "cn": "冈比亚",
+        "en": "Gambia",
+        "code": "GM"
+      },
+      {
+        "cn": "格鲁吉亚",
+        "en": "Georgia",
+        "code": "GE"
+      },
+      {
+        "cn": "德国",
+        "en": "Germany",
+        "code": "DE"
+      },
+      {
+        "cn": "加纳",
+        "en": "Ghana",
+        "code": "GH"
+      },
+      {
+        "cn": "直布罗陀",
+        "en": "Gibraltar",
+        "code": "GI"
+      },
+      {
+        "cn": "希腊",
+        "en": "Greece",
+        "code": "GR"
+      },
+      {
+        "cn": "格陵兰",
+        "en": "Greenland",
+        "code": "GL"
+      },
+      {
+        "cn": "格林纳达",
+        "en": "Grenada",
+        "code": "GD"
+      },
+      {
+        "cn": "瓜德罗普",
+        "en": "Guadeloupe",
+        "code": "GP"
+      },
+      {
+        "cn": "危地马拉",
+        "en": "Guatemala",
+        "code": "GT"
+      },
+      {
+        "cn": "GG",
+        "en": "GG",
+        "code": "GG"
+      },
+      {
+        "cn": "几内亚比绍",
+        "en": "Guinea-Bissau",
+        "code": "GW"
+      },
+      {
+        "cn": "圭亚那",
+        "en": "Guyana",
+        "code": "GY"
+      },
+      {
+        "cn": "海地",
+        "en": "Haiti",
+        "code": "HT"
+      },
+      {
+        "cn": "洪都拉斯",
+        "en": "Honduras",
+        "code": "HN"
+      },
+      {
+        "cn": "香港",
+        "en": "Hong Kong",
+        "code": "HK"
+      },
+      {
+        "cn": "匈牙利",
+        "en": "Hungary",
+        "code": "HU"
+      },
+      {
+        "cn": "冰岛",
+        "en": "Iceland",
+        "code": "IS"
+      },
+      {
+        "cn": "印度",
+        "en": "India",
+        "code": "IN"
+      },
+      {
+        "cn": "印度尼西亚",
+        "en": "Indonesia",
+        "code": "ID"
+      },
+      {
+        "cn": "伊朗",
+        "en": "Iran",
+        "code": "IR"
+      },
+      {
+        "cn": "伊拉克",
+        "en": "Iraq",
+        "code": "IQ"
+      },
+      {
+        "cn": "爱尔兰",
+        "en": "Ireland",
+        "code": "IE"
+      },
+      {
+        "cn": "马恩岛",
+        "en": "Isle of Man",
+        "code": "IM"
+      },
+      {
+        "cn": "以色列",
+        "en": "Israel",
+        "code": "IL"
+      },
+      {
+        "cn": "意大利",
+        "en": "Italy",
+        "code": "IT"
+      },
+      {
+        "cn": "牙买加",
+        "en": "Jamaica",
+        "code": "JM"
+      },
+      {
+        "cn": "日本",
+        "en": "Japan",
+        "code": "JP"
+      },
+      {
+        "cn": "泽西岛",
+        "en": "Jersey",
+        "code": "JE"
+      },
+      {
+        "cn": "约旦",
+        "en": "Jordan",
+        "code": "JO"
+      },
+      {
+        "cn": "哈萨克斯坦",
+        "en": "Kazakhstan",
+        "code": "KZ"
+      },
+      {
+        "cn": "肯尼亚",
+        "en": "Kenya",
+        "code": "KE"
+      },
+      {
+        "cn": "科索沃",
+        "en": "Kosovo",
+        "code": "XK"
+      },
+      {
+        "cn": "科威特",
+        "en": "Kuwait",
+        "code": "KW"
+      },
+      {
+        "cn": "吉尔吉斯斯坦",
+        "en": "Kyrgyzstan",
+        "code": "KG"
+      },
+      {
+        "cn": "老挝",
+        "en": "Laos",
+        "code": "LA"
+      },
+      {
+        "cn": "拉脱维亚",
+        "en": "Latvia",
+        "code": "LV"
+      },
+      {
+        "cn": "黎巴嫩",
+        "en": "Lebanon",
+        "code": "LB"
+      },
+      {
+        "cn": "利比里亚",
+        "en": "Liberia",
+        "code": "LR"
+      },
+      {
+        "cn": "列支敦士登",
+        "en": "Liechtenstein",
+        "code": "LI"
+      },
+      {
+        "cn": "立陶宛",
+        "en": "Lithuania",
+        "code": "LT"
+      },
+      {
+        "cn": "卢森堡",
+        "en": "Luxembourg",
+        "code": "LU"
+      },
+      {
+        "cn": "澳门",
+        "en": "Macau",
+        "code": "MO"
+      },
+      {
+        "cn": "马达加斯加",
+        "en": "Madagascar",
+        "code": "MG"
+      },
+      {
+        "cn": "PT-MA",
+        "en": "PT-MA",
+        "code": "PT-MA"
+      },
+      {
+        "cn": "马拉维",
+        "en": "Malawi",
+        "code": "MW"
+      },
+      {
+        "cn": "马来西亚",
+        "en": "Malaysia",
+        "code": "MY"
+      },
+      {
+        "cn": "马里",
+        "en": "Mali",
+        "code": "ML"
+      },
+      {
+        "cn": "马耳他",
+        "en": "Malta",
+        "code": "MT"
+      },
+      {
+        "cn": "GP-MG",
+        "en": "GP-MG",
+        "code": "GP-MG"
+      },
+      {
+        "cn": "马提尼克",
+        "en": "Martinique",
+        "code": "MQ"
+      },
+      {
+        "cn": "毛里求斯",
+        "en": "Mauritius",
+        "code": "MU"
+      },
+      {
+        "cn": "马约特",
+        "en": "Mayotte",
+        "code": "YT"
+      },
+      {
+        "cn": "墨西哥",
+        "en": "Mexico",
+        "code": "MX"
+      },
+      {
+        "cn": "摩尔多瓦",
+        "en": "Moldova",
+        "code": "MD"
+      },
+      {
+        "cn": "摩纳哥",
+        "en": "Monaco",
+        "code": "MC"
+      },
+      {
+        "cn": "蒙古",
+        "en": "Mongolia",
+        "code": "MN"
+      },
+      {
+        "cn": "黑山",
+        "en": "Montenegro",
+        "code": "ME"
+      },
+      {
+        "cn": "蒙特塞拉特",
+        "en": "Montserrat",
+        "code": "MS"
+      },
+      {
+        "cn": "摩洛哥",
+        "en": "Morocco",
+        "code": "MA"
+      },
+      {
+        "cn": "莫桑比克",
+        "en": "Mozambique",
+        "code": "MZ"
+      },
+      {
+        "cn": "尼泊尔",
+        "en": "Nepal",
+        "code": "NP"
+      },
+      {
+        "cn": "荷兰",
+        "en": "Netherlands",
+        "code": "NL"
+      },
+      {
+        "cn": "新西兰",
+        "en": "New Zealand",
+        "code": "NZ"
+      },
+      {
+        "cn": "尼加拉瓜",
+        "en": "Nicaragua",
+        "code": "NI"
+      },
+      {
+        "cn": "尼日利亚",
+        "en": "Nigeria",
+        "code": "NG"
+      },
+      {
+        "cn": "北马其顿",
+        "en": "North Macedonia",
+        "code": "MK"
+      },
+      {
+        "cn": "CY-NC",
+        "en": "CY-NC",
+        "code": "CY-NC"
+      },
+      {
+        "cn": "挪威",
+        "en": "Norway",
+        "code": "NO"
+      },
+      {
+        "cn": "阿曼",
+        "en": "Oman",
+        "code": "OM"
+      },
+      {
+        "cn": "巴基斯坦",
+        "en": "Pakistan",
+        "code": "PK"
+      },
+      {
+        "cn": "巴勒斯坦",
+        "en": "Palestine",
+        "code": "PS"
+      },
+      {
+        "cn": "巴拿马",
+        "en": "Panama",
+        "code": "PA"
+      },
+      {
+        "cn": "巴布亚新几内亚",
+        "en": "Papua New Guinea",
+        "code": "PG"
+      },
+      {
+        "cn": "巴拉圭",
+        "en": "Paraguay",
+        "code": "PY"
+      },
+      {
+        "cn": "秘鲁",
+        "en": "Peru",
+        "code": "PE"
+      },
+      {
+        "cn": "菲律宾",
+        "en": "Philippines",
+        "code": "PH"
+      },
+      {
+        "cn": "波兰",
+        "en": "Poland",
+        "code": "PL"
+      },
+      {
+        "cn": "葡萄牙",
+        "en": "Portugal",
+        "code": "PT"
+      },
+      {
+        "cn": "USPR",
+        "en": "USPR",
+        "code": "USPR"
+      },
+      {
+        "cn": "卡塔尔",
+        "en": "Qatar",
+        "code": "QA"
+      },
+      {
+        "cn": "留尼汪",
+        "en": "Reunion",
+        "code": "RE"
+      },
+      {
+        "cn": "罗马尼亚",
+        "en": "Romania",
+        "code": "RO"
+      },
+      {
+        "cn": "俄罗斯",
+        "en": "Russia",
+        "code": "RU"
+      },
+      {
+        "cn": "卢旺达",
+        "en": "Rwanda",
+        "code": "RW"
+      },
+      {
+        "cn": "BQ-SA",
+        "en": "BQ-SA",
+        "code": "BQ-SA"
+      },
+      {
+        "cn": "圣巴泰勒米",
+        "en": "Saint Barthelemy",
+        "code": "BL"
+      },
+      {
+        "cn": "圣基茨和尼维斯",
+        "en": "Saint Kitts and Nevis",
+        "code": "KN"
+      },
+      {
+        "cn": "圣卢西亚",
+        "en": "Saint Lucia",
+        "code": "LC"
+      },
+      {
+        "cn": "法属圣马丁",
+        "en": "Saint Martin",
+        "code": "MF"
+      },
+      {
+        "cn": "圣文森特和格林纳丁斯",
+        "en": "Saint Vincent and the Grenadines",
+        "code": "VC"
+      },
+      {
+        "cn": "萨摩亚",
+        "en": "Samoa",
+        "code": "WS"
+      },
+      {
+        "cn": "圣马力诺",
+        "en": "San Marino",
+        "code": "SM"
+      },
+      {
+        "cn": "沙特阿拉伯",
+        "en": "Saudi Arabia",
+        "code": "SA"
+      },
+      {
+        "cn": "塞内加尔",
+        "en": "Senegal",
+        "code": "SN"
+      },
+      {
+        "cn": "塞尔维亚",
+        "en": "Serbia",
+        "code": "RS"
+      },
+      {
+        "cn": "塞舌尔",
+        "en": "Seychelles",
+        "code": "SC"
+      },
+      {
+        "cn": "塞拉利昂",
+        "en": "Sierra Leone",
+        "code": "SL"
+      },
+      {
+        "cn": "新加坡",
+        "en": "Singapore",
+        "code": "SG"
+      },
+      {
+        "cn": "BQ-SE",
+        "en": "BQ-SE",
+        "code": "BQ-SE"
+      },
+      {
+        "cn": "荷属圣马丁",
+        "en": "Sint Maarten",
+        "code": "SX"
+      },
+      {
+        "cn": "斯洛伐克",
+        "en": "Slovakia",
+        "code": "SK"
+      },
+      {
+        "cn": "斯洛文尼亚",
+        "en": "Slovenia",
+        "code": "SI"
+      },
+      {
+        "cn": "南非",
+        "en": "South Africa",
+        "code": "ZA"
+      },
+      {
+        "cn": "韩国",
+        "en": "South Korea",
+        "code": "KR"
+      },
+      {
+        "cn": "西班牙",
+        "en": "Spain",
+        "code": "ES"
+      },
+      {
+        "cn": "斯里兰卡",
+        "en": "Sri Lanka",
+        "code": "LK"
+      },
+      {
+        "cn": "苏里南",
+        "en": "Suriname",
+        "code": "SR"
+      },
+      {
+        "cn": "瑞典",
+        "en": "Sweden",
+        "code": "SE"
+      },
+      {
+        "cn": "瑞士",
+        "en": "Switzerland",
+        "code": "CH"
+      },
+      {
+        "cn": "台湾",
+        "en": "Taiwan",
+        "code": "TW"
+      },
+      {
+        "cn": "塔吉克斯坦",
+        "en": "Tajikistan",
+        "code": "TJ"
+      },
+      {
+        "cn": "坦桑尼亚",
+        "en": "Tanzania",
+        "code": "TZ"
+      },
+      {
+        "cn": "泰国",
+        "en": "Thailand",
+        "code": "TH"
+      },
+      {
+        "cn": "东帝汶",
+        "en": "Timor-Leste",
+        "code": "TL"
+      },
+      {
+        "cn": "多哥",
+        "en": "Togo",
+        "code": "TG"
+      },
+      {
+        "cn": "汤加",
+        "en": "Tonga",
+        "code": "TO"
+      },
+      {
+        "cn": "特立尼达和多巴哥",
+        "en": "Trinidad and Tobago",
+        "code": "TT"
+      },
+      {
+        "cn": "突尼斯",
+        "en": "Tunisia",
+        "code": "TN"
+      },
+      {
+        "cn": "土耳其",
+        "en": "Turkey",
+        "code": "TR"
+      },
+      {
+        "cn": "特克斯和凯科斯群岛",
+        "en": "Turks and Caicos Islands",
+        "code": "TC"
+      },
+      {
+        "cn": "乌干达",
+        "en": "Uganda",
+        "code": "UG"
+      },
+      {
+        "cn": "乌克兰",
+        "en": "Ukraine",
+        "code": "UA"
+      },
+      {
+        "cn": "阿联酋",
+        "en": "United Arab Emirates",
+        "code": "AE"
+      },
+      {
+        "cn": "英国",
+        "en": "United Kingdom",
+        "code": "GB"
+      },
+      {
+        "cn": "美国",
+        "en": "United States",
+        "code": "US"
+      },
+      {
+        "cn": "乌拉圭",
+        "en": "Uruguay",
+        "code": "UY"
+      },
+      {
+        "cn": "乌兹别克斯坦",
+        "en": "Uzbekistan",
+        "code": "UZ"
+      },
+      {
+        "cn": "梵蒂冈",
+        "en": "Vatican City",
+        "code": "VA"
+      },
+      {
+        "cn": "越南",
+        "en": "Vietnam",
+        "code": "VN"
+      },
+      {
+        "cn": "赞比亚",
+        "en": "Zambia",
+        "code": "ZM"
+      },
+      {
+        "cn": "津巴布韦",
+        "en": "Zimbabwe",
+        "code": "ZW"
+      }
+    ],
+    "dataSize": 2048.0,
+    "validDays": 15,
+    "price": 16.5
+  },
+  {
+    "id": 2745,
+    "name": "全球通用 2GB/15天 (覆盖198+国)",
+    "type": "global",
+    "countries": [
+      {
+        "cn": "阿富汗",
+        "en": "Afghanistan",
+        "code": "AF"
+      },
+      {
+        "cn": "阿尔巴尼亚",
+        "en": "Albania",
+        "code": "AL"
+      },
+      {
+        "cn": "阿尔及利亚",
+        "en": "Algeria",
+        "code": "DZ"
+      },
+      {
+        "cn": "安道尔",
+        "en": "Andorra",
+        "code": "AD"
+      },
+      {
+        "cn": "安圭拉",
+        "en": "Anguilla",
+        "code": "AI"
+      },
+      {
+        "cn": "安提瓜和巴布达",
+        "en": "Antigua and Barbuda",
+        "code": "AG"
+      },
+      {
+        "cn": "荷属安的列斯",
+        "en": "Netherlands Antilles",
+        "code": "AN"
+      },
+      {
+        "cn": "阿根廷",
+        "en": "Argentina",
+        "code": "AR"
+      },
+      {
+        "cn": "亚美尼亚",
+        "en": "Armenia",
+        "code": "AM"
+      },
+      {
+        "cn": "阿鲁巴",
+        "en": "Aruba",
+        "code": "AW"
+      },
+      {
+        "cn": "澳大利亚",
+        "en": "Australia",
+        "code": "AU"
+      },
+      {
+        "cn": "奥地利",
+        "en": "Austria",
+        "code": "AT"
+      },
+      {
+        "cn": "阿塞拜疆",
+        "en": "Azerbaijan",
+        "code": "AZ"
+      },
+      {
+        "cn": "PT-AZ",
+        "en": "PT-AZ",
+        "code": "PT-AZ"
+      },
+      {
+        "cn": "巴哈马",
+        "en": "Bahamas",
+        "code": "BS"
+      },
+      {
+        "cn": "巴林",
+        "en": "Bahrain",
+        "code": "BH"
+      },
+      {
+        "cn": "孟加拉国",
+        "en": "Bangladesh",
+        "code": "BD"
+      },
+      {
+        "cn": "巴巴多斯",
+        "en": "Barbados",
+        "code": "BB"
+      },
+      {
+        "cn": "白俄罗斯",
+        "en": "Belarus",
+        "code": "BY"
+      },
+      {
+        "cn": "比利时",
+        "en": "Belgium",
+        "code": "BE"
+      },
+      {
+        "cn": "伯利兹",
+        "en": "Belize",
+        "code": "BZ"
+      },
+      {
+        "cn": "贝宁",
+        "en": "Benin",
+        "code": "BJ"
+      },
+      {
+        "cn": "百慕大",
+        "en": "Bermuda",
+        "code": "BM"
+      },
+      {
+        "cn": "玻利维亚",
+        "en": "Bolivia",
+        "code": "BO"
+      },
+      {
+        "cn": "荷兰加勒比区",
+        "en": "Bonaire, Sint Eustatius and Saba",
+        "code": "BQ"
+      },
+      {
+        "cn": "波黑",
+        "en": "Bosnia and Herzegovina",
+        "code": "BA"
+      },
+      {
+        "cn": "博茨瓦纳",
+        "en": "Botswana",
+        "code": "BW"
+      },
+      {
+        "cn": "巴西",
+        "en": "Brazil",
+        "code": "BR"
+      },
+      {
+        "cn": "英属维尔京群岛",
+        "en": "British Virgin Islands",
+        "code": "VG"
+      },
+      {
+        "cn": "文莱",
+        "en": "Brunei",
+        "code": "BN"
+      },
+      {
+        "cn": "布基纳法索",
+        "en": "Burkina Faso",
+        "code": "BF"
+      },
+      {
+        "cn": "柬埔寨",
+        "en": "Cambodia",
+        "code": "KH"
+      },
+      {
+        "cn": "喀麦隆",
+        "en": "Cameroon",
+        "code": "CM"
+      },
+      {
+        "cn": "加拿大",
+        "en": "Canada",
+        "code": "CA"
+      },
+      {
+        "cn": "ES-XCI",
+        "en": "ES-XCI",
+        "code": "ES-XCI"
+      },
+      {
+        "cn": "佛得角",
+        "en": "Cape Verde",
+        "code": "CV"
+      },
+      {
+        "cn": "开曼群岛",
+        "en": "Cayman Islands",
+        "code": "KY"
+      },
+      {
+        "cn": "中非共和国",
+        "en": "Central African Republic",
+        "code": "CF"
+      },
+      {
+        "cn": "乍得",
+        "en": "Chad",
+        "code": "TD"
+      },
+      {
+        "cn": "智利",
+        "en": "Chile",
+        "code": "CL"
+      },
+      {
+        "cn": "中国",
+        "en": "China",
+        "code": "CN"
+      },
+      {
+        "cn": "哥伦比亚",
+        "en": "Colombia",
+        "code": "CO"
+      },
+      {
+        "cn": "哥斯达黎加",
+        "en": "Costa Rica",
+        "code": "CR"
+      },
+      {
+        "cn": "科特迪瓦",
+        "en": "Ivory Coast",
+        "code": "CI"
+      },
+      {
+        "cn": "克罗地亚",
+        "en": "Croatia",
+        "code": "HR"
+      },
+      {
+        "cn": "库拉索",
+        "en": "Curacao",
+        "code": "CW"
+      },
+      {
+        "cn": "塞浦路斯",
+        "en": "Cyprus",
+        "code": "CY"
+      },
+      {
+        "cn": "捷克",
+        "en": "Czech Republic",
+        "code": "CZ"
+      },
+      {
+        "cn": "刚果(金)",
+        "en": "Congo, Democratic Republic",
+        "code": "CD"
+      },
+      {
+        "cn": "丹麦",
+        "en": "Denmark",
+        "code": "DK"
+      },
+      {
+        "cn": "多米尼克",
+        "en": "Dominica",
+        "code": "DM"
+      },
+      {
+        "cn": "多米尼加",
+        "en": "Dominican Republic",
+        "code": "DO"
+      },
+      {
+        "cn": "厄瓜多尔",
+        "en": "Ecuador",
+        "code": "EC"
+      },
+      {
+        "cn": "埃及",
+        "en": "Egypt",
+        "code": "EG"
+      },
+      {
+        "cn": "萨尔瓦多",
+        "en": "El Salvador",
+        "code": "SV"
+      },
+      {
+        "cn": "爱沙尼亚",
+        "en": "Estonia",
+        "code": "EE"
+      },
+      {
+        "cn": "斯威士兰",
+        "en": "Swaziland",
+        "code": "SZ"
+      },
+      {
+        "cn": "埃塞俄比亚",
+        "en": "Ethiopia",
+        "code": "ET"
+      },
+      {
+        "cn": "法罗群岛",
+        "en": "Faroe Islands",
+        "code": "FO"
+      },
+      {
+        "cn": "斐济",
+        "en": "Fiji",
+        "code": "FJ"
+      },
+      {
+        "cn": "芬兰",
+        "en": "Finland",
+        "code": "FI"
+      },
+      {
+        "cn": "法国",
+        "en": "France",
+        "code": "FR"
+      },
+      {
+        "cn": "法属圭亚那",
+        "en": "French Guiana",
+        "code": "GF"
+      },
+      {
+        "cn": "法属波利尼西亚",
+        "en": "French Polynesia",
+        "code": "PF"
+      },
+      {
+        "cn": "FR-GP",
+        "en": "FR-GP",
+        "code": "FR-GP"
+      },
+      {
+        "cn": "加蓬",
+        "en": "Gabon",
+        "code": "GA"
+      },
+      {
+        "cn": "冈比亚",
+        "en": "Gambia",
+        "code": "GM"
+      },
+      {
+        "cn": "格鲁吉亚",
+        "en": "Georgia",
+        "code": "GE"
+      },
+      {
+        "cn": "德国",
+        "en": "Germany",
+        "code": "DE"
+      },
+      {
+        "cn": "加纳",
+        "en": "Ghana",
+        "code": "GH"
+      },
+      {
+        "cn": "直布罗陀",
+        "en": "Gibraltar",
+        "code": "GI"
+      },
+      {
+        "cn": "希腊",
+        "en": "Greece",
+        "code": "GR"
+      },
+      {
+        "cn": "格陵兰",
+        "en": "Greenland",
+        "code": "GL"
+      },
+      {
+        "cn": "格林纳达",
+        "en": "Grenada",
+        "code": "GD"
+      },
+      {
+        "cn": "瓜德罗普",
+        "en": "Guadeloupe",
+        "code": "GP"
+      },
+      {
+        "cn": "危地马拉",
+        "en": "Guatemala",
+        "code": "GT"
+      },
+      {
+        "cn": "GG",
+        "en": "GG",
+        "code": "GG"
+      },
+      {
+        "cn": "几内亚比绍",
+        "en": "Guinea-Bissau",
+        "code": "GW"
+      },
+      {
+        "cn": "圭亚那",
+        "en": "Guyana",
+        "code": "GY"
+      },
+      {
+        "cn": "海地",
+        "en": "Haiti",
+        "code": "HT"
+      },
+      {
+        "cn": "洪都拉斯",
+        "en": "Honduras",
+        "code": "HN"
+      },
+      {
+        "cn": "香港",
+        "en": "Hong Kong",
+        "code": "HK"
+      },
+      {
+        "cn": "匈牙利",
+        "en": "Hungary",
+        "code": "HU"
+      },
+      {
+        "cn": "冰岛",
+        "en": "Iceland",
+        "code": "IS"
+      },
+      {
+        "cn": "印度",
+        "en": "India",
+        "code": "IN"
+      },
+      {
+        "cn": "印度尼西亚",
+        "en": "Indonesia",
+        "code": "ID"
+      },
+      {
+        "cn": "伊朗",
+        "en": "Iran",
+        "code": "IR"
+      },
+      {
+        "cn": "伊拉克",
+        "en": "Iraq",
+        "code": "IQ"
+      },
+      {
+        "cn": "爱尔兰",
+        "en": "Ireland",
+        "code": "IE"
+      },
+      {
+        "cn": "马恩岛",
+        "en": "Isle of Man",
+        "code": "IM"
+      },
+      {
+        "cn": "以色列",
+        "en": "Israel",
+        "code": "IL"
+      },
+      {
+        "cn": "意大利",
+        "en": "Italy",
+        "code": "IT"
+      },
+      {
+        "cn": "牙买加",
+        "en": "Jamaica",
+        "code": "JM"
+      },
+      {
+        "cn": "日本",
+        "en": "Japan",
+        "code": "JP"
+      },
+      {
+        "cn": "泽西岛",
+        "en": "Jersey",
+        "code": "JE"
+      },
+      {
+        "cn": "约旦",
+        "en": "Jordan",
+        "code": "JO"
+      },
+      {
+        "cn": "哈萨克斯坦",
+        "en": "Kazakhstan",
+        "code": "KZ"
+      },
+      {
+        "cn": "肯尼亚",
+        "en": "Kenya",
+        "code": "KE"
+      },
+      {
+        "cn": "科索沃",
+        "en": "Kosovo",
+        "code": "XK"
+      },
+      {
+        "cn": "科威特",
+        "en": "Kuwait",
+        "code": "KW"
+      },
+      {
+        "cn": "吉尔吉斯斯坦",
+        "en": "Kyrgyzstan",
+        "code": "KG"
+      },
+      {
+        "cn": "老挝",
+        "en": "Laos",
+        "code": "LA"
+      },
+      {
+        "cn": "拉脱维亚",
+        "en": "Latvia",
+        "code": "LV"
+      },
+      {
+        "cn": "黎巴嫩",
+        "en": "Lebanon",
+        "code": "LB"
+      },
+      {
+        "cn": "利比里亚",
+        "en": "Liberia",
+        "code": "LR"
+      },
+      {
+        "cn": "列支敦士登",
+        "en": "Liechtenstein",
+        "code": "LI"
+      },
+      {
+        "cn": "立陶宛",
+        "en": "Lithuania",
+        "code": "LT"
+      },
+      {
+        "cn": "卢森堡",
+        "en": "Luxembourg",
+        "code": "LU"
+      },
+      {
+        "cn": "澳门",
+        "en": "Macau",
+        "code": "MO"
+      },
+      {
+        "cn": "马达加斯加",
+        "en": "Madagascar",
+        "code": "MG"
+      },
+      {
+        "cn": "PT-MA",
+        "en": "PT-MA",
+        "code": "PT-MA"
+      },
+      {
+        "cn": "马拉维",
+        "en": "Malawi",
+        "code": "MW"
+      },
+      {
+        "cn": "马来西亚",
+        "en": "Malaysia",
+        "code": "MY"
+      },
+      {
+        "cn": "马里",
+        "en": "Mali",
+        "code": "ML"
+      },
+      {
+        "cn": "马耳他",
+        "en": "Malta",
+        "code": "MT"
+      },
+      {
+        "cn": "GP-MG",
+        "en": "GP-MG",
+        "code": "GP-MG"
+      },
+      {
+        "cn": "马提尼克",
+        "en": "Martinique",
+        "code": "MQ"
+      },
+      {
+        "cn": "毛里求斯",
+        "en": "Mauritius",
+        "code": "MU"
+      },
+      {
+        "cn": "马约特",
+        "en": "Mayotte",
+        "code": "YT"
+      },
+      {
+        "cn": "墨西哥",
+        "en": "Mexico",
+        "code": "MX"
+      },
+      {
+        "cn": "摩尔多瓦",
+        "en": "Moldova",
+        "code": "MD"
+      },
+      {
+        "cn": "摩纳哥",
+        "en": "Monaco",
+        "code": "MC"
+      },
+      {
+        "cn": "蒙古",
+        "en": "Mongolia",
+        "code": "MN"
+      },
+      {
+        "cn": "黑山",
+        "en": "Montenegro",
+        "code": "ME"
+      },
+      {
+        "cn": "蒙特塞拉特",
+        "en": "Montserrat",
+        "code": "MS"
+      },
+      {
+        "cn": "摩洛哥",
+        "en": "Morocco",
+        "code": "MA"
+      },
+      {
+        "cn": "莫桑比克",
+        "en": "Mozambique",
+        "code": "MZ"
+      },
+      {
+        "cn": "尼泊尔",
+        "en": "Nepal",
+        "code": "NP"
+      },
+      {
+        "cn": "荷兰",
+        "en": "Netherlands",
+        "code": "NL"
+      },
+      {
+        "cn": "新西兰",
+        "en": "New Zealand",
+        "code": "NZ"
+      },
+      {
+        "cn": "尼加拉瓜",
+        "en": "Nicaragua",
+        "code": "NI"
+      },
+      {
+        "cn": "尼日利亚",
+        "en": "Nigeria",
+        "code": "NG"
+      },
+      {
+        "cn": "北马其顿",
+        "en": "North Macedonia",
+        "code": "MK"
+      },
+      {
+        "cn": "CY-NC",
+        "en": "CY-NC",
+        "code": "CY-NC"
+      },
+      {
+        "cn": "挪威",
+        "en": "Norway",
+        "code": "NO"
+      },
+      {
+        "cn": "阿曼",
+        "en": "Oman",
+        "code": "OM"
+      },
+      {
+        "cn": "巴基斯坦",
+        "en": "Pakistan",
+        "code": "PK"
+      },
+      {
+        "cn": "巴勒斯坦",
+        "en": "Palestine",
+        "code": "PS"
+      },
+      {
+        "cn": "巴拿马",
+        "en": "Panama",
+        "code": "PA"
+      },
+      {
+        "cn": "巴布亚新几内亚",
+        "en": "Papua New Guinea",
+        "code": "PG"
+      },
+      {
+        "cn": "巴拉圭",
+        "en": "Paraguay",
+        "code": "PY"
+      },
+      {
+        "cn": "秘鲁",
+        "en": "Peru",
+        "code": "PE"
+      },
+      {
+        "cn": "菲律宾",
+        "en": "Philippines",
+        "code": "PH"
+      },
+      {
+        "cn": "波兰",
+        "en": "Poland",
+        "code": "PL"
+      },
+      {
+        "cn": "葡萄牙",
+        "en": "Portugal",
+        "code": "PT"
+      },
+      {
+        "cn": "USPR",
+        "en": "USPR",
+        "code": "USPR"
+      },
+      {
+        "cn": "卡塔尔",
+        "en": "Qatar",
+        "code": "QA"
+      },
+      {
+        "cn": "留尼汪",
+        "en": "Reunion",
+        "code": "RE"
+      },
+      {
+        "cn": "罗马尼亚",
+        "en": "Romania",
+        "code": "RO"
+      },
+      {
+        "cn": "俄罗斯",
+        "en": "Russia",
+        "code": "RU"
+      },
+      {
+        "cn": "卢旺达",
+        "en": "Rwanda",
+        "code": "RW"
+      },
+      {
+        "cn": "BQ-SA",
+        "en": "BQ-SA",
+        "code": "BQ-SA"
+      },
+      {
+        "cn": "圣巴泰勒米",
+        "en": "Saint Barthelemy",
+        "code": "BL"
+      },
+      {
+        "cn": "圣基茨和尼维斯",
+        "en": "Saint Kitts and Nevis",
+        "code": "KN"
+      },
+      {
+        "cn": "圣卢西亚",
+        "en": "Saint Lucia",
+        "code": "LC"
+      },
+      {
+        "cn": "法属圣马丁",
+        "en": "Saint Martin",
+        "code": "MF"
+      },
+      {
+        "cn": "圣文森特和格林纳丁斯",
+        "en": "Saint Vincent and the Grenadines",
+        "code": "VC"
+      },
+      {
+        "cn": "萨摩亚",
+        "en": "Samoa",
+        "code": "WS"
+      },
+      {
+        "cn": "圣马力诺",
+        "en": "San Marino",
+        "code": "SM"
+      },
+      {
+        "cn": "沙特阿拉伯",
+        "en": "Saudi Arabia",
+        "code": "SA"
+      },
+      {
+        "cn": "塞内加尔",
+        "en": "Senegal",
+        "code": "SN"
+      },
+      {
+        "cn": "塞尔维亚",
+        "en": "Serbia",
+        "code": "RS"
+      },
+      {
+        "cn": "塞舌尔",
+        "en": "Seychelles",
+        "code": "SC"
+      },
+      {
+        "cn": "塞拉利昂",
+        "en": "Sierra Leone",
+        "code": "SL"
+      },
+      {
+        "cn": "新加坡",
+        "en": "Singapore",
+        "code": "SG"
+      },
+      {
+        "cn": "BQ-SE",
+        "en": "BQ-SE",
+        "code": "BQ-SE"
+      },
+      {
+        "cn": "荷属圣马丁",
+        "en": "Sint Maarten",
+        "code": "SX"
+      },
+      {
+        "cn": "斯洛伐克",
+        "en": "Slovakia",
+        "code": "SK"
+      },
+      {
+        "cn": "斯洛文尼亚",
+        "en": "Slovenia",
+        "code": "SI"
+      },
+      {
+        "cn": "南非",
+        "en": "South Africa",
+        "code": "ZA"
+      },
+      {
+        "cn": "韩国",
+        "en": "South Korea",
+        "code": "KR"
+      },
+      {
+        "cn": "西班牙",
+        "en": "Spain",
+        "code": "ES"
+      },
+      {
+        "cn": "斯里兰卡",
+        "en": "Sri Lanka",
+        "code": "LK"
+      },
+      {
+        "cn": "苏里南",
+        "en": "Suriname",
+        "code": "SR"
+      },
+      {
+        "cn": "瑞典",
+        "en": "Sweden",
+        "code": "SE"
+      },
+      {
+        "cn": "瑞士",
+        "en": "Switzerland",
+        "code": "CH"
+      },
+      {
+        "cn": "台湾",
+        "en": "Taiwan",
+        "code": "TW"
+      },
+      {
+        "cn": "塔吉克斯坦",
+        "en": "Tajikistan",
+        "code": "TJ"
+      },
+      {
+        "cn": "坦桑尼亚",
+        "en": "Tanzania",
+        "code": "TZ"
+      },
+      {
+        "cn": "泰国",
+        "en": "Thailand",
+        "code": "TH"
+      },
+      {
+        "cn": "东帝汶",
+        "en": "Timor-Leste",
+        "code": "TL"
+      },
+      {
+        "cn": "多哥",
+        "en": "Togo",
+        "code": "TG"
+      },
+      {
+        "cn": "汤加",
+        "en": "Tonga",
+        "code": "TO"
+      },
+      {
+        "cn": "特立尼达和多巴哥",
+        "en": "Trinidad and Tobago",
+        "code": "TT"
+      },
+      {
+        "cn": "突尼斯",
+        "en": "Tunisia",
+        "code": "TN"
+      },
+      {
+        "cn": "土耳其",
+        "en": "Turkey",
+        "code": "TR"
+      },
+      {
+        "cn": "特克斯和凯科斯群岛",
+        "en": "Turks and Caicos Islands",
+        "code": "TC"
+      },
+      {
+        "cn": "乌干达",
+        "en": "Uganda",
+        "code": "UG"
+      },
+      {
+        "cn": "乌克兰",
+        "en": "Ukraine",
+        "code": "UA"
+      },
+      {
+        "cn": "阿联酋",
+        "en": "United Arab Emirates",
+        "code": "AE"
+      },
+      {
+        "cn": "英国",
+        "en": "United Kingdom",
+        "code": "GB"
+      },
+      {
+        "cn": "美国",
+        "en": "United States",
+        "code": "US"
+      },
+      {
+        "cn": "乌拉圭",
+        "en": "Uruguay",
+        "code": "UY"
+      },
+      {
+        "cn": "乌兹别克斯坦",
+        "en": "Uzbekistan",
+        "code": "UZ"
+      },
+      {
+        "cn": "梵蒂冈",
+        "en": "Vatican City",
+        "code": "VA"
+      },
+      {
+        "cn": "越南",
+        "en": "Vietnam",
+        "code": "VN"
+      },
+      {
+        "cn": "赞比亚",
+        "en": "Zambia",
+        "code": "ZM"
+      },
+      {
+        "cn": "津巴布韦",
+        "en": "Zimbabwe",
+        "code": "ZW"
+      }
+    ],
+    "dataSize": 2048.0,
+    "validDays": 15,
+    "price": 16.5
+  },
+  {
+    "id": 2746,
+    "name": "全球通用 5GB/60天 (覆盖198+国)",
+    "type": "global",
+    "countries": [
+      {
+        "cn": "阿富汗",
+        "en": "Afghanistan",
+        "code": "AF"
+      },
+      {
+        "cn": "阿尔巴尼亚",
+        "en": "Albania",
+        "code": "AL"
+      },
+      {
+        "cn": "阿尔及利亚",
+        "en": "Algeria",
+        "code": "DZ"
+      },
+      {
+        "cn": "安道尔",
+        "en": "Andorra",
+        "code": "AD"
+      },
+      {
+        "cn": "安圭拉",
+        "en": "Anguilla",
+        "code": "AI"
+      },
+      {
+        "cn": "安提瓜和巴布达",
+        "en": "Antigua and Barbuda",
+        "code": "AG"
+      },
+      {
+        "cn": "荷属安的列斯",
+        "en": "Netherlands Antilles",
+        "code": "AN"
+      },
+      {
+        "cn": "阿根廷",
+        "en": "Argentina",
+        "code": "AR"
+      },
+      {
+        "cn": "亚美尼亚",
+        "en": "Armenia",
+        "code": "AM"
+      },
+      {
+        "cn": "阿鲁巴",
+        "en": "Aruba",
+        "code": "AW"
+      },
+      {
+        "cn": "澳大利亚",
+        "en": "Australia",
+        "code": "AU"
+      },
+      {
+        "cn": "奥地利",
+        "en": "Austria",
+        "code": "AT"
+      },
+      {
+        "cn": "阿塞拜疆",
+        "en": "Azerbaijan",
+        "code": "AZ"
+      },
+      {
+        "cn": "PT-AZ",
+        "en": "PT-AZ",
+        "code": "PT-AZ"
+      },
+      {
+        "cn": "巴哈马",
+        "en": "Bahamas",
+        "code": "BS"
+      },
+      {
+        "cn": "巴林",
+        "en": "Bahrain",
+        "code": "BH"
+      },
+      {
+        "cn": "孟加拉国",
+        "en": "Bangladesh",
+        "code": "BD"
+      },
+      {
+        "cn": "巴巴多斯",
+        "en": "Barbados",
+        "code": "BB"
+      },
+      {
+        "cn": "白俄罗斯",
+        "en": "Belarus",
+        "code": "BY"
+      },
+      {
+        "cn": "比利时",
+        "en": "Belgium",
+        "code": "BE"
+      },
+      {
+        "cn": "伯利兹",
+        "en": "Belize",
+        "code": "BZ"
+      },
+      {
+        "cn": "贝宁",
+        "en": "Benin",
+        "code": "BJ"
+      },
+      {
+        "cn": "百慕大",
+        "en": "Bermuda",
+        "code": "BM"
+      },
+      {
+        "cn": "玻利维亚",
+        "en": "Bolivia",
+        "code": "BO"
+      },
+      {
+        "cn": "荷兰加勒比区",
+        "en": "Bonaire, Sint Eustatius and Saba",
+        "code": "BQ"
+      },
+      {
+        "cn": "波黑",
+        "en": "Bosnia and Herzegovina",
+        "code": "BA"
+      },
+      {
+        "cn": "博茨瓦纳",
+        "en": "Botswana",
+        "code": "BW"
+      },
+      {
+        "cn": "巴西",
+        "en": "Brazil",
+        "code": "BR"
+      },
+      {
+        "cn": "英属维尔京群岛",
+        "en": "British Virgin Islands",
+        "code": "VG"
+      },
+      {
+        "cn": "文莱",
+        "en": "Brunei",
+        "code": "BN"
+      },
+      {
+        "cn": "布基纳法索",
+        "en": "Burkina Faso",
+        "code": "BF"
+      },
+      {
+        "cn": "柬埔寨",
+        "en": "Cambodia",
+        "code": "KH"
+      },
+      {
+        "cn": "喀麦隆",
+        "en": "Cameroon",
+        "code": "CM"
+      },
+      {
+        "cn": "加拿大",
+        "en": "Canada",
+        "code": "CA"
+      },
+      {
+        "cn": "ES-XCI",
+        "en": "ES-XCI",
+        "code": "ES-XCI"
+      },
+      {
+        "cn": "佛得角",
+        "en": "Cape Verde",
+        "code": "CV"
+      },
+      {
+        "cn": "开曼群岛",
+        "en": "Cayman Islands",
+        "code": "KY"
+      },
+      {
+        "cn": "中非共和国",
+        "en": "Central African Republic",
+        "code": "CF"
+      },
+      {
+        "cn": "乍得",
+        "en": "Chad",
+        "code": "TD"
+      },
+      {
+        "cn": "智利",
+        "en": "Chile",
+        "code": "CL"
+      },
+      {
+        "cn": "中国",
+        "en": "China",
+        "code": "CN"
+      },
+      {
+        "cn": "哥伦比亚",
+        "en": "Colombia",
+        "code": "CO"
+      },
+      {
+        "cn": "哥斯达黎加",
+        "en": "Costa Rica",
+        "code": "CR"
+      },
+      {
+        "cn": "科特迪瓦",
+        "en": "Ivory Coast",
+        "code": "CI"
+      },
+      {
+        "cn": "克罗地亚",
+        "en": "Croatia",
+        "code": "HR"
+      },
+      {
+        "cn": "库拉索",
+        "en": "Curacao",
+        "code": "CW"
+      },
+      {
+        "cn": "塞浦路斯",
+        "en": "Cyprus",
+        "code": "CY"
+      },
+      {
+        "cn": "捷克",
+        "en": "Czech Republic",
+        "code": "CZ"
+      },
+      {
+        "cn": "刚果(金)",
+        "en": "Congo, Democratic Republic",
+        "code": "CD"
+      },
+      {
+        "cn": "丹麦",
+        "en": "Denmark",
+        "code": "DK"
+      },
+      {
+        "cn": "多米尼克",
+        "en": "Dominica",
+        "code": "DM"
+      },
+      {
+        "cn": "多米尼加",
+        "en": "Dominican Republic",
+        "code": "DO"
+      },
+      {
+        "cn": "厄瓜多尔",
+        "en": "Ecuador",
+        "code": "EC"
+      },
+      {
+        "cn": "埃及",
+        "en": "Egypt",
+        "code": "EG"
+      },
+      {
+        "cn": "萨尔瓦多",
+        "en": "El Salvador",
+        "code": "SV"
+      },
+      {
+        "cn": "爱沙尼亚",
+        "en": "Estonia",
+        "code": "EE"
+      },
+      {
+        "cn": "斯威士兰",
+        "en": "Swaziland",
+        "code": "SZ"
+      },
+      {
+        "cn": "埃塞俄比亚",
+        "en": "Ethiopia",
+        "code": "ET"
+      },
+      {
+        "cn": "法罗群岛",
+        "en": "Faroe Islands",
+        "code": "FO"
+      },
+      {
+        "cn": "斐济",
+        "en": "Fiji",
+        "code": "FJ"
+      },
+      {
+        "cn": "芬兰",
+        "en": "Finland",
+        "code": "FI"
+      },
+      {
+        "cn": "法国",
+        "en": "France",
+        "code": "FR"
+      },
+      {
+        "cn": "法属圭亚那",
+        "en": "French Guiana",
+        "code": "GF"
+      },
+      {
+        "cn": "法属波利尼西亚",
+        "en": "French Polynesia",
+        "code": "PF"
+      },
+      {
+        "cn": "FR-GP",
+        "en": "FR-GP",
+        "code": "FR-GP"
+      },
+      {
+        "cn": "加蓬",
+        "en": "Gabon",
+        "code": "GA"
+      },
+      {
+        "cn": "冈比亚",
+        "en": "Gambia",
+        "code": "GM"
+      },
+      {
+        "cn": "格鲁吉亚",
+        "en": "Georgia",
+        "code": "GE"
+      },
+      {
+        "cn": "德国",
+        "en": "Germany",
+        "code": "DE"
+      },
+      {
+        "cn": "加纳",
+        "en": "Ghana",
+        "code": "GH"
+      },
+      {
+        "cn": "直布罗陀",
+        "en": "Gibraltar",
+        "code": "GI"
+      },
+      {
+        "cn": "希腊",
+        "en": "Greece",
+        "code": "GR"
+      },
+      {
+        "cn": "格陵兰",
+        "en": "Greenland",
+        "code": "GL"
+      },
+      {
+        "cn": "格林纳达",
+        "en": "Grenada",
+        "code": "GD"
+      },
+      {
+        "cn": "瓜德罗普",
+        "en": "Guadeloupe",
+        "code": "GP"
+      },
+      {
+        "cn": "危地马拉",
+        "en": "Guatemala",
+        "code": "GT"
+      },
+      {
+        "cn": "GG",
+        "en": "GG",
+        "code": "GG"
+      },
+      {
+        "cn": "几内亚比绍",
+        "en": "Guinea-Bissau",
+        "code": "GW"
+      },
+      {
+        "cn": "圭亚那",
+        "en": "Guyana",
+        "code": "GY"
+      },
+      {
+        "cn": "海地",
+        "en": "Haiti",
+        "code": "HT"
+      },
+      {
+        "cn": "洪都拉斯",
+        "en": "Honduras",
+        "code": "HN"
+      },
+      {
+        "cn": "香港",
+        "en": "Hong Kong",
+        "code": "HK"
+      },
+      {
+        "cn": "匈牙利",
+        "en": "Hungary",
+        "code": "HU"
+      },
+      {
+        "cn": "冰岛",
+        "en": "Iceland",
+        "code": "IS"
+      },
+      {
+        "cn": "印度",
+        "en": "India",
+        "code": "IN"
+      },
+      {
+        "cn": "印度尼西亚",
+        "en": "Indonesia",
+        "code": "ID"
+      },
+      {
+        "cn": "伊朗",
+        "en": "Iran",
+        "code": "IR"
+      },
+      {
+        "cn": "伊拉克",
+        "en": "Iraq",
+        "code": "IQ"
+      },
+      {
+        "cn": "爱尔兰",
+        "en": "Ireland",
+        "code": "IE"
+      },
+      {
+        "cn": "马恩岛",
+        "en": "Isle of Man",
+        "code": "IM"
+      },
+      {
+        "cn": "以色列",
+        "en": "Israel",
+        "code": "IL"
+      },
+      {
+        "cn": "意大利",
+        "en": "Italy",
+        "code": "IT"
+      },
+      {
+        "cn": "牙买加",
+        "en": "Jamaica",
+        "code": "JM"
+      },
+      {
+        "cn": "日本",
+        "en": "Japan",
+        "code": "JP"
+      },
+      {
+        "cn": "泽西岛",
+        "en": "Jersey",
+        "code": "JE"
+      },
+      {
+        "cn": "约旦",
+        "en": "Jordan",
+        "code": "JO"
+      },
+      {
+        "cn": "哈萨克斯坦",
+        "en": "Kazakhstan",
+        "code": "KZ"
+      },
+      {
+        "cn": "肯尼亚",
+        "en": "Kenya",
+        "code": "KE"
+      },
+      {
+        "cn": "科索沃",
+        "en": "Kosovo",
+        "code": "XK"
+      },
+      {
+        "cn": "科威特",
+        "en": "Kuwait",
+        "code": "KW"
+      },
+      {
+        "cn": "吉尔吉斯斯坦",
+        "en": "Kyrgyzstan",
+        "code": "KG"
+      },
+      {
+        "cn": "老挝",
+        "en": "Laos",
+        "code": "LA"
+      },
+      {
+        "cn": "拉脱维亚",
+        "en": "Latvia",
+        "code": "LV"
+      },
+      {
+        "cn": "黎巴嫩",
+        "en": "Lebanon",
+        "code": "LB"
+      },
+      {
+        "cn": "利比里亚",
+        "en": "Liberia",
+        "code": "LR"
+      },
+      {
+        "cn": "列支敦士登",
+        "en": "Liechtenstein",
+        "code": "LI"
+      },
+      {
+        "cn": "立陶宛",
+        "en": "Lithuania",
+        "code": "LT"
+      },
+      {
+        "cn": "卢森堡",
+        "en": "Luxembourg",
+        "code": "LU"
+      },
+      {
+        "cn": "澳门",
+        "en": "Macau",
+        "code": "MO"
+      },
+      {
+        "cn": "马达加斯加",
+        "en": "Madagascar",
+        "code": "MG"
+      },
+      {
+        "cn": "PT-MA",
+        "en": "PT-MA",
+        "code": "PT-MA"
+      },
+      {
+        "cn": "马拉维",
+        "en": "Malawi",
+        "code": "MW"
+      },
+      {
+        "cn": "马来西亚",
+        "en": "Malaysia",
+        "code": "MY"
+      },
+      {
+        "cn": "马里",
+        "en": "Mali",
+        "code": "ML"
+      },
+      {
+        "cn": "马耳他",
+        "en": "Malta",
+        "code": "MT"
+      },
+      {
+        "cn": "GP-MG",
+        "en": "GP-MG",
+        "code": "GP-MG"
+      },
+      {
+        "cn": "马提尼克",
+        "en": "Martinique",
+        "code": "MQ"
+      },
+      {
+        "cn": "毛里求斯",
+        "en": "Mauritius",
+        "code": "MU"
+      },
+      {
+        "cn": "马约特",
+        "en": "Mayotte",
+        "code": "YT"
+      },
+      {
+        "cn": "墨西哥",
+        "en": "Mexico",
+        "code": "MX"
+      },
+      {
+        "cn": "摩尔多瓦",
+        "en": "Moldova",
+        "code": "MD"
+      },
+      {
+        "cn": "摩纳哥",
+        "en": "Monaco",
+        "code": "MC"
+      },
+      {
+        "cn": "蒙古",
+        "en": "Mongolia",
+        "code": "MN"
+      },
+      {
+        "cn": "黑山",
+        "en": "Montenegro",
+        "code": "ME"
+      },
+      {
+        "cn": "蒙特塞拉特",
+        "en": "Montserrat",
+        "code": "MS"
+      },
+      {
+        "cn": "摩洛哥",
+        "en": "Morocco",
+        "code": "MA"
+      },
+      {
+        "cn": "莫桑比克",
+        "en": "Mozambique",
+        "code": "MZ"
+      },
+      {
+        "cn": "尼泊尔",
+        "en": "Nepal",
+        "code": "NP"
+      },
+      {
+        "cn": "荷兰",
+        "en": "Netherlands",
+        "code": "NL"
+      },
+      {
+        "cn": "新西兰",
+        "en": "New Zealand",
+        "code": "NZ"
+      },
+      {
+        "cn": "尼加拉瓜",
+        "en": "Nicaragua",
+        "code": "NI"
+      },
+      {
+        "cn": "尼日利亚",
+        "en": "Nigeria",
+        "code": "NG"
+      },
+      {
+        "cn": "北马其顿",
+        "en": "North Macedonia",
+        "code": "MK"
+      },
+      {
+        "cn": "CY-NC",
+        "en": "CY-NC",
+        "code": "CY-NC"
+      },
+      {
+        "cn": "挪威",
+        "en": "Norway",
+        "code": "NO"
+      },
+      {
+        "cn": "阿曼",
+        "en": "Oman",
+        "code": "OM"
+      },
+      {
+        "cn": "巴基斯坦",
+        "en": "Pakistan",
+        "code": "PK"
+      },
+      {
+        "cn": "巴勒斯坦",
+        "en": "Palestine",
+        "code": "PS"
+      },
+      {
+        "cn": "巴拿马",
+        "en": "Panama",
+        "code": "PA"
+      },
+      {
+        "cn": "巴布亚新几内亚",
+        "en": "Papua New Guinea",
+        "code": "PG"
+      },
+      {
+        "cn": "巴拉圭",
+        "en": "Paraguay",
+        "code": "PY"
+      },
+      {
+        "cn": "秘鲁",
+        "en": "Peru",
+        "code": "PE"
+      },
+      {
+        "cn": "菲律宾",
+        "en": "Philippines",
+        "code": "PH"
+      },
+      {
+        "cn": "波兰",
+        "en": "Poland",
+        "code": "PL"
+      },
+      {
+        "cn": "葡萄牙",
+        "en": "Portugal",
+        "code": "PT"
+      },
+      {
+        "cn": "USPR",
+        "en": "USPR",
+        "code": "USPR"
+      },
+      {
+        "cn": "卡塔尔",
+        "en": "Qatar",
+        "code": "QA"
+      },
+      {
+        "cn": "留尼汪",
+        "en": "Reunion",
+        "code": "RE"
+      },
+      {
+        "cn": "罗马尼亚",
+        "en": "Romania",
+        "code": "RO"
+      },
+      {
+        "cn": "俄罗斯",
+        "en": "Russia",
+        "code": "RU"
+      },
+      {
+        "cn": "卢旺达",
+        "en": "Rwanda",
+        "code": "RW"
+      },
+      {
+        "cn": "BQ-SA",
+        "en": "BQ-SA",
+        "code": "BQ-SA"
+      },
+      {
+        "cn": "圣巴泰勒米",
+        "en": "Saint Barthelemy",
+        "code": "BL"
+      },
+      {
+        "cn": "圣基茨和尼维斯",
+        "en": "Saint Kitts and Nevis",
+        "code": "KN"
+      },
+      {
+        "cn": "圣卢西亚",
+        "en": "Saint Lucia",
+        "code": "LC"
+      },
+      {
+        "cn": "法属圣马丁",
+        "en": "Saint Martin",
+        "code": "MF"
+      },
+      {
+        "cn": "圣文森特和格林纳丁斯",
+        "en": "Saint Vincent and the Grenadines",
+        "code": "VC"
+      },
+      {
+        "cn": "萨摩亚",
+        "en": "Samoa",
+        "code": "WS"
+      },
+      {
+        "cn": "圣马力诺",
+        "en": "San Marino",
+        "code": "SM"
+      },
+      {
+        "cn": "沙特阿拉伯",
+        "en": "Saudi Arabia",
+        "code": "SA"
+      },
+      {
+        "cn": "塞内加尔",
+        "en": "Senegal",
+        "code": "SN"
+      },
+      {
+        "cn": "塞尔维亚",
+        "en": "Serbia",
+        "code": "RS"
+      },
+      {
+        "cn": "塞舌尔",
+        "en": "Seychelles",
+        "code": "SC"
+      },
+      {
+        "cn": "塞拉利昂",
+        "en": "Sierra Leone",
+        "code": "SL"
+      },
+      {
+        "cn": "新加坡",
+        "en": "Singapore",
+        "code": "SG"
+      },
+      {
+        "cn": "BQ-SE",
+        "en": "BQ-SE",
+        "code": "BQ-SE"
+      },
+      {
+        "cn": "荷属圣马丁",
+        "en": "Sint Maarten",
+        "code": "SX"
+      },
+      {
+        "cn": "斯洛伐克",
+        "en": "Slovakia",
+        "code": "SK"
+      },
+      {
+        "cn": "斯洛文尼亚",
+        "en": "Slovenia",
+        "code": "SI"
+      },
+      {
+        "cn": "南非",
+        "en": "South Africa",
+        "code": "ZA"
+      },
+      {
+        "cn": "韩国",
+        "en": "South Korea",
+        "code": "KR"
+      },
+      {
+        "cn": "西班牙",
+        "en": "Spain",
+        "code": "ES"
+      },
+      {
+        "cn": "斯里兰卡",
+        "en": "Sri Lanka",
+        "code": "LK"
+      },
+      {
+        "cn": "苏里南",
+        "en": "Suriname",
+        "code": "SR"
+      },
+      {
+        "cn": "瑞典",
+        "en": "Sweden",
+        "code": "SE"
+      },
+      {
+        "cn": "瑞士",
+        "en": "Switzerland",
+        "code": "CH"
+      },
+      {
+        "cn": "台湾",
+        "en": "Taiwan",
+        "code": "TW"
+      },
+      {
+        "cn": "塔吉克斯坦",
+        "en": "Tajikistan",
+        "code": "TJ"
+      },
+      {
+        "cn": "坦桑尼亚",
+        "en": "Tanzania",
+        "code": "TZ"
+      },
+      {
+        "cn": "泰国",
+        "en": "Thailand",
+        "code": "TH"
+      },
+      {
+        "cn": "东帝汶",
+        "en": "Timor-Leste",
+        "code": "TL"
+      },
+      {
+        "cn": "多哥",
+        "en": "Togo",
+        "code": "TG"
+      },
+      {
+        "cn": "汤加",
+        "en": "Tonga",
+        "code": "TO"
+      },
+      {
+        "cn": "特立尼达和多巴哥",
+        "en": "Trinidad and Tobago",
+        "code": "TT"
+      },
+      {
+        "cn": "突尼斯",
+        "en": "Tunisia",
+        "code": "TN"
+      },
+      {
+        "cn": "土耳其",
+        "en": "Turkey",
+        "code": "TR"
+      },
+      {
+        "cn": "特克斯和凯科斯群岛",
+        "en": "Turks and Caicos Islands",
+        "code": "TC"
+      },
+      {
+        "cn": "乌干达",
+        "en": "Uganda",
+        "code": "UG"
+      },
+      {
+        "cn": "乌克兰",
+        "en": "Ukraine",
+        "code": "UA"
+      },
+      {
+        "cn": "阿联酋",
+        "en": "United Arab Emirates",
+        "code": "AE"
+      },
+      {
+        "cn": "英国",
+        "en": "United Kingdom",
+        "code": "GB"
+      },
+      {
+        "cn": "美国",
+        "en": "United States",
+        "code": "US"
+      },
+      {
+        "cn": "乌拉圭",
+        "en": "Uruguay",
+        "code": "UY"
+      },
+      {
+        "cn": "乌兹别克斯坦",
+        "en": "Uzbekistan",
+        "code": "UZ"
+      },
+      {
+        "cn": "梵蒂冈",
+        "en": "Vatican City",
+        "code": "VA"
+      },
+      {
+        "cn": "越南",
+        "en": "Vietnam",
+        "code": "VN"
+      },
+      {
+        "cn": "赞比亚",
+        "en": "Zambia",
+        "code": "ZM"
+      },
+      {
+        "cn": "津巴布韦",
+        "en": "Zimbabwe",
+        "code": "ZW"
+      }
+    ],
+    "dataSize": 5120.0,
+    "validDays": 60,
+    "price": 35.0
+  },
+  {
     "id": 2744,
     "name": "亚洲 100GB/180天 (覆盖18国)",
     "type": "regional",
@@ -9652,7 +12652,7 @@
     ],
     "dataSize": 10240.0,
     "validDays": 180,
-    "price": 59.0
+    "price": 57.0
   },
   {
     "id": 2669,
@@ -10652,7 +13652,7 @@
     ],
     "dataSize": 20480.0,
     "validDays": 365,
-    "price": 69.0
+    "price": 66.0
   },
   {
     "id": 2670,
