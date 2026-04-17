@@ -1,5 +1,95 @@
 [
   {
+    "id": 2748,
+    "name": "巴西 无限流量/3天",
+    "type": "local",
+    "countries": [
+      {
+        "cn": "巴西",
+        "en": "Brazil",
+        "code": "BR"
+      }
+    ],
+    "dataSize": 0.0,
+    "validDays": 3,
+    "price": 11.5
+  },
+  {
+    "id": 2749,
+    "name": "巴西 无限流量/5天",
+    "type": "local",
+    "countries": [
+      {
+        "cn": "巴西",
+        "en": "Brazil",
+        "code": "BR"
+      }
+    ],
+    "dataSize": 0.0,
+    "validDays": 5,
+    "price": 18.5
+  },
+  {
+    "id": 2750,
+    "name": "巴西 无限流量/7天",
+    "type": "local",
+    "countries": [
+      {
+        "cn": "巴西",
+        "en": "Brazil",
+        "code": "BR"
+      }
+    ],
+    "dataSize": 0.0,
+    "validDays": 7,
+    "price": 26.5
+  },
+  {
+    "id": 2751,
+    "name": "巴西 无限流量/10天",
+    "type": "local",
+    "countries": [
+      {
+        "cn": "巴西",
+        "en": "Brazil",
+        "code": "BR"
+      }
+    ],
+    "dataSize": 0.0,
+    "validDays": 10,
+    "price": 32.0
+  },
+  {
+    "id": 2752,
+    "name": "巴西 无限流量/15天",
+    "type": "local",
+    "countries": [
+      {
+        "cn": "巴西",
+        "en": "Brazil",
+        "code": "BR"
+      }
+    ],
+    "dataSize": 0.0,
+    "validDays": 15,
+    "price": 49.0
+  },
+  {
+    "id": 2753,
+    "name": "巴西 无限流量/30天",
+    "type": "local",
+    "countries": [
+      {
+        "cn": "巴西",
+        "en": "Brazil",
+        "code": "BR"
+      }
+    ],
+    "dataSize": 0.0,
+    "validDays": 30,
+    "price": 89.0
+  },
+  {
     "id": 2747,
     "name": "全球通用 2GB/15天 (覆盖198+国)",
     "type": "global",
