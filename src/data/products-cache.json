@@ -21522,7 +21522,7 @@
     ],
     "dataSize": 1024.0,
     "validDays": 7,
-    "price": 15.0
+    "price": 8.5
   },
   {
     "id": 2644,
@@ -22317,7 +22317,7 @@
     ],
     "dataSize": 2048.0,
     "validDays": 15,
-    "price": 27.0
+    "price": 16.5
   },
   {
     "id": 2645,
@@ -23112,7 +23112,7 @@
     ],
     "dataSize": 3072.0,
     "validDays": 30,
-    "price": 36.0
+    "price": 24.0
   },
   {
     "id": 2646,
@@ -33897,7 +33897,7 @@
     ],
     "dataSize": 1024.0,
     "validDays": 7,
-    "price": 4.5
+    "price": 4.0
   },
   {
     "id": 2073,
@@ -34077,7 +34077,7 @@
     ],
     "dataSize": 2048.0,
     "validDays": 15,
-    "price": 21.5
+    "price": 7.0
   },
   {
     "id": 2059,
@@ -36667,7 +36667,7 @@
     ],
     "dataSize": 0.0,
     "validDays": 30,
-    "price": 72.5
+    "price": 72.0
   },
   {
     "id": 1984,
@@ -36757,7 +36757,7 @@
     ],
     "dataSize": 2048.0,
     "validDays": 15,
-    "price": 14.5
+    "price": 17.0
   },
   {
     "id": 1990,
@@ -36802,7 +36802,7 @@
     ],
     "dataSize": 3072.0,
     "validDays": 30,
-    "price": 20.0
+    "price": 24.0
   },
   {
     "id": 1993,
@@ -37497,7 +37497,7 @@
     ],
     "dataSize": 0.0,
     "validDays": 10,
-    "price": 47.0
+    "price": 36.5
   },
   {
     "id": 1949,
@@ -37512,7 +37512,7 @@
     ],
     "dataSize": 0.0,
     "validDays": 15,
-    "price": 63.0
+    "price": 50.0
   },
   {
     "id": 1950,
@@ -37527,7 +37527,7 @@
     ],
     "dataSize": 0.0,
     "validDays": 30,
-    "price": 99.0
+    "price": 74.0
   },
   {
     "id": 1906,
@@ -40492,7 +40492,7 @@
     ],
     "dataSize": 2048.0,
     "validDays": 15,
-    "price": 15.0
+    "price": 13.0
   },
   {
     "id": 1865,
@@ -40507,7 +40507,7 @@
     ],
     "dataSize": 3072.0,
     "validDays": 30,
-    "price": 21.0
+    "price": 17.0
   },
   {
     "id": 1866,
@@ -40522,7 +40522,7 @@
     ],
     "dataSize": 5120.0,
     "validDays": 30,
-    "price": 32.5
+    "price": 23.0
   },
   {
     "id": 1857,
@@ -41542,7 +41542,7 @@
     ],
     "dataSize": 0.0,
     "validDays": 30,
-    "price": 72.5
+    "price": 72.0
   },
   {
     "id": 1815,
@@ -41797,7 +41797,7 @@
     ],
     "dataSize": 0.0,
     "validDays": 5,
-    "price": 29.5
+    "price": 26.0
   },
   {
     "id": 1793,
@@ -41827,7 +41827,7 @@
     ],
     "dataSize": 0.0,
     "validDays": 10,
-    "price": 42.0
+    "price": 39.0
   },
   {
     "id": 1795,
@@ -41842,7 +41842,7 @@
     ],
     "dataSize": 0.0,
     "validDays": 15,
-    "price": 62.0
+    "price": 57.5
   },
   {
     "id": 1796,
@@ -41857,7 +41857,7 @@
     ],
     "dataSize": 0.0,
     "validDays": 30,
-    "price": 99.0
+    "price": 98.0
   },
   {
     "id": 1791,
@@ -42217,7 +42217,7 @@
     ],
     "dataSize": 3072.0,
     "validDays": 30,
-    "price": 5.5
+    "price": 5.0
   },
   {
     "id": 1756,
@@ -42667,7 +42667,7 @@
     ],
     "dataSize": 1024.0,
     "validDays": 7,
-    "price": 4.5
+    "price": 4.0
   },
   {
     "id": 1728,
@@ -44527,7 +44527,7 @@
     ],
     "dataSize": 2048.0,
     "validDays": 15,
-    "price": 15.0
+    "price": 14.0
   },
   {
     "id": 1670,
@@ -44542,7 +44542,7 @@
     ],
     "dataSize": 3072.0,
     "validDays": 30,
-    "price": 21.0
+    "price": 19.0
   },
   {
     "id": 1671,
@@ -44557,7 +44557,7 @@
     ],
     "dataSize": 5120.0,
     "validDays": 30,
-    "price": 32.5
+    "price": 25.0
   },
   {
     "id": 1650,
@@ -44737,7 +44737,7 @@
     ],
     "dataSize": 5120.0,
     "validDays": 30,
-    "price": 29.0
+    "price": 23.0
   },
   {
     "id": 1638,
@@ -46347,7 +46347,7 @@
     ],
     "dataSize": 1024.0,
     "validDays": 7,
-    "price": 9.5
+    "price": 8.0
   },
   {
     "id": 1566,
@@ -46497,7 +46497,7 @@
     ],
     "dataSize": 1024.0,
     "validDays": 7,
-    "price": 8.0
+    "price": 9.0
   },
   {
     "id": 1576,
@@ -46917,7 +46917,7 @@
     ],
     "dataSize": 10240.0,
     "validDays": 30,
-    "price": 19.0
+    "price": 18.0
   },
   {
     "id": 1544,
@@ -46932,7 +46932,7 @@
     ],
     "dataSize": 20480.0,
     "validDays": 30,
-    "price": 28.0
+    "price": 26.0
   },
   {
     "id": 1545,
@@ -47007,7 +47007,7 @@
     ],
     "dataSize": 0.0,
     "validDays": 30,
-    "price": 72.5
+    "price": 72.0
   },
   {
     "id": 1536,
@@ -47082,7 +47082,7 @@
     ],
     "dataSize": 2048.0,
     "validDays": 15,
-    "price": 10.5
+    "price": 10.0
   },
   {
     "id": 1533,
@@ -47097,7 +47097,7 @@
     ],
     "dataSize": 3072.0,
     "validDays": 30,
-    "price": 15.0
+    "price": 14.0
   },
   {
     "id": 1534,
@@ -47112,7 +47112,7 @@
     ],
     "dataSize": 5120.0,
     "validDays": 30,
-    "price": 24.5
+    "price": 21.0
   },
   {
     "id": 1535,
@@ -47127,7 +47127,7 @@
     ],
     "dataSize": 10240.0,
     "validDays": 30,
-    "price": 44.5
+    "price": 34.0
   },
   {
     "id": 1529,
@@ -50752,7 +50752,7 @@
     ],
     "dataSize": 0.0,
     "validDays": 30,
-    "price": 109.0
+    "price": 99.0
   },
   {
     "id": 1331,
@@ -51682,7 +51682,7 @@
     ],
     "dataSize": 0.0,
     "validDays": 3,
-    "price": 12.5
+    "price": 11.5
   },
   {
     "id": 1260,
@@ -51697,7 +51697,7 @@
     ],
     "dataSize": 0.0,
     "validDays": 5,
-    "price": 20.5
+    "price": 19.0
   },
   {
     "id": 1261,
@@ -51712,7 +51712,7 @@
     ],
     "dataSize": 0.0,
     "validDays": 7,
-    "price": 29.5
+    "price": 27.0
   },
   {
     "id": 1262,
@@ -51967,7 +51967,7 @@
     ],
     "dataSize": 0.0,
     "validDays": 30,
-    "price": 72.5
+    "price": 72.0
   },
   {
     "id": 1248,
@@ -53352,7 +53352,7 @@
     ],
     "dataSize": 2048.0,
     "validDays": 15,
-    "price": 9.5
+    "price": 8.5
   },
   {
     "id": 1188,
@@ -53572,7 +53572,7 @@
     ],
     "dataSize": 3072.0,
     "validDays": 30,
-    "price": 13.0
+    "price": 11.0
   },
   {
     "id": 1189,
@@ -53792,7 +53792,7 @@
     ],
     "dataSize": 51200.0,
     "validDays": 30,
-    "price": 99.0
+    "price": 70.0
   },
   {
     "id": 1190,
@@ -54012,7 +54012,7 @@
     ],
     "dataSize": 5120.0,
     "validDays": 30,
-    "price": 20.0
+    "price": 19.5
   },
   {
     "id": 1191,
@@ -54232,7 +54232,7 @@
     ],
     "dataSize": 10240.0,
     "validDays": 30,
-    "price": 37.0
+    "price": 31.0
   },
   {
     "id": 1192,
@@ -54452,7 +54452,7 @@
     ],
     "dataSize": 20480.0,
     "validDays": 30,
-    "price": 49.0
+    "price": 48.0
   },
   {
     "id": 1193,
@@ -76192,7 +76192,7 @@
     ],
     "dataSize": 10240.0,
     "validDays": 30,
-    "price": 29.5
+    "price": 29.0
   },
   {
     "id": 569,
@@ -76207,7 +76207,7 @@
     ],
     "dataSize": 20480.0,
     "validDays": 30,
-    "price": 49.0
+    "price": 48.0
   },
   {
     "id": 570,
@@ -78772,7 +78772,7 @@
     ],
     "dataSize": 1024.0,
     "validDays": 7,
-    "price": 8.0
+    "price": 7.5
   },
   {
     "id": 286,
@@ -78787,7 +78787,7 @@
     ],
     "dataSize": 2048.0,
     "validDays": 15,
-    "price": 16.0
+    "price": 14.5
   },
   {
     "id": 287,
@@ -78802,7 +78802,7 @@
     ],
     "dataSize": 3072.0,
     "validDays": 30,
-    "price": 23.0
+    "price": 21.0
   },
   {
     "id": 288,
@@ -79297,7 +79297,7 @@
     ],
     "dataSize": 3072.0,
     "validDays": 30,
-    "price": 9.5
+    "price": 9.0
   },
   {
     "id": 321,
@@ -80512,7 +80512,7 @@
     ],
     "dataSize": 1024.0,
     "validDays": 7,
-    "price": 6.5
+    "price": 6.0
   },
   {
     "id": 402,
@@ -80527,7 +80527,7 @@
     ],
     "dataSize": 2048.0,
     "validDays": 15,
-    "price": 12.5
+    "price": 11.5
   },
   {
     "id": 403,
@@ -80542,7 +80542,7 @@
     ],
     "dataSize": 3072.0,
     "validDays": 30,
-    "price": 18.0
+    "price": 16.0
   },
   {
     "id": 404,
@@ -80557,7 +80557,7 @@
     ],
     "dataSize": 5120.0,
     "validDays": 30,
-    "price": 28.0
+    "price": 25.0
   },
   {
     "id": 405,
@@ -80572,7 +80572,7 @@
     ],
     "dataSize": 10240.0,
     "validDays": 30,
-    "price": 45.0
+    "price": 35.0
   },
   {
     "id": 406,
@@ -81712,7 +81712,7 @@
     ],
     "dataSize": 5120.0,
     "validDays": 30,
-    "price": 25.5
+    "price": 25.0
   },
   {
     "id": 482,
@@ -82612,7 +82612,7 @@
     ],
     "dataSize": 10240.0,
     "validDays": 30,
-    "price": 19.5
+    "price": 19.0
   },
   {
     "id": 64,
@@ -82627,7 +82627,7 @@
     ],
     "dataSize": 20480.0,
     "validDays": 30,
-    "price": 32.0
+    "price": 31.0
   },
   {
     "id": 65,
@@ -82657,7 +82657,7 @@
     ],
     "dataSize": 0.0,
     "validDays": 3,
-    "price": 11.4
+    "price": 11.5
   },
   {
     "id": 67,
@@ -82702,7 +82702,7 @@
     ],
     "dataSize": 0.0,
     "validDays": 30,
-    "price": 72.5
+    "price": 72.0
   },
   {
     "id": 70,
@@ -83677,7 +83677,7 @@
     ],
     "dataSize": 1024.0,
     "validDays": 7,
-    "price": 4.5
+    "price": 4.0
   },
   {
     "id": 135,
@@ -83737,7 +83737,7 @@
     ],
     "dataSize": 10240.0,
     "validDays": 30,
-    "price": 20.0
+    "price": 19.0
   },
   {
     "id": 139,
@@ -83752,7 +83752,7 @@
     ],
     "dataSize": 20480.0,
     "validDays": 30,
-    "price": 32.0
+    "price": 30.0
   },
   {
     "id": 140,
@@ -83872,7 +83872,7 @@
     ],
     "dataSize": 0.0,
     "validDays": 3,
-    "price": 11.4
+    "price": 11.5
   },
   {
     "id": 148,
@@ -83887,7 +83887,7 @@
     ],
     "dataSize": 0.0,
     "validDays": 5,
-    "price": 19.5
+    "price": 17.0
   },
   {
     "id": 149,
@@ -83947,7 +83947,7 @@
     ],
     "dataSize": 0.0,
     "validDays": 30,
-    "price": 74.0
+    "price": 72.0
   },
   {
     "id": 153,
@@ -84112,7 +84112,7 @@
     ],
     "dataSize": 5120.0,
     "validDays": 30,
-    "price": 22.0
+    "price": 21.0
   },
   {
     "id": 164,
@@ -84127,7 +84127,7 @@
     ],
     "dataSize": 10240.0,
     "validDays": 30,
-    "price": 35.0
+    "price": 34.0
   },
   {
     "id": 165,
@@ -84952,7 +84952,7 @@
     ],
     "dataSize": 2048.0,
     "validDays": 15,
-    "price": 11.0
+    "price": 10.5
   },
   {
     "id": 220,
@@ -84967,7 +84967,7 @@
     ],
     "dataSize": 3072.0,
     "validDays": 30,
-    "price": 15.0
+    "price": 14.0
   },
   {
     "id": 221,
@@ -84982,7 +84982,7 @@
     ],
     "dataSize": 5120.0,
     "validDays": 30,
-    "price": 25.0
+    "price": 23.0
   },
   {
     "id": 222,
@@ -84997,7 +84997,7 @@
     ],
     "dataSize": 10240.0,
     "validDays": 30,
-    "price": 42.0
+    "price": 37.0
   },
   {
     "id": 223,
@@ -85357,7 +85357,7 @@
     ],
     "dataSize": 2048.0,
     "validDays": 15,
-    "price": 5.5
+    "price": 5.0
   },
   {
     "id": 247,
@@ -85372,7 +85372,7 @@
     ],
     "dataSize": 3072.0,
     "validDays": 30,
-    "price": 6.0
+    "price": 5.0
   },
   {
     "id": 248,
@@ -85402,7 +85402,7 @@
     ],
     "dataSize": 10240.0,
     "validDays": 30,
-    "price": 13.0
+    "price": 12.0
   },
   {
     "id": 250,
