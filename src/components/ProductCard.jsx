@@ -129,7 +129,7 @@ export default function ProductCard({ product, compact = false }) {
         {/* 价格 + 购买 */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px', flexShrink: 0 }}>
           <div>
-            <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.35)', textAlign: 'right', marginBottom: '1px' }}>USDT</div>
+            <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.35)', textAlign: 'right', marginBottom: '1px' }}>USD</div>
             <div style={{
               fontSize: '22px', fontWeight: 800, lineHeight: 1,
               background: 'linear-gradient(135deg, #60a5fa, #a78bfa)',

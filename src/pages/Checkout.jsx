@@ -3,40 +3,73 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useAllProducts } from '../hooks/useProducts'
 import { useOrders, createOrder } from '../hooks/useOrders'
 import { formatData, formatDays, formatPrice, getCountryName, USDT_ADDRESS, TON_ADDRESS } from '../utils/format'
+import { ORDER_STATUS, normalizeOrderStatus } from '../utils/orderStatus'
 
 const COUNTDOWN = 30 * 60 // 30 minutes
-const BOT_USERNAME = 'Esim_sal_bot'
+
+const getSettlementInfo = (product, paymentMethod) => {
+  const normalizedMethod = String(paymentMethod || 'usdt').toLowerCase()
+  const settlementAmount = product?.[`${normalizedMethod}_settlement_amount`]
+    ?? product?.[`${normalizedMethod}SettlementAmount`]
+    ?? product?.[`${normalizedMethod}_amount`]
+    ?? product?.[`${normalizedMethod}Amount`]
+    ?? product?.settlement_amount
+    ?? product?.settlementAmount
+    ?? product?.price
+    ?? 0
+
+  const settlementCurrency = product?.[`${normalizedMethod}_settlement_currency`]
+    ?? product?.[`${normalizedMethod}SettlementCurrency`]
+    ?? product?.[`${normalizedMethod}_currency`]
+    ?? product?.[`${normalizedMethod}Currency`]
+    ?? product?.settlement_currency
+    ?? product?.settlementCurrency
+    ?? (normalizedMethod === 'ton' ? 'TON' : 'USDT')
+
+  return {
+    amount: Number(settlementAmount) || 0,
+    currency: String(settlementCurrency || '').toUpperCase() || (normalizedMethod === 'ton' ? 'TON' : 'USDT'),
+  }
+}
+
+const formatSettlementDisplay = (amount, currency) => {
+  const numericAmount = Number(amount)
+  const safeAmount = Number.isFinite(numericAmount) ? numericAmount.toFixed(2) : '0.00'
+  return `${safeAmount} ${String(currency || '').toUpperCase()}`.trim()
+}
+
+const formatUsdReference = (price) => `${formatPrice(price)} USD`
 
 export default function Checkout() {
   const { id } = useParams()
   const navigate = useNavigate()
   const { products, loading } = useAllProducts()
-  const { addOrder } = useOrders()
+  const { addOrder, updateOrder } = useOrders()
 
-  // Create or restore order for this product
   const [order, setOrder] = useState(null)
   const [timeLeft, setTimeLeft] = useState(COUNTDOWN)
   const [copied, setCopied] = useState(false)
   const [copiedTon, setCopiedTon] = useState(false)
   const [orderIdCopied, setOrderIdCopied] = useState(false)
-  const [paymentMethod, setPaymentMethod] = useState('usdt') // 'usdt' or 'ton'
-  const [email, setEmail] = useState('')
+  const [paymentMethod, setPaymentMethod] = useState('usdt')
   const [termsAccepted, setTermsAccepted] = useState(false)
   const intervalRef = useRef(null)
   const orderCreatedRef = useRef(false)
 
   const product = products.find(p => p.id === parseInt(id))
+  const price = product ? formatPrice(product.price) : '0.00'
+  const settlement = product ? getSettlementInfo(product, paymentMethod) : { amount: 0, currency: paymentMethod === 'ton' ? 'TON' : 'USDT' }
+  const settlementDisplay = formatSettlementDisplay(settlement.amount, settlement.currency)
+  const usdReference = formatUsdReference(price)
 
-  // 复用已有订单，绝不重复创建
   useEffect(() => {
     if (!product) return
-    
-    // 先检查 localStorage 是否有该产品的未完成订单（复用，不重复创建）
+
     try {
       const tgUserId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 'guest'
       const key = `esim_orders_${tgUserId}`
       const existing = JSON.parse(localStorage.getItem(key) || '[]')
-      const found = existing.find(o => String(o.productId) === String(product.id) && o.status === 'pending')
+      const found = existing.find(o => String(o.productId) === String(product.id) && normalizeOrderStatus(o.status) === ORDER_STATUS.PENDING_PAYMENT)
       if (found) {
         setOrder(found)
         orderCreatedRef.current = true
@@ -46,23 +79,29 @@ export default function Checkout() {
       console.error('[Checkout] 检查现有订单时出错:', e)
     }
 
-    // 防止重复创建：如果已经创建过则不再创建
     if (orderCreatedRef.current) return
-    
+
     orderCreatedRef.current = true
-    // 没有则新建
     const newOrder = createOrder(product)
     setOrder(newOrder)
     addOrder(newOrder)
   }, [product]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // 跳转订单详情
   const goToOrderDetail = () => {
     if (!termsAccepted) {
       alert('请先阅读并同意服务条款和退款政策')
       return
     }
-    if (order) navigate(`/order/${order.id}`)
+    if (order) {
+      updateOrder(order.id, {
+        paymentMethod,
+        settlementAmount: settlement.amount,
+        settlementCurrency: settlement.currency,
+        amount: settlement.amount,
+        currency: settlement.currency,
+      })
+      navigate(`/order/${order.id}`)
+    }
   }
 
   useEffect(() => {
@@ -110,25 +149,6 @@ export default function Checkout() {
     } catch {}
   }
 
-  // Open Telegram bot with order info
-  const openTelegramBot = () => {
-    if (!order || !product) return
-    // 更新订单邮箱到 Supabase
-    if (email) {
-      import('../hooks/useOrders').then(({ supabase }) => {
-        supabase?.from('miniapp_orders').update({ customer_email: email }).eq('id', order.id).then(() => {})
-      }).catch(() => {})
-    }
-    const price = formatPrice(product.price)
-    const msg = `order_${order.id}_${product.id}`
-    const url = `https://t.me/${BOT_USERNAME}?start=${msg}`
-    if (window.Telegram?.WebApp) {
-      window.Telegram.WebApp.openTelegramLink(url)
-    } else {
-      window.open(url, '_blank')
-    }
-  }
-
   if (loading || !order) return (
     <div style={{ minHeight: '100vh', background: '#0a0a0f', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <div style={{ color: 'rgba(255,255,255,0.5)' }}>加载中...</div>
@@ -144,11 +164,9 @@ export default function Checkout() {
   )
 
   const expired = timeLeft === 0
-  const price = formatPrice(product.price)
 
   return (
     <div style={{ minHeight: '100vh', background: '#0a0a0f', paddingBottom: '30px' }}>
-      {/* Header */}
       <div style={{
         padding: '16px',
         display: 'flex',
@@ -177,7 +195,6 @@ export default function Checkout() {
         <span style={{ fontSize: '16px', fontWeight: 600, color: '#fff' }}>确认订单</span>
       </div>
 
-      {/* Order Summary */}
       <div style={{ padding: '16px' }}>
         <div style={{
           background: 'linear-gradient(135deg, rgba(59,130,246,0.12), rgba(139,92,246,0.12))',
@@ -207,19 +224,21 @@ export default function Checkout() {
                 {formatData(product.dataSize, product.isUnlimited)} · {formatDays(product.validDays)}
               </div>
             </div>
-            <div style={{
-              fontSize: '22px',
-              fontWeight: 700,
-              background: 'linear-gradient(135deg, #60a5fa, #a78bfa)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-            }}>
-              ${price}
+            <div style={{ textAlign: 'right' }}>
+              <div style={{
+                fontSize: '22px',
+                fontWeight: 700,
+                background: 'linear-gradient(135deg, #60a5fa, #a78bfa)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+              }}>
+                {settlementDisplay}
+              </div>
+              <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.45)' }}>参考：{usdReference}</div>
             </div>
           </div>
         </div>
 
-        {/* Order ID */}
         <div style={{
           background: 'rgba(255,255,255,0.04)',
           border: '1px solid rgba(255,255,255,0.08)',
@@ -250,7 +269,6 @@ export default function Checkout() {
           </button>
         </div>
 
-        {/* Countdown */}
         {!expired ? (
           <div style={{
             background: 'rgba(239,68,68,0.08)',
@@ -291,7 +309,6 @@ export default function Checkout() {
           </div>
         )}
 
-        {/* Payment Method Selection */}
         <div style={{ marginBottom: '16px' }}>
           <div style={{ fontSize: '14px', fontWeight: 600, color: '#fff', marginBottom: '12px' }}>选择支付方式</div>
           <div style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
@@ -330,7 +347,6 @@ export default function Checkout() {
           </div>
         </div>
 
-        {/* USDT Payment */}
         {!expired && paymentMethod === 'usdt' && (
           <div style={{
             background: 'rgba(255,255,255,0.04)',
@@ -354,27 +370,25 @@ export default function Checkout() {
               }}>₮</div>
               <div>
                 <div style={{ fontSize: '14px', fontWeight: 600, color: '#fff' }}>USDT 付款 (TRC20)</div>
-                <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)' }}>请转账至以下地址</div>
+                <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)' }}>请按下方结算金额付款</div>
               </div>
             </div>
 
-            {/* Amount */}
             <div style={{
               background: 'rgba(59,130,246,0.1)',
               borderRadius: '12px',
               padding: '12px 14px',
               marginBottom: '14px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
             }}>
-              <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)' }}>付款金额</span>
-              <span style={{ fontSize: '20px', fontWeight: 700, color: '#60a5fa' }}>
-                {price} USDT
-              </span>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
+                <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)' }}>付款金额</span>
+                <span style={{ fontSize: '20px', fontWeight: 700, color: '#60a5fa' }}>
+                  {settlementDisplay}
+                </span>
+              </div>
+              <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)' }}>参考：{usdReference}</div>
             </div>
 
-            {/* Address */}
             <div style={{ marginBottom: '14px' }}>
               <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)', marginBottom: '8px' }}>收款地址</div>
               <div style={{
@@ -415,7 +429,6 @@ export default function Checkout() {
           </div>
         )}
 
-        {/* TON Payment */}
         {!expired && paymentMethod === 'ton' && (
           <div style={{
             background: 'rgba(255,255,255,0.04)',
@@ -439,11 +452,10 @@ export default function Checkout() {
               }}>T</div>
               <div>
                 <div style={{ fontSize: '14px', fontWeight: 600, color: '#fff' }}>TON 付款</div>
-                <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)' }}>请转账至以下钱包地址</div>
+                <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)' }}>请按下方结算金额付款</div>
               </div>
             </div>
 
-            {/* Amount */}
             <div style={{
               background: 'rgba(59,130,246,0.1)',
               borderRadius: '12px',
@@ -451,17 +463,14 @@ export default function Checkout() {
               marginBottom: '14px',
             }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
-                <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)' }}>付款金额（USD等值）</span>
+                <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)' }}>付款金额</span>
                 <span style={{ fontSize: '20px', fontWeight: 700, color: '#60a5fa' }}>
-                  ${price}
+                  {settlementDisplay}
                 </span>
               </div>
-              <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)' }}>
-                ⚠️ 请按当前 TON/USDT 汇率换算后转账对应数量的 TON
-              </div>
+              <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)' }}>参考：{usdReference}</div>
             </div>
 
-            {/* Address */}
             <div style={{ marginBottom: '14px' }}>
               <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)', marginBottom: '8px' }}>收款地址</div>
               <div style={{
@@ -506,7 +515,6 @@ export default function Checkout() {
           </div>
         )}
 
-        {/* Contact Bot CTA */}
         {!expired && (
           <div style={{
             background: 'linear-gradient(135deg, rgba(0,136,204,0.15), rgba(0,136,204,0.08))',
@@ -516,30 +524,17 @@ export default function Checkout() {
             marginBottom: '16px',
             textAlign: 'center',
           }}>
-            <div style={{ fontSize: '32px', marginBottom: '10px' }}>✈️</div>
+            <div style={{ fontSize: '32px', marginBottom: '10px' }}>🧾</div>
             <div style={{ fontSize: '15px', fontWeight: 600, color: '#fff', marginBottom: '6px' }}>
-              付款后联系客服
+              付款后回到订单详情页
             </div>
             <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', marginBottom: '12px', lineHeight: 1.6 }}>
-              转账完成后，将截图发送给客服机器人<br />
-              eSIM 将在确认后发送到您的 Telegram
+              系统会自动同步付款与交付状态。<br />
+              订单详情页是正式查看二维码、ICCID、安装说明与异常状态的唯一入口。
             </div>
-            <input
-              type="email"
-              placeholder="请填写邮箱（用于接收eSIM激活码）"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              style={{
-                width: '100%', boxSizing: 'border-box',
-                background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)',
-                borderRadius: '10px', color: '#fff', fontSize: '13px',
-                padding: '11px 14px', marginBottom: '12px', outline: 'none',
-              }}
-            />
-            {/* Terms Agreement */}
             <label style={{
               display: 'flex', alignItems: 'flex-start', gap: '8px',
-              marginBottom: '12px', cursor: 'pointer',
+              marginBottom: '12px', cursor: 'pointer', textAlign: 'left',
             }}>
               <input
                 type="checkbox"
@@ -588,14 +583,16 @@ export default function Checkout() {
             >
               📋 已付款？查看订单详情
             </button>
+            <div style={{ marginTop: 10, fontSize: 11, color: 'rgba(255,255,255,0.42)', lineHeight: 1.6 }}>
+              如自动同步异常，再联系支持处理；支持入口仅用于异常兜底。
+            </div>
           </div>
         )}
 
-        {/* 安全标识 */}
         <div style={{
           display: 'flex', gap: '8px', marginBottom: '12px', justifyContent: 'center', flexWrap: 'wrap',
         }}>
-          {['🔒 加密支付', '⚡ 2分钟激活', '↩️ 未激活可退款'].map((t, i) => (
+          {['🔒 加密支付', '⚡ 自动同步订单', '📱 订单页查看交付'].map((t, i) => (
             <span key={i} style={{
               fontSize: '11px', color: 'rgba(255,255,255,0.5)',
               background: 'rgba(255,255,255,0.05)', borderRadius: '20px', padding: '4px 10px',
@@ -604,7 +601,6 @@ export default function Checkout() {
           ))}
         </div>
 
-        {/* Steps */}
         <div style={{
           background: 'rgba(255,255,255,0.03)',
           border: '1px solid rgba(255,255,255,0.06)',
@@ -616,14 +612,14 @@ export default function Checkout() {
           </div>
           {(paymentMethod === 'usdt' ? [
             { step: '1', text: '复制上方 USDT (TRC20) 收款地址', done: copied },
-            { step: '2', text: `转账 ${price} USDT 至该地址`, done: false },
-            { step: '3', text: `截图付款记录，点击"联系客服"按钮`, done: false },
-            { step: '4', text: '收到 eSIM 二维码，扫码激活即用', done: false },
+            { step: '2', text: `按结算金额转账 ${settlementDisplay} 至该地址`, done: false },
+            { step: '3', text: `USD 参考金额：${usdReference}`, done: false },
+            { step: '4', text: '付款完成后返回订单详情页等待自动同步', done: false },
           ] : [
             { step: '1', text: '复制上方 TON 收款地址', done: copiedTon },
-            { step: '2', text: `按实时汇率换算，转账等值 $${price} 的 TON 至该地址`, done: false },
-            { step: '3', text: `截图付款记录，点击"联系客服"按钮`, done: false },
-            { step: '4', text: '收到 eSIM 二维码，扫码激活即用', done: false },
+            { step: '2', text: `按结算金额转账 ${settlementDisplay} 至该地址`, done: false },
+            { step: '3', text: `USD 参考金额：${usdReference}`, done: false },
+            { step: '4', text: '付款完成后返回订单详情页等待自动同步', done: false },
           ]).map((s, i) => (
             <div key={i} style={{
               display: 'flex',
@@ -655,12 +651,6 @@ export default function Checkout() {
           ))}
         </div>
       </div>
-
-      <style>{`
-        @keyframes spin {
-          to { transform: rotate(360deg); }
-        }
-      `}</style>
     </div>
   )
 }

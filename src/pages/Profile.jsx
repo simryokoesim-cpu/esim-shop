@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { useOrders } from '../hooks/useOrders'
+import { normalizeOrderStatus } from '../utils/orderStatus'
 
 const BOT_USERNAME = 'Esim_sal_bot'
 
@@ -11,8 +12,13 @@ export default function Profile() {
   const userName = tgUser?.first_name || 'Hi'
   const userAvatar = tgUser?.photo_url
 
-  const activeOrders = orders.filter(o => o.status === 'active' || o.status === 'activated').length
-  const pendingOrders = orders.filter(o => o.status === 'pending').length
+  const normalizedOrders = orders.map(order => ({
+    ...order,
+    userStatus: normalizeOrderStatus(order),
+  }))
+
+  const activeOrders = normalizedOrders.filter(o => o.userStatus === 'activated').length
+  const pendingOrders = normalizedOrders.filter(o => o.userStatus === 'pending').length
 
   const openBot = (cmd) => {
     const url = `https://t.me/${BOT_USERNAME}?start=${cmd}`
@@ -28,7 +34,7 @@ export default function Profile() {
     { icon: '💰', label: '我的余额', desc: '查看余额和提现', action: () => openBot('balance') },
     { icon: '👥', label: '推荐赚钱', desc: '推荐好友得佣金', action: () => openBot('referral') },
     { icon: '💳', label: '绑定钱包', desc: 'USDT TRC20 地址', action: () => openBot('wallet') },
-    { icon: '🎧', label: '联系客服', desc: '@Esim_sale1_bot', action: () => {
+    { icon: '🎧', label: '联系客服', desc: '仅用于异常处理', action: () => {
       if (window.Telegram?.WebApp) {
         window.Telegram.WebApp.openTelegramLink('https://t.me/Esim_sale1_bot')
       }
@@ -37,7 +43,6 @@ export default function Profile() {
 
   return (
     <div style={{ minHeight: '100vh', background: '#0a0a0f', paddingBottom: '80px' }}>
-      {/* 用户信息头部 */}
       <div style={{
         padding: '30px 16px 24px',
         background: 'linear-gradient(180deg, rgba(30,20,60,0.8) 0%, transparent 100%)',
@@ -62,11 +67,10 @@ export default function Profile() {
         </div>
       </div>
 
-      {/* 统计卡片 */}
       <div style={{ padding: '0 16px 20px', display: 'flex', gap: '10px' }}>
         {[
           { label: '全部订单', value: orders.length, color: '#60a5fa' },
-          { label: '使用中', value: activeOrders, color: '#10b981' },
+          { label: '已激活', value: activeOrders, color: '#10b981' },
           { label: '待付款', value: pendingOrders, color: '#f59e0b' },
         ].map((stat, i) => (
           <div key={i} onClick={() => navigate('/orders')} style={{
@@ -79,7 +83,6 @@ export default function Profile() {
         ))}
       </div>
 
-      {/* 功能菜单 */}
       <div style={{ padding: '0 16px' }}>
         <div style={{
           background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',

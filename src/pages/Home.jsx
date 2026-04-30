@@ -119,6 +119,16 @@ export default function Home() {
       .slice(0, 8)
   }, [products])
 
+  const allCountryCount = useMemo(() => {
+    const seen = new Set()
+    products.forEach(p => {
+      p.countries?.forEach(c => {
+        if (c?.code) seen.add(c.code)
+      })
+    })
+    return seen.size
+  }, [products])
+
   // 热门国家列表（去重，按优先级排序）
   const hotCountries = useMemo(() => {
     const countryMap = {}
@@ -294,12 +304,7 @@ export default function Home() {
           </button>
         </div>
         <div style={{ display: 'flex', gap: '10px', overflowX: 'auto', paddingLeft: '16px', paddingRight: '16px', paddingBottom: '4px', scrollbarWidth: 'none' }}>
-          {[
-            {code:'TH',cn:'泰国'},{code:'JP',cn:'日本'},{code:'SG',cn:'新加坡'},
-            {code:'MY',cn:'马来西亚'},{code:'KR',cn:'韩国'},{code:'HK',cn:'香港'},
-            {code:'TW',cn:'台湾'},{code:'CN',cn:'中国'},{code:'ID',cn:'印尼'},
-            {code:'VN',cn:'越南'},{code:'AE',cn:'阿联酋'},{code:'GB',cn:'英国'},
-          ].map(c => {
+          {hotCountries.map(c => {
             const flag = String.fromCodePoint(...[...c.code.toUpperCase()].map(ch => 0x1F1E6 - 65 + ch.charCodeAt(0)))
             return (
               <button key={c.code}
@@ -312,7 +317,7 @@ export default function Home() {
                 }}
               >
                 <div style={{ fontSize: '28px', marginBottom: '5px' }}>{flag}</div>
-                <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.8)', fontWeight: 500, whiteSpace: 'nowrap' }}>{c.cn}</div>
+                <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.8)', fontWeight: 500, whiteSpace: 'nowrap' }}>{c.cn || c.en}</div>
               </button>
             )
           })}

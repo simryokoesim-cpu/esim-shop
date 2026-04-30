@@ -2,9 +2,13 @@
 // This keeps credentials secure on the server side
 
 const API_BASE = 'https://ciuh32wky.xigrocoltd.com/api'
-const CREDENTIALS = {
-  username: process.env.ESIM_API_USERNAME || 'tgesim',
-  password: process.env.ESIM_API_PASSWORD || '123123'
+function getCredentials() {
+  const username = process.env.ESIM_API_USERNAME
+  const password = process.env.ESIM_API_PASSWORD
+  if (!username || !password) {
+    throw new Error('Missing ESIM_API_USERNAME or ESIM_API_PASSWORD')
+  }
+  return { username, password }
 }
 
 let cachedToken = null
@@ -14,7 +18,7 @@ async function login() {
   const res = await fetch(`${API_BASE}/agent/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(CREDENTIALS),
+    body: JSON.stringify(getCredentials()),
   })
   const data = await res.json()
   if (!data.success) throw new Error('Login failed: ' + data.message)
@@ -45,9 +49,10 @@ export default async function handler(req, res) {
     const token = await getToken()
     
     // Forward query params
-    const { page = 1, limit = 20, search = '', country = '' } = req.query
+    const { page = 1, limit = 20, search = '', keyword = '', country = '' } = req.query
     const params = new URLSearchParams({ page, limit })
-    if (search) params.set('keyword', search)
+    const keywordValue = search || keyword
+    if (keywordValue) params.set('keyword', keywordValue)
     if (country) params.set('country', country)
     
     const apiRes = await fetch(`${API_BASE}/agent/products?${params}`, {

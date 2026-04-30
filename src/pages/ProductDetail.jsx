@@ -30,10 +30,17 @@ export default function ProductDetail() {
   }
 
   const countryName = getCountryName(product)
+  const heroFlag = product.type === 'global'
+    ? '🌐'
+    : product.type === 'regional' || (product.countries?.length || 0) > 1
+      ? '🗺️'
+      : (product.countries?.[0]?.code
+          ? String.fromCodePoint(...[...product.countries[0].code.toUpperCase()].map(c => 0x1F1E6 - 65 + c.charCodeAt(0)))
+          : '🌐')
   const dataLabel = formatData(product.dataSize, product.isUnlimited)
   const daysLabel = formatDays(product.validDays)
 
-    const activationPolicy = product.thirdPartyData?.activationPolicy
+  const activationPolicy = product.thirdPartyData?.activationPolicy
   const validityNote = activationPolicy === 'first-usage' ? '首次使用后开始计算' : '购买后立即生效'
 
   const specs = [
@@ -119,7 +126,7 @@ export default function ProductDetail() {
             alignItems: 'baseline',
             gap: '4px',
           }}>
-            <span style={{ fontSize: '14px', color: 'rgba(255,255,255,0.5)' }}>USDT</span>
+            <span style={{ fontSize: '14px', color: 'rgba(255,255,255,0.5)' }}>USD</span>
             <span style={{
               fontSize: '42px',
               fontWeight: 800,
@@ -306,7 +313,7 @@ export default function ProductDetail() {
             boxShadow: '0 4px 24px rgba(59,130,246,0.4)',
           }}
         >
-          立即购买 · ${formatPrice(product.price)} USDT
+          立即购买 · USD ${formatPrice(product.price)}
         </button>
       </div>
     </div>

@@ -5,13 +5,11 @@ import { fetchProducts } from '../api/esim'
 const cache = {}
 const CACHE_TTL = 10 * 60 * 1000 // 10 minutes
 
-const SUPABASE_URL = 'https://afdyzuohzwdvreyhnfdb.supabase.co'
-const SUPABASE_KEY = 'sb_publishable_FfMQeSJTbZPfsKtMF6nyqA_Fgo_gzun'
-const LS_CACHE_KEY = 'esim_products_cache_v5'
+const LS_CACHE_KEY = 'esim_products_cache_v7'
 const LS_CACHE_TTL = 60 * 60 * 1000 // 1 hour
 
 // 清理所有旧版本缓存
-;['v1','v2','v3','v4'].forEach(v => {
+;['v1','v2','v3','v4','v5','v6'].forEach(v => {
   try { localStorage.removeItem(`esim_products_cache_${v}`) } catch(e) {}
 })
 
@@ -25,41 +23,25 @@ function normalizeProduct(p) {
   const countries = p.countries ?? (p.country ? [{ code: p.country, cn: p.country, en: p.country }] : [])
   const price = p.price ?? p.retailPrice ?? 0
   const isUnlimited = p.isUnlimited ?? p.thirdPartyData?.isUnlimited ?? (dataSize === 0)
-  return { ...p, dataSize, validDays, countries, price, isUnlimited, name: p.name ?? '' }
+  const hasVoice = !!(p.hasVoice || (p.thirdPartyData?.voice) || /SMS|Min/i.test(p.nameEn || ''))
+  return { ...p, dataSize, validDays, countries, price, isUnlimited, hasVoice, name: p.name ?? '' }
 }
 
-// 从 Supabase 分页拉取所有产品
-async function fetchAllFromSupabase() {
-  // 使用供应商API拉取完整产品数据（含正确的countries数组格式）
-  const { fetchProducts: fetchFromApi } = await import('./useProducts').catch(() => ({}))
-  
-  // 直接调用供应商API
-  const API_BASE = 'https://ciuh32wky.xigrocoltd.com/api'
-  const CREDENTIALS = { username: 'tgesim', password: '123123' }
-  
-  // 登录获取token
-  const loginRes = await fetch(`${API_BASE}/agent/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(CREDENTIALS),
-  })
-  const loginData = await loginRes.json()
-  if (!loginData.success) throw new Error('Login failed')
-  const token = loginData.data.token
-
-  // 分页拉取所有产品
+// 从后端代理分页拉取所有产品（禁止在前端直连供应商 API 或携带凭证）
+async function fetchAllProductsFromProxy() {
   const allProducts = []
   let page = 1
+
   while (true) {
-    const res = await fetch(`${API_BASE}/agent/products?page=${page}&limit=100`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-    if (!res.ok) break
-    const data = await res.json()
-    const list = data.data?.list || []
+    const data = await fetchProducts({ page, limit: 100 })
+    const list = Array.isArray(data.data)
+      ? data.data
+      : (data.data?.list || [])
+
     if (!list.length) break
     allProducts.push(...list)
-    const total = data.data?.total || 0
+
+    const total = data.data?.total || data.pagination?.total || allProducts.length
     if (allProducts.length >= total) break
     page++
   }
@@ -104,7 +86,7 @@ async function getAllProducts() {
         console.log(`[Products] Loaded ${local.length} from local bundle cache`)
         allProductsCache = local
         // 后台异步更新 localStorage（不阻塞UI）
-        fetchAllFromSupabase().then(raw => {
+        fetchAllProductsFromProxy().then(raw => {
           try {
             localStorage.setItem(LS_CACHE_KEY, JSON.stringify({ ts: Date.now(), data: raw }))
           } catch(e) {}
@@ -133,7 +115,7 @@ async function getAllProducts() {
     // 3. 从供应商API拉取（兜底）
     try {
       console.log('[Products] Fetching from API...')
-      const raw = await fetchAllFromSupabase()
+      const raw = await fetchAllProductsFromProxy()
       console.log(`[Products] Fetched ${raw.length} from API`)
       const products = raw.map(normalizeProduct)
       try {

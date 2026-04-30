@@ -9,7 +9,7 @@ function getFlag(code) {
   return String.fromCodePoint(...[...code.toUpperCase()].map(c => 0x1F1E6 - 65 + c.charCodeAt(0)))
 }
 
-// 热门国家（单国套餐）
+// 热门国家
 const HOT_COUNTRIES = [
   {code:'TH', cn:'泰国'}, {code:'JP', cn:'日本'}, {code:'SG', cn:'新加坡'},
   {code:'MY', cn:'马来西亚'}, {code:'KR', cn:'韩国'}, {code:'HK', cn:'香港'},
@@ -44,12 +44,11 @@ export default function ProductList() {
   const allCountries = useMemo(() => {
     const matched = new Map()
     products.forEach(p => {
-      if (p.countries?.length === 1) {
-        const c = p.countries[0]
+      p.countries?.forEach(c => {
         if (c?.code && !matched.has(c.code)) {
           matched.set(c.code, { code: c.code, cn: c.cn || c.en || c.code, en: c.en || c.cn || c.code })
         }
-      }
+      })
     })
     return Array.from(matched.values()).sort((a, b) => {
       const aHot = HOT_COUNTRIES.some(h => h.code === a.code)
@@ -82,12 +81,22 @@ export default function ProductList() {
     if (matched && selectedCountry?.code !== matched.code) setSelectedCountry(matched)
   }, [initCountryCode, allCountries, selectedCountry])
 
-  // 按国家筛选的套餐
+  const isVoiceProduct = (p) => !!(p.hasVoice || (p.thirdPartyData?.voice) || /SMS|Min/i.test(p.nameEn || p.name || ''))
+
+  // 按国家筛选的套餐：单国优先，同时包含覆盖该国的区域/多国套餐
   const countryProducts = useMemo(() => {
     if (!selectedCountry) return []
-    return products.filter(p =>
-      p.countries?.length === 1 && p.countries[0].code === selectedCountry.code
-    ).sort((a, b) => parseFloat(a.price) - parseFloat(b.price))
+
+    const matched = products.filter(p =>
+      p.countries?.some(c => c.code === selectedCountry.code)
+    )
+
+    return matched.sort((a, b) => {
+      const aSingle = a.countries?.length === 1 ? 0 : 1
+      const bSingle = b.countries?.length === 1 ? 0 : 1
+      if (aSingle !== bSingle) return aSingle - bSingle
+      return parseFloat(a.price) - parseFloat(b.price)
+    })
   }, [products, selectedCountry])
 
   // 区域套餐
@@ -113,9 +122,8 @@ export default function ProductList() {
       }
     })
     result = Object.values(grouped)
-    const isVoice = p => !!(p.hasVoice || (p.thirdPartyData?.voice) || /SMS|Min/i.test(p.nameEn || p.name || ''))
-    if (globalFilter === 'voice') result = result.filter(isVoice)
-    else result = result.filter(p => !isVoice(p))
+    if (globalFilter === 'voice') result = result.filter(isVoiceProduct)
+    else result = result.filter(p => !isVoiceProduct(p))
     return result.sort((a, b) => parseFloat(a.price) - parseFloat(b.price))
   }, [products, globalFilter])
 
@@ -243,7 +251,7 @@ export default function ProductList() {
                         p.type === 'regional' && r.keywords.some(kw => p.name.includes(kw))
                       )
                     )
-                    const hasGlobal = searchOtherResults.some(p => p.type === 'global' || p.countries?.length > 30)
+                    const hasGlobal = searchOtherResults.some(p => p.type === 'global')
                     return (
                       <>
                         {regionMatches.map(r => (
@@ -281,11 +289,14 @@ export default function ProductList() {
           selectedCountry ? (
             // 国家套餐列表
             <>
-              <div style={{ fontSize: '20px', fontWeight: 700, marginBottom: '16px' }}>
+              <div style={{ fontSize: '20px', fontWeight: 700, marginBottom: '8px' }}>
                 {getFlag(selectedCountry.code)} {selectedCountry.cn}
                 <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.4)', fontWeight: 400, marginLeft: '8px' }}>
                   共 {countryProducts.length} 个套餐
                 </span>
+              </div>
+              <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)', marginBottom: '16px' }}>
+                优先显示单国套餐，同时包含覆盖该国家的区域/多国套餐
               </div>
               {countryProducts.map(p => <ProductCard key={p.id} product={p} onClick={() => navigate(`/product/${p.id}`)} />)}
             </>
@@ -361,7 +372,7 @@ export default function ProductList() {
             <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
               {[
                 { id: 'data', label: '📶 纯数据' },
-                { id: 'voice', label: '📞 数据+通话+短信' },
+                { id: 'voice', label: '📞 数据/语音/短信' },
               ].map(f => (
                 <button key={f.id} onClick={() => setGlobalFilter(f.id)} style={{
                   flex: 1, padding: '8px 4px', borderRadius: '12px', fontSize: '12px',

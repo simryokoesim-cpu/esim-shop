@@ -57,10 +57,10 @@ Bot后端 → 供应商API下单 → 获取eSIM激活码 → 发二维码给用�
 | 类型 | 判断条件 | 显示位置 |
 |------|---------|---------|
 | 单国套餐 | countries.length === 1 | 热门国家 |
-| 区域套餐 | type=regional 或 2≤countries≤30 | 区域套餐 |
-| 全球套餐 | type=global 或 countries>30 | 全球套餐 |
-| 含通话 | thirdPartyData.voice 有值 | 全球→含通话 |
-| 含短信 | thirdPartyData.text 有值 | 全球→含短信 |
+| 区域套餐 | 以 `type=regional` 为主，兼容多国非 global/local 套餐 | 区域套餐 |
+| 全球套餐 | 以 `type=global` 为准 | 全球套餐 |
+| 含通话 | `hasVoice` 或语音相关字段命中 | 全球→含通话 |
+| 含短信 | 仅作为补充能力判断，不再单独作为主要分栏 | 视页面逻辑而定 |
 
 ---
 
