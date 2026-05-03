@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "verify:secrets": "node scripts/verify-secrets.mjs",
+    "probe:prod:initdata": "node scripts/probe-production-initdata.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.100.0",

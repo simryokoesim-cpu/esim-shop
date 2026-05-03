@@ -3,12 +3,12 @@ import { useState, useCallback } from 'react'
 
 const ORDERS_KEY = 'esim_orders'
 
-// 获取 Telegram ID 用于后端代理认证
-function getTgIdHeader() {
+// 获取 Telegram WebApp initData；后端只信任 initData 签名解析出的 tg_id
+function getTgInitDataHeader() {
   try {
-    return window.Telegram?.WebApp?.initDataUnsafe?.user?.id?.toString() || '0'
+    return window.Telegram?.WebApp?.initData || ''
   } catch {
-    return '0'
+    return ''
   }
 }
 
@@ -87,7 +87,7 @@ async function saveOrderToBackend(order, retries = 3) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-Telegram-Id': getTgIdHeader()
+          'X-Telegram-Init-Data': getTgInitDataHeader()
         },
         body: JSON.stringify(payload)
       })
