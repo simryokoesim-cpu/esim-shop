@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-import fs from 'node:fs/promises'
+import { auditProfit, summarizeProfit } from './financial-utils.mjs'
+import { loadProductsSource } from './load-products-source.mjs'
 
 const args = new Set(process.argv.slice(2))
 const urlArg = process.argv.find(arg => arg.startsWith('--url='))
@@ -21,6 +22,9 @@ const stats = {
   thirdPartyDataPresent: 0,
   thirdPartyDataMissing: 0,
   correctedVoiceSmsConflicts: 0,
+  financialLossBlocked: 0,
+  lowMarginWarnings: 0,
+  profitableOnline: 0,
 }
 const VOICE_SMS_UNSUPPORTED_NOTE = '(Note: Voice/SMS features not supported by underlying metadata)'
 
@@ -76,6 +80,12 @@ function stripVoiceSmsClaims(text) {
 
 function normalizeProduct(product) {
   const next = { ...product }
+  const profitAudit = auditProfit(product)
+  next.profitAudit = profitAudit
+  if (profitAudit.status === 'FINANCIAL_LOSS') {
+    next.status = 'inactive'
+    next.inactiveReason = 'FINANCIAL_LOSS'
+  }
   const thirdPartyData = product?.thirdPartyData
   const textSuggestsVoiceOrSms = hasVoiceOrSmsText(product)
   const thirdPartyConfirmsVoiceOrSms = !!(thirdPartyData?.voice || thirdPartyData?.text || product?.hasVoice)
@@ -162,38 +172,39 @@ function validateProduct(product, seenIds, countryCodes) {
 }
 
 async function loadProducts() {
-  if (fileArg) {
-    const file = fileArg.split('=').slice(1).join('=')
-    const raw = JSON.parse(await fs.readFile(file, 'utf8'))
-    if (Array.isArray(raw)) return raw
-    return raw.data?.list || raw.products || raw.data || []
-  }
-
-  const all = []
-  for (let page = 1; page < 1000; page++) {
-    const res = await fetch(`${baseUrl}/api/products?page=${page}&limit=100`)
-    const body = await res.json().catch(() => null)
-    if (!res.ok || !body?.success) throw new Error(`Product API failed on page ${page}: HTTP ${res.status}`)
-    const list = body.data?.list || []
-    const total = body.data?.total || all.length
-    all.push(...list)
-    if (!list.length || all.length >= total) break
-  }
-  return all
+  const file = fileArg?.split('=').slice(1).join('=')
+  return loadProductsSource({ baseUrl, fileArg: file, includeFinancialLoss: true })
 }
 
-const products = (await loadProducts()).map(normalizeProduct)
+const loaded = await loadProducts()
+const rawProducts = loaded.products
+const normalizedProducts = rawProducts.map(normalizeProduct)
+const financial = summarizeProfit(normalizedProducts)
+const products = normalizedProducts.filter(product => product.profitAudit?.status !== 'FINANCIAL_LOSS')
+stats.financialLossBlocked = financial.financialLossCount
+stats.lowMarginWarnings = financial.lowMarginCount
+stats.profitableOnline = products.length
 const seenIds = new Set()
 const countryCodes = new Set()
 for (const product of products) validateProduct(product, seenIds, countryCodes)
-stats.total = products.length
+stats.total = rawProducts.length
 stats.uniqueIds = seenIds.size
 stats.countries = countryCodes.size
 
 const result = {
   ok: errors.length === 0 && (!failOnWarn || warnings.length === 0),
-  source: fileArg ? fileArg.split('=').slice(1).join('=') : baseUrl,
+  source: loaded.source,
   stats,
+  financial: {
+    currency: financial.currency,
+    source: 'price(agent retail USD) - agentPrice(wholesale USD); no FX conversion applied because supplier returns both fields in USD',
+    onlineProfitableProducts: products.length,
+    financialLossBlocked: financial.financialLossCount,
+    lowMarginWarnings: financial.lowMarginCount,
+    missingCostCount: financial.missingCostCount,
+    top10LossBlacklist: financial.topLossBlacklist,
+    lowMargin: financial.lowMargin,
+  },
   errors,
   warnings,
 }

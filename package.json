@@ -13,7 +13,9 @@
     "verify:product-schema": "node scripts/verify-product-schema.mjs",
     "deploy:prod": "vercel --prod --yes",
     "predeploy:prod": "npm run verify:product-schema -- --fail-on-warn && node scripts/write-deploy-version.mjs",
-    "stats:three-axis": "node scripts/three-axis-stats.mjs"
+    "stats:three-axis": "node scripts/three-axis-stats.mjs",
+    "audit:profit": "node scripts/profit-audit-report.mjs",
+    "deactivate:financial-loss": "node scripts/deactivate-financial-loss-products.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.100.0",

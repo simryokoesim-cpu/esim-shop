@@ -2,6 +2,7 @@
 // This keeps credentials secure on the server side
 
 const API_BASE = 'https://ciuh32wky.xigrocoltd.com/api'
+const LOW_MARGIN_THRESHOLD_USD = 0.3
 function getCredentials() {
   const username = process.env.ESIM_API_USERNAME
   const password = process.env.ESIM_API_PASSWORD
@@ -49,6 +50,12 @@ function stripVoiceSmsClaims(text) {
 
 function normalizeProduct(product) {
   const next = { ...product }
+  const profitAudit = auditProfit(product)
+  next.profitAudit = profitAudit
+  if (profitAudit.status === 'FINANCIAL_LOSS') {
+    next.status = 'inactive'
+    next.inactiveReason = 'FINANCIAL_LOSS'
+  }
   const textConflict = textSuggestsVoiceOrSms(product) && !metadataConfirmsVoiceOrSms(product)
   if (textConflict) {
     next.hasVoice = false
@@ -69,8 +76,28 @@ function normalizeProduct(product) {
   return next
 }
 
-function normalizeProducts(products) {
-  return (products || []).map(normalizeProduct)
+function parseUsd(value) {
+  const n = Number(value)
+  return Number.isFinite(n) ? n : null
+}
+
+function auditProfit(product) {
+  const retailPriceUsd = parseUsd(product?.price ?? product?.retailPrice)
+  const wholesaleCostUsd = parseUsd(product?.agentPrice ?? product?.cost_price ?? product?.costPrice ?? product?.wholesaleCost ?? product?.wholesale_price ?? product?.wholesalePrice)
+  const marginUsd = retailPriceUsd === null || wholesaleCostUsd === null ? null : Number((retailPriceUsd - wholesaleCostUsd).toFixed(2))
+  return {
+    status: marginUsd === null ? 'MISSING_COST' : marginUsd <= 0 ? 'FINANCIAL_LOSS' : marginUsd < LOW_MARGIN_THRESHOLD_USD ? 'LOW_MARGIN' : 'PROFITABLE',
+    currency: 'USD',
+    retailPriceUsd,
+    wholesaleCostUsd,
+    marginUsd,
+    source: 'price-agentPrice',
+  }
+}
+
+function normalizeProducts(products, { filterFinancialLoss = true } = {}) {
+  const normalized = (products || []).map(normalizeProduct)
+  return filterFinancialLoss ? normalized.filter(product => product.profitAudit?.status !== 'FINANCIAL_LOSS') : normalized
 }
 
 async function login() {
@@ -111,11 +138,7 @@ async function fetchSupplierProducts(token, params) {
   return apiRes.json()
 }
 
-async function fetchAllProducts(token) {
-  if (cachedProducts && Date.now() < productsCacheExpiry) {
-    return cachedProducts
-  }
-
+async function fetchAllRawProducts(token) {
   const allProducts = []
   let page = 1
   while (true) {
@@ -128,7 +151,17 @@ async function fetchAllProducts(token) {
     page += 1
   }
 
-  cachedProducts = normalizeProducts(allProducts)
+  return allProducts
+}
+
+async function fetchAllProducts(token) {
+  if (cachedProducts && Date.now() < productsCacheExpiry) {
+    return cachedProducts
+  }
+
+  const allProducts = await fetchAllRawProducts(token)
+
+  cachedProducts = normalizeProducts(allProducts, { filterFinancialLoss: true })
   productsCacheExpiry = Date.now() + PRODUCTS_CACHE_TTL
   return cachedProducts
 }
@@ -174,11 +207,14 @@ export default async function handler(req, res) {
     const token = await getToken()
     
     // Forward query params
-    const { page = 1, limit = 20, search = '', keyword = '', country = '', id = '' } = req.query
+    const { page = 1, limit = 20, search = '', keyword = '', country = '', id = '', includeFinancialLoss = '' } = req.query
     const keywordValue = search || keyword
+    const allowFinancialAudit = includeFinancialLoss === '1' && req.headers['x-profit-audit-secret'] && process.env.PROFIT_AUDIT_SECRET && req.headers['x-profit-audit-secret'] === process.env.PROFIT_AUDIT_SECRET
 
     if (id || keywordValue || country) {
-      let products = await fetchAllProducts(token)
+      let products = allowFinancialAudit
+        ? normalizeProducts(await fetchAllRawProducts(token), { filterFinancialLoss: false })
+        : await fetchAllProducts(token)
       if (id) {
         products = products.filter(product => String(product.id) === String(id))
       }
@@ -204,11 +240,18 @@ export default async function handler(req, res) {
       })
     }
 
-    const params = new URLSearchParams({ page, limit })
-    if (country) params.set('country', country)
-    const data = await fetchSupplierProducts(token, params)
-    if (data?.data?.list) data.data.list = normalizeProducts(data.data.list)
-    return res.status(200).json(data)
+    const products = allowFinancialAudit
+      ? normalizeProducts(await fetchAllRawProducts(token), { filterFinancialLoss: false })
+      : await fetchAllProducts(token)
+    return res.status(200).json({
+      success: true,
+      data: {
+        list: paginate(products, page, limit),
+        total: products.length,
+        page: parseInt(page, 10) || 1,
+        limit: parseInt(limit, 10) || 20,
+      },
+    })
     
   } catch (error) {
     console.error('API Error:', error)
