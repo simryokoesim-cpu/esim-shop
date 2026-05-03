@@ -28,10 +28,19 @@ function addWarning(product, code, message, extra = {}) {
   warnings.push({ id: product?.id ?? null, code, message, ...extra })
 }
 
+function isUnlimited(product) {
+  return !!(
+    product?.isUnlimited ||
+    product?.thirdPartyData?.isUnlimited ||
+    /无限|unlimited/i.test(String(product?.nameEn || product?.name || ''))
+  )
+}
+
 function isVoiceOrSms(product) {
   return !!(
     product?.hasVoice ||
     product?.thirdPartyData?.voice ||
+    product?.thirdPartyData?.text ||
     /\b(SMS|Min|Minute|Voice|Call)\b/i.test(String(product?.nameEn || product?.name || ''))
   )
 }
@@ -74,8 +83,8 @@ function validateProduct(product, seenIds, countryCodes) {
   if (cls === 'regional' && (countries?.length || 0) < 2) addError(product, 'REGIONAL_COUNTRY_MISMATCH', 'Regional product must cover at least two countries', { type: product.type, countries: countries?.length })
   if (cls === 'global' && product.type !== 'global') addError(product, 'GLOBAL_TYPE_MISMATCH', 'Global classification requires type=global', { type: product.type })
 
-  if (!product.isUnlimited && (!Number.isFinite(Number(product.dataSize)) || Number(product.dataSize) <= 0)) {
-    addWarning(product, 'MISSING_DATA_SIZE', 'Product has no positive dataSize and is not unlimited', { dataSize: product.dataSize })
+  if (!isUnlimited(product) && !isVoiceOrSms(product) && (!Number.isFinite(Number(product.dataSize)) || Number(product.dataSize) <= 0)) {
+    addWarning(product, 'MISSING_DATA_SIZE', 'Pure data product has no positive dataSize and is not unlimited', { dataSize: product.dataSize })
   }
   if (!Number.isFinite(Number(product.validDays)) || Number(product.validDays) <= 0) {
     addWarning(product, 'BAD_VALID_DAYS', 'Product validDays should be positive', { validDays: product.validDays })
