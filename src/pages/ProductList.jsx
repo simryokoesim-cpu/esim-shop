@@ -36,7 +36,7 @@ export default function ProductList() {
   const { products, loading } = useAllProducts()
   const navigate = useNavigate()
 
-  const [searchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
   const initTab = searchParams.get('tab') || 'hot'
   const initCountryCode = searchParams.get('country')
   const initSearch = searchParams.get('search') || ''
@@ -73,31 +73,38 @@ export default function ProductList() {
   }, [initTab, initSearch])
 
   useEffect(() => {
-    if (!initCountryCode) {
-      setSelectedCountry(null)
-      return
-    }
+    if (!initCountryCode) return
     const matched = allCountries.find(c => c.code === initCountryCode) || HOT_COUNTRIES.find(c => c.code === initCountryCode)
-    if (matched && selectedCountry?.code !== matched.code) setSelectedCountry(matched)
-  }, [initCountryCode, allCountries, selectedCountry])
+    if (matched) setSelectedCountry(matched)
+  }, [initCountryCode, allCountries])
 
   const isVoiceProduct = (p) => !!(p.hasVoice || (p.thirdPartyData?.voice) || /SMS|Min/i.test(p.nameEn || p.name || ''))
 
-  // 按国家筛选的套餐：单国优先，同时包含覆盖该国的区域/多国套餐
-  const countryProducts = useMemo(() => {
-    if (!selectedCountry) return []
+  // 按国家筛选并分组：单国套餐、覆盖该国的区域套餐、覆盖该国的全球套餐分开展示
+  const countryProductGroups = useMemo(() => {
+    const empty = { single: [], regional: [], global: [] }
+    if (!selectedCountry) return empty
 
-    const matched = products.filter(p =>
+    const covering = products.filter(p =>
       p.countries?.some(c => c.code === selectedCountry.code)
     )
+    const byPrice = (a, b) => parseFloat(a.price) - parseFloat(b.price)
 
-    return matched.sort((a, b) => {
-      const aSingle = a.countries?.length === 1 ? 0 : 1
-      const bSingle = b.countries?.length === 1 ? 0 : 1
-      if (aSingle !== bSingle) return aSingle - bSingle
-      return parseFloat(a.price) - parseFloat(b.price)
+    const groups = { single: [], regional: [], global: [] }
+    covering.forEach(p => {
+      if (p.countries?.length === 1) groups.single.push(p)
+      else if (p.type === 'global' || p.countries?.length > 30) groups.global.push(p)
+      else groups.regional.push(p)
     })
+
+    return {
+      single: groups.single.sort(byPrice),
+      regional: groups.regional.sort(byPrice),
+      global: groups.global.sort(byPrice),
+    }
   }, [products, selectedCountry])
+
+  const countryProductsTotal = countryProductGroups.single.length + countryProductGroups.regional.length + countryProductGroups.global.length
 
   // 区域套餐
   const regionalProducts = useMemo(() => {
@@ -162,10 +169,45 @@ export default function ProductList() {
     { id: 'global', label: '🌐 全球套餐' },
   ]
 
+  const selectCountry = (country) => {
+    setSearch('')
+    setTab('hot')
+    setSelectedCountry(country)
+    setSelectedRegion(null)
+    setSearchParams({ tab: 'hot', country: country.code })
+  }
+
+  const clearSelectedCountry = () => {
+    setSelectedCountry(null)
+    setSearchParams({ tab: 'hot' })
+  }
+
   const handleTabChange = (t) => {
     setTab(t)
     setSelectedCountry(null)
     setSelectedRegion(null)
+    setSearchParams(t === 'hot' ? { tab: 'hot' } : { tab: t })
+  }
+
+  const renderProductSubgroups = (items) => {
+    const dataOnly = items.filter(p => !isVoiceProduct(p))
+    const voiceAndSms = items.filter(isVoiceProduct)
+    return (
+      <>
+        {dataOnly.length > 0 && (
+          <>
+            <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.45)', margin: '8px 0 8px' }}>📶 纯数据（{dataOnly.length}）</div>
+            {dataOnly.map(p => <ProductCard key={p.id} product={p} onClick={() => navigate(`/product/${p.id}`)} />)}
+          </>
+        )}
+        {voiceAndSms.length > 0 && (
+          <>
+            <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.45)', margin: '14px 0 8px' }}>📞 数据/语音/短信（{voiceAndSms.length}）</div>
+            {voiceAndSms.map(p => <ProductCard key={p.id} product={p} onClick={() => navigate(`/product/${p.id}`)} />)}
+          </>
+        )}
+      </>
+    )
   }
 
   const isInDetail = (tab === 'hot' && selectedCountry) || (tab === 'regional' && selectedRegion)
@@ -183,7 +225,7 @@ export default function ProductList() {
         {/* Back + Search */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
           <button
-            onClick={() => isInDetail ? (setSelectedCountry(null), setSelectedRegion(null)) : navigate('/')}
+            onClick={() => isInDetail ? (selectedCountry ? clearSelectedCountry() : setSelectedRegion(null)) : navigate('/')}
             style={{ background: 'rgba(255,255,255,0.08)', border: 'none', color: '#fff', borderRadius: '10px', padding: '8px 12px', cursor: 'pointer', fontSize: '16px' }}
           >←</button>
           <input
@@ -224,7 +266,7 @@ export default function ProductList() {
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', marginBottom: '24px' }}>
                   {searchCountries.map(c => (
-                    <button key={c.code} onClick={() => { setSearch(''); setTab('hot'); setSelectedCountry(c) }} style={{
+                    <button key={c.code} onClick={() => selectCountry(c)} style={{
                       background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)',
                       borderRadius: '14px', padding: '14px 8px', cursor: 'pointer', textAlign: 'center',
                     }}>
@@ -292,13 +334,33 @@ export default function ProductList() {
               <div style={{ fontSize: '20px', fontWeight: 700, marginBottom: '8px' }}>
                 {getFlag(selectedCountry.code)} {selectedCountry.cn}
                 <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.4)', fontWeight: 400, marginLeft: '8px' }}>
-                  共 {countryProducts.length} 个套餐
+                  本地套餐 {countryProductGroups.single.length} 个
                 </span>
               </div>
               <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)', marginBottom: '16px' }}>
-                优先显示单国套餐，同时包含覆盖该国家的区域/多国套餐
+                本地国家套餐、区域套餐、全球套餐已分开展示
               </div>
-              {countryProducts.map(p => <ProductCard key={p.id} product={p} onClick={() => navigate(`/product/${p.id}`)} />)}
+
+              {countryProductGroups.single.length > 0 && (
+                <>
+                  <div style={{ fontSize: '13px', color: '#93c5fd', fontWeight: 600, margin: '0 0 10px' }}>📍 本地国家套餐（{countryProductGroups.single.length}）</div>
+                  {renderProductSubgroups(countryProductGroups.single)}
+                </>
+              )}
+
+              {countryProductGroups.regional.length > 0 && (
+                <>
+                  <div style={{ fontSize: '13px', color: '#a78bfa', fontWeight: 600, margin: '22px 0 10px' }}>🗺️ 覆盖该国家的区域套餐（{countryProductGroups.regional.length}）</div>
+                  {renderProductSubgroups(countryProductGroups.regional)}
+                </>
+              )}
+
+              {countryProductGroups.global.length > 0 && (
+                <>
+                  <div style={{ fontSize: '13px', color: '#34d399', fontWeight: 600, margin: '22px 0 10px' }}>🌐 覆盖该国家的全球套餐（{countryProductGroups.global.length}）</div>
+                  {renderProductSubgroups(countryProductGroups.global)}
+                </>
+              )}
             </>
           ) : (
             // 国家网格
@@ -308,7 +370,7 @@ export default function ProductList() {
               <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.35)', marginBottom: '10px' }}>热门国家</div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', marginBottom: '20px' }}>
                 {HOT_COUNTRIES.map(c => (
-                  <button key={c.code} onClick={() => setSelectedCountry(c)} style={{
+                  <button key={c.code} onClick={() => selectCountry(c)} style={{
                     background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)',
                     borderRadius: '14px', padding: '14px 8px', cursor: 'pointer', textAlign: 'center',
                     transition: 'all 0.2s',
@@ -324,7 +386,7 @@ export default function ProductList() {
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px' }}>
                 {nonHotCountries.map(c => (
-                  <button key={c.code} onClick={() => setSelectedCountry(c)} style={{
+                  <button key={c.code} onClick={() => selectCountry(c)} style={{
                     background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)',
                     borderRadius: '14px', padding: '14px 8px', cursor: 'pointer', textAlign: 'center',
                     transition: 'all 0.2s',
@@ -393,7 +455,7 @@ export default function ProductList() {
         {loading && (
           <div style={{ textAlign: 'center', color: 'rgba(255,255,255,0.3)', padding: '40px' }}>加载中...</div>
         )}
-        {!loading && !search && tab === 'hot' && selectedCountry && countryProducts.length === 0 && (
+        {!loading && !search && tab === 'hot' && selectedCountry && countryProductsTotal === 0 && (
           <div style={{ textAlign: 'center', color: 'rgba(255,255,255,0.4)', padding: '40px' }}>
             <div style={{ fontSize: '40px', marginBottom: '12px' }}>😕</div>
             <div>暂无该国家的套餐，请稍后再试</div>
