@@ -18,6 +18,8 @@ const stats = {
   global: 0,
   dataOnly: 0,
   voiceOrSms: 0,
+  thirdPartyDataPresent: 0,
+  thirdPartyDataMissing: 0,
 }
 
 function addError(product, code, message, extra = {}) {
@@ -36,12 +38,26 @@ function isUnlimited(product) {
   )
 }
 
+function getFeatureText(product) {
+  return [
+    product?.name,
+    product?.nameEn,
+    product?.description,
+    product?.descriptionEn,
+    ...(Array.isArray(product?.features) ? product.features : []),
+  ].filter(Boolean).join(' ')
+}
+
+function hasVoiceOrSmsText(product) {
+  return /\b(SMS|Min|Minute|Minutes|Voice|Call|Calls|Text|Texts)\b|语音|短信|通话/i.test(getFeatureText(product))
+}
+
 function isVoiceOrSms(product) {
   return !!(
     product?.hasVoice ||
     product?.thirdPartyData?.voice ||
     product?.thirdPartyData?.text ||
-    /\b(SMS|Min|Minute|Voice|Call)\b/i.test(String(product?.nameEn || product?.name || ''))
+    hasVoiceOrSmsText(product)
   )
 }
 
@@ -63,6 +79,27 @@ function validateProduct(product, seenIds, countryCodes) {
   seenIds.add(id)
 
   if (!product.name && !product.nameEn) addError(product, 'MISSING_NAME', 'Product missing name/nameEn')
+  const thirdPartyData = product.thirdPartyData
+  if (!thirdPartyData || typeof thirdPartyData !== 'object') {
+    stats.thirdPartyDataMissing += 1
+    addError(product, 'MISSING_THIRD_PARTY_DATA', 'Product missing thirdPartyData for supplier feature validation')
+  } else {
+    stats.thirdPartyDataPresent += 1
+    if (!thirdPartyData.packageId && !thirdPartyData.packageSlug) {
+      addWarning(product, 'WEAK_THIRD_PARTY_IDENTITY', 'thirdPartyData missing packageId/packageSlug')
+    }
+  }
+
+  const textSuggestsVoiceOrSms = hasVoiceOrSmsText(product)
+  const thirdPartyConfirmsVoiceOrSms = !!(thirdPartyData?.voice || thirdPartyData?.text || product.hasVoice)
+  if (textSuggestsVoiceOrSms && !thirdPartyConfirmsVoiceOrSms) {
+    addError(product, 'NEEDS_TG_CONFIRMATION', '[待确认] Voice/SMS feature is ambiguous; block upload until TG confirmation', {
+      action: 'TG_PENDING_CONFIRMATION_REQUIRED',
+      name: product.name,
+      nameEn: product.nameEn,
+    })
+  }
+
   const price = Number(product.price)
   if (!Number.isFinite(price) || price <= 0) addError(product, 'BAD_PRICE', 'Product price must be positive', { price: product.price })
 
