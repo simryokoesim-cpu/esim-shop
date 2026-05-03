@@ -12,13 +12,12 @@ import NavBar from './components/NavBar'
 function App() {
   useEffect(() => {
     // Initialize Telegram Web App
-    if (window.Telegram?.WebApp) {
-      const tg = window.Telegram.WebApp
-      tg.ready()
-      tg.expand()
-      tg.setHeaderColor('#0a0a0f')
-      tg.setBackgroundColor('#0a0a0f')
-    }
+    const tg = window.Telegram?.WebApp
+    if (!tg) return
+    try { tg.ready?.() } catch (e) { console.warn('[TelegramWebApp] ready failed:', e) }
+    try { tg.expand?.() } catch (e) { console.warn('[TelegramWebApp] expand failed:', e) }
+    try { tg.setHeaderColor?.('#0a0a0f') } catch (e) { console.warn('[TelegramWebApp] setHeaderColor failed:', e) }
+    try { tg.setBackgroundColor?.('#0a0a0f') } catch (e) { console.warn('[TelegramWebApp] setBackgroundColor failed:', e) }
   }, [])
 
   return (

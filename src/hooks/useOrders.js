@@ -105,6 +105,38 @@ async function saveOrderToBackend(order, retries = 3) {
   console.error('[useOrders] ❌ 订单写入失败（已重试3次）:', order.id)
 }
 
+async function updateOrderOnBackend(orderId, updates, retries = 2) {
+  const payload = {
+    id: orderId,
+    payment_method: updates.paymentMethod,
+    settlement_amount: updates.settlementAmount ?? updates.amount,
+    settlement_currency: updates.settlementCurrency ?? updates.currency,
+  }
+
+  for (let i = 0; i < retries; i++) {
+    try {
+      const r = await fetch('/api/orders', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Telegram-Init-Data': getTgInitDataHeader()
+        },
+        body: JSON.stringify(payload)
+      })
+      if (r.ok) {
+        console.log('[useOrders] ✅ 支付选择已同步:', orderId)
+        return
+      }
+      console.warn(`[useOrders] 支付选择同步 ${i+1} 失败: ${r.status}`)
+      if (i < retries - 1) await new Promise(r => setTimeout(r, 800))
+    } catch (e) {
+      console.warn(`[useOrders] 支付选择同步异常 ${i+1}:`, e.message)
+      if (i < retries - 1) await new Promise(r => setTimeout(r, 800))
+    }
+  }
+  console.error('[useOrders] ❌ 支付选择同步失败:', orderId)
+}
+
 export function useOrders() {
   const [orders, setOrders] = useState(() => loadOrders())
 
@@ -124,6 +156,7 @@ export function useOrders() {
       saveOrders(next)
       return next
     })
+    if (updates.paymentMethod) updateOrderOnBackend(orderId, updates)
   }, [])
 
   const cancelOrder = useCallback((orderId) => {

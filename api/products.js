@@ -121,7 +121,7 @@ export default async function handler(req, res) {
     const { page = 1, limit = 20, search = '', keyword = '', country = '', id = '' } = req.query
     const keywordValue = search || keyword
 
-    if (id || keywordValue) {
+    if (id || keywordValue || country) {
       let products = await fetchAllProducts(token)
       if (id) {
         products = products.filter(product => String(product.id) === String(id))
@@ -134,7 +134,8 @@ export default async function handler(req, res) {
           .map(item => item.product)
       }
       if (country) {
-        products = products.filter(product => (product.countries || []).some(c => c.code === country))
+        const countryCode = String(country).toUpperCase()
+        products = products.filter(product => (product.countries || []).some(c => String(c.code || '').toUpperCase() === countryCode))
       }
       return res.status(200).json({
         success: true,

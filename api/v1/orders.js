@@ -58,6 +58,49 @@ function validateCreatePayload(order) {
   return null
 }
 
+async function getCanonicalProduct(req, productId) {
+  const host = req.headers?.host
+  if (!host) throw new Error('MISSING_HOST')
+  const protocol = String(req.headers?.['x-forwarded-proto'] || 'https').split(',')[0].trim() || 'https'
+  const url = `${protocol}://${host}/api/products?id=${encodeURIComponent(productId)}&limit=1`
+  const r = await fetch(url)
+  const data = await r.json()
+  if (!r.ok || !data?.success) throw new Error('PRODUCT_LOOKUP_FAILED')
+  return data?.data?.list?.[0] || null
+}
+
+function assertCanonicalOrder(order, product) {
+  if (!product) return 'PRODUCT_NOT_FOUND'
+  const expectedAmount = Number(product.price)
+  const receivedAmount = Number(order.amount)
+  if (!Number.isFinite(expectedAmount) || expectedAmount < 0) return 'BAD_PRODUCT_PRICE'
+  if (!Number.isFinite(receivedAmount) || Math.abs(receivedAmount - expectedAmount) > 0.01) return 'AMOUNT_MISMATCH'
+  order.product_id = String(product.id)
+  order.product_name = product.name || product.nameEn || order.product_name
+  order.amount = String(product.price)
+  order.currency = 'USD'
+  return null
+}
+
+function paymentSelectionPayload(input) {
+  const body = input || {}
+  const paymentMethod = String(body.payment_method ?? body.paymentMethod ?? '').toLowerCase()
+  if (!['usdt', 'ton'].includes(paymentMethod)) return { error: 'BAD_PAYMENT_METHOD' }
+
+  const settlementAmount = body.settlement_amount ?? body.settlementAmount ?? body.amount
+  const settlementCurrency = String(body.settlement_currency ?? body.settlementCurrency ?? body.currency ?? '').toUpperCase()
+  if (!Number.isFinite(Number(settlementAmount)) || Number(settlementAmount) < 0) return { error: 'BAD_SETTLEMENT_AMOUNT' }
+  if (!settlementCurrency) return { error: 'BAD_SETTLEMENT_CURRENCY' }
+
+  return {
+    payload: {
+      payment_method: paymentMethod,
+      settlement_amount: String(settlementAmount),
+      settlement_currency: settlementCurrency,
+    },
+  }
+}
+
 export default async function handler(req, res) {
   setCors(req, res)
 
@@ -72,6 +115,10 @@ export default async function handler(req, res) {
       const order = publicOrderPayload(req.body, req)
       const payloadError = validateCreatePayload(order)
       if (payloadError) return res.status(400).json({ error: payloadError })
+
+      const product = await getCanonicalProduct(req, order.product_id)
+      const canonicalError = assertCanonicalOrder(order, product)
+      if (canonicalError) return res.status(400).json({ error: canonicalError })
 
       const r = await fetch(`${SUPABASE_URL}/rest/v1/miniapp_orders`, {
         method: 'POST',
@@ -93,10 +140,26 @@ export default async function handler(req, res) {
     }
 
     if (req.method === 'PATCH') {
-      return res.status(403).json({
-        error: 'PATCH_DISABLED',
-        message: 'Payment selection updates remain disabled until the dedicated /api/v1/orders/:id/payment-selection endpoint is implemented.',
+      const orderId = req.body?.id || req.query?.id
+      if (!orderId || typeof orderId !== 'string') return res.status(400).json({ error: 'MISSING_ORDER_ID' })
+      const selection = paymentSelectionPayload(req.body)
+      if (selection.error) return res.status(400).json({ error: selection.error })
+
+      const r = await fetch(`${SUPABASE_URL}/rest/v1/miniapp_orders?id=eq.${encodeURIComponent(orderId)}&tg_id=eq.${encodeURIComponent(req.user.tg_id)}&status=in.(pending,pending_payment)`, {
+        method: 'PATCH',
+        headers: supabaseHeaders({
+          'Content-Type': 'application/json',
+          Prefer: 'return=representation',
+        }),
+        body: JSON.stringify(selection.payload),
       })
+
+      const text = await r.text()
+      let data
+      try { data = JSON.parse(text) } catch { data = text }
+      if (!r.ok) return res.status(r.status).json(data || { error: 'SUPABASE_PATCH_FAILED' })
+      if (Array.isArray(data) && data.length === 0) return res.status(404).json({ error: 'ORDER_NOT_FOUND' })
+      return res.status(200).json({ success: true, id: orderId })
     }
 
     if (req.method === 'GET') {
