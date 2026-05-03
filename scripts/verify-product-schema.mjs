@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { auditProfit, summarizeProfit } from './financial-utils.mjs'
+import { auditProfit, getFeatureSignals, normalizePriceForProfit, summarizeProfit } from './skill-audit.js'
 import { loadProductsSource } from './load-products-source.mjs'
 
 const args = new Set(process.argv.slice(2))
@@ -21,7 +21,7 @@ const stats = {
   voiceOrSms: 0,
   thirdPartyDataPresent: 0,
   thirdPartyDataMissing: 0,
-  correctedVoiceSmsConflicts: 0,
+  featureDefenseRestored: 0,
   financialLossBlocked: 0,
   lowMarginWarnings: 0,
   profitableOnline: 0,
@@ -67,38 +67,24 @@ function isVoiceOrSms(product) {
   )
 }
 
-function stripVoiceSmsClaims(text) {
-  return String(text || '')
-    .replace(/。?包含语音通话/g, '')
-    .replace(/，?包含语音通话/g, '')
-    .replace(/。?包含短信服务/g, '')
-    .replace(/，?包含短信服务/g, '')
-    .replace(/\b(Voice|SMS|Calls?|Texts?|Minutes?)\b/gi, '')
-    .replace(/\s{2,}/g, ' ')
-    .trim()
-}
-
 function normalizeProduct(product) {
-  const next = { ...product }
+  const next = normalizePriceForProfit({ ...product })
   const profitAudit = auditProfit(product)
   next.profitAudit = profitAudit
   if (profitAudit.status === 'FINANCIAL_LOSS') {
     next.status = 'inactive'
     next.inactiveReason = 'FINANCIAL_LOSS'
   }
-  const thirdPartyData = product?.thirdPartyData
-  const textSuggestsVoiceOrSms = hasVoiceOrSmsText(product)
-  const thirdPartyConfirmsVoiceOrSms = !!(thirdPartyData?.voice || thirdPartyData?.text || product?.hasVoice)
-  if (textSuggestsVoiceOrSms && !thirdPartyConfirmsVoiceOrSms) {
-    stats.correctedVoiceSmsConflicts += 1
-    next.hasVoice = false
-    next.description = `${stripVoiceSmsClaims(next.description)} ${VOICE_SMS_UNSUPPORTED_NOTE}`.trim()
-    next.descriptionEn = `${stripVoiceSmsClaims(next.descriptionEn)} ${VOICE_SMS_UNSUPPORTED_NOTE}`.trim()
-    next.features = (Array.isArray(next.features) ? next.features : [])
-      .filter(feature => !/语音|短信|通话|\b(SMS|Voice|Calls?|Texts?|Minutes?)\b/i.test(String(feature || '')))
-    if (!next.features.some(feature => /仅数据|data only/i.test(String(feature)))) next.features.unshift('仅数据流量')
-    next.capability = { data: true, voice: false, sms: false, source: 'thirdPartyData' }
-  }
+  const signals = getFeatureSignals(next)
+  if ((signals.voice || signals.sms) && (!product?.hasVoice && !product?.thirdPartyData?.voice && !product?.thirdPartyData?.text)) stats.featureDefenseRestored += 1
+  next.hasVoice = signals.voice
+  next.capability = signals
+  const features = Array.isArray(next.features) ? [...next.features] : []
+  if (signals.voice && !features.some(f => /语音|通话|Voice|Call/i.test(String(f)))) features.unshift('包含语音通话')
+  if (signals.sms && !features.some(f => /短信|SMS|Text/i.test(String(f)))) features.unshift('包含短信服务')
+  next.features = features.filter(feature => !/Voice\/SMS features not supported/i.test(String(feature)))
+  next.description = String(next.description || '').replace(VOICE_SMS_UNSUPPORTED_NOTE, '').replace(/，\s*$/,'').trim()
+  next.descriptionEn = String(next.descriptionEn || '').replace(VOICE_SMS_UNSUPPORTED_NOTE, '').trim()
   return next
 }
 
@@ -127,16 +113,6 @@ function validateProduct(product, seenIds, countryCodes) {
     if (!thirdPartyData.packageId && !thirdPartyData.packageSlug) {
       addWarning(product, 'WEAK_THIRD_PARTY_IDENTITY', 'thirdPartyData missing packageId/packageSlug')
     }
-  }
-
-  const textSuggestsVoiceOrSms = hasVoiceOrSmsText(product)
-  const thirdPartyConfirmsVoiceOrSms = !!(thirdPartyData?.voice || thirdPartyData?.text || product.hasVoice)
-  if (textSuggestsVoiceOrSms && !thirdPartyConfirmsVoiceOrSms && !String(product.description || '').includes(VOICE_SMS_UNSUPPORTED_NOTE)) {
-    addError(product, 'NEEDS_TG_CONFIRMATION', '[待确认] Voice/SMS feature is ambiguous; block upload until TG confirmation', {
-      action: 'TG_PENDING_CONFIRMATION_REQUIRED',
-      name: product.name,
-      nameEn: product.nameEn,
-    })
   }
 
   const price = Number(product.price)

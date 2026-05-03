@@ -55,13 +55,17 @@ export default function ProductDetail() {
 
   const tags = []
   if (product.isRenewable) tags.push({ icon: '🔄', text: '可续费', color: '#10b981' })
-  if (product.hasVoice) tags.push({ icon: '📱', text: '含语音通话', color: '#8b5cf6' })
+  if (product.hasVoice || product.capability?.voice) tags.push({ icon: '📞', text: '含语音通话', color: '#8b5cf6' })
+  if (product.capability?.sms) tags.push({ icon: '💬', text: '含短信服务', color: '#06b6d4' })
   if (product.isUnlimited) tags.push({ icon: '♾️', text: '无限流量', color: '#f59e0b' })
   if (product.type === 'global') tags.push({ icon: '🌐', text: '全球通用', color: '#3b82f6' })
   tags.push({ icon: '⚡', text: '即买即用', color: '#ef4444' })
 
   return (
     <div style={{ minHeight: '100vh', background: '#0a0a0f' }}>
+      {product.jsonLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(product.jsonLd) }} />
+      )}
       {/* Hero section */}
       <div style={{
         background: 'linear-gradient(180deg, #1e1b4b 0%, #0a0a0f 100%)',

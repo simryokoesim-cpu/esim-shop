@@ -19,7 +19,8 @@ function getSmartTags(product) {
     tags.push({ text: '大流量', color: '#10b981', bg: 'rgba(16,185,129,0.15)' })
   }
 
-  if (product.hasVoice) tags.push({ text: '含通话', color: '#8b5cf6', bg: 'rgba(139,92,246,0.15)' })
+  if (product.hasVoice || product.capability?.voice) tags.push({ text: '含通话', color: '#8b5cf6', bg: 'rgba(139,92,246,0.15)' })
+  if (product.capability?.sms) tags.push({ text: '含短信', color: '#06b6d4', bg: 'rgba(6,182,212,0.15)' })
   if (product.renewable) tags.push({ text: '可续费', color: '#06b6d4', bg: 'rgba(6,182,212,0.15)' })
   if (product.type === 'global') tags.push({ text: '全球通用', color: '#3b82f6', bg: 'rgba(59,130,246,0.15)' })
 

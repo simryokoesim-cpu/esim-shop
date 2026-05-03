@@ -1,8 +1,10 @@
 // Backend proxy for eSIM products API
 // This keeps credentials secure on the server side
 
+import { auditProfit, getFeatureSignals, normalizePriceForProfit } from '../scripts/skill-audit.js'
+import { generateProductJsonLd, generateProductMeta } from '../scripts/skill-seo.js'
+
 const API_BASE = 'https://ciuh32wky.xigrocoltd.com/api'
-const LOW_MARGIN_THRESHOLD_USD = 0.3
 function getCredentials() {
   const username = process.env.ESIM_API_USERNAME
   const password = process.env.ESIM_API_PASSWORD
@@ -19,80 +21,26 @@ let productsCacheExpiry = 0
 const PRODUCTS_CACHE_TTL = 10 * 60 * 1000
 const VOICE_SMS_UNSUPPORTED_NOTE = '(Note: Voice/SMS features not supported by underlying metadata)'
 
-function getFeatureText(product) {
-  return [
-    product?.name,
-    product?.nameEn,
-    product?.description,
-    product?.descriptionEn,
-    ...(Array.isArray(product?.features) ? product.features : []),
-  ].filter(Boolean).join(' ').replaceAll(VOICE_SMS_UNSUPPORTED_NOTE, '')
-}
-
-function textSuggestsVoiceOrSms(product) {
-  return /\b(SMS|Min|Minute|Minutes|Voice|Call|Calls|Text|Texts)\b|语音|短信|通话/i.test(getFeatureText(product))
-}
-
-function metadataConfirmsVoiceOrSms(product) {
-  return !!(product?.hasVoice || product?.thirdPartyData?.voice || product?.thirdPartyData?.text)
-}
-
-function stripVoiceSmsClaims(text) {
-  return String(text || '')
-    .replace(/。?包含语音通话/g, '')
-    .replace(/，?包含语音通话/g, '')
-    .replace(/。?包含短信服务/g, '')
-    .replace(/，?包含短信服务/g, '')
-    .replace(/\b(Voice|SMS|Calls?|Texts?|Minutes?)\b/gi, '')
-    .replace(/\s{2,}/g, ' ')
-    .trim()
-}
-
 function normalizeProduct(product) {
-  const next = { ...product }
-  const profitAudit = auditProfit(product)
+  const next = normalizePriceForProfit({ ...product })
+  const profitAudit = auditProfit(next)
   next.profitAudit = profitAudit
   if (profitAudit.status === 'FINANCIAL_LOSS') {
     next.status = 'inactive'
     next.inactiveReason = 'FINANCIAL_LOSS'
   }
-  const textConflict = textSuggestsVoiceOrSms(product) && !metadataConfirmsVoiceOrSms(product)
-  if (textConflict) {
-    next.hasVoice = false
-    next.description = `${stripVoiceSmsClaims(next.description)} ${VOICE_SMS_UNSUPPORTED_NOTE}`.trim()
-    next.descriptionEn = `${stripVoiceSmsClaims(next.descriptionEn)} ${VOICE_SMS_UNSUPPORTED_NOTE}`.trim()
-    next.features = (Array.isArray(next.features) ? next.features : [])
-      .filter(feature => !/语音|短信|通话|\b(SMS|Voice|Calls?|Texts?|Minutes?)\b/i.test(String(feature || '')))
-    if (!next.features.some(feature => /仅数据|data only/i.test(String(feature)))) next.features.unshift('仅数据流量')
-    next.capability = { data: true, voice: false, sms: false, source: 'thirdPartyData' }
-  } else {
-    next.capability = {
-      data: true,
-      voice: !!(next.hasVoice || next.thirdPartyData?.voice),
-      sms: !!next.thirdPartyData?.text,
-      source: 'thirdPartyData',
-    }
-  }
+  const signals = getFeatureSignals(next)
+  next.hasVoice = signals.voice
+  next.capability = signals
+  const features = Array.isArray(next.features) ? [...next.features] : []
+  if (signals.voice && !features.some(f => /语音|通话|Voice|Call/i.test(String(f)))) features.unshift('包含语音通话')
+  if (signals.sms && !features.some(f => /短信|SMS|Text/i.test(String(f)))) features.unshift('包含短信服务')
+  next.features = features.filter(feature => !/Voice\/SMS features not supported/i.test(String(feature)))
+  next.description = String(next.description || '').replace(VOICE_SMS_UNSUPPORTED_NOTE, '').replace(/，\s*$/,'').trim()
+  next.descriptionEn = String(next.descriptionEn || '').replace(VOICE_SMS_UNSUPPORTED_NOTE, '').trim()
+  next.seo = generateProductMeta(next)
+  next.jsonLd = generateProductJsonLd(next)
   return next
-}
-
-function parseUsd(value) {
-  const n = Number(value)
-  return Number.isFinite(n) ? n : null
-}
-
-function auditProfit(product) {
-  const retailPriceUsd = parseUsd(product?.price ?? product?.retailPrice)
-  const wholesaleCostUsd = parseUsd(product?.agentPrice ?? product?.cost_price ?? product?.costPrice ?? product?.wholesaleCost ?? product?.wholesale_price ?? product?.wholesalePrice)
-  const marginUsd = retailPriceUsd === null || wholesaleCostUsd === null ? null : Number((retailPriceUsd - wholesaleCostUsd).toFixed(2))
-  return {
-    status: marginUsd === null ? 'MISSING_COST' : marginUsd <= 0 ? 'FINANCIAL_LOSS' : marginUsd < LOW_MARGIN_THRESHOLD_USD ? 'LOW_MARGIN' : 'PROFITABLE',
-    currency: 'USD',
-    retailPriceUsd,
-    wholesaleCostUsd,
-    marginUsd,
-    source: 'price-agentPrice',
-  }
 }
 
 function normalizeProducts(products, { filterFinancialLoss = true } = {}) {
