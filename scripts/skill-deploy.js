@@ -14,7 +14,9 @@ function run(command, commandArgs, options = {}) {
 
 export function runPredeployGate() {
   run('node', ['scripts/verify-product-schema.mjs', '--fail-on-warn'])
+  run('node', ['scripts/audit-price-volatility.mjs', '--write'])
   run('node', ['scripts/profit-audit-report.mjs', '--out=/home/adobe/.openclaw/workspace/reports/miniapp-profit-audit-predeploy-latest.json'])
+  run('node', ['scripts/ops-artifact-quota.mjs'])
   run('npm', ['run', 'build'])
   run('node', ['scripts/write-deploy-version.mjs'])
 }

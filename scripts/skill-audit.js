@@ -73,7 +73,6 @@ export function summarizeProfit(products) {
   const lowMargin = audited.filter(item => item.audit.status === 'LOW_MARGIN')
   const missingCost = audited.filter(item => item.audit.status === 'MISSING_COST')
   const profitable = audited.filter(item => item.audit.status === 'PROFITABLE' || item.audit.status === 'LOW_MARGIN')
-  const dynamicPriced = audited.filter(item => item.audit.dynamicPricing?.applied)
 
   const toReportRow = ({ product, audit }) => ({
     id: product.id,
@@ -94,8 +93,6 @@ export function summarizeProfit(products) {
     financialLossCount: financialLoss.length,
     lowMarginCount: lowMargin.length,
     missingCostCount: missingCost.length,
-    dynamicPricedCount: dynamicPriced.length,
-    dynamicPriced: dynamicPriced.map(toReportRow).sort((a, b) => a.id - b.id),
     topLossBlacklist: financialLoss.map(toReportRow).sort((a, b) => a.marginUsd - b.marginUsd).slice(0, 10),
     financialLoss: financialLoss.map(toReportRow).sort((a, b) => a.marginUsd - b.marginUsd),
     lowMargin: lowMargin.map(toReportRow).sort((a, b) => a.marginUsd - b.marginUsd),

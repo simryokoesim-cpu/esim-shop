@@ -28,7 +28,7 @@ function resolveVercelToken() {
   return ''
 }
 
-run('npm', ['run', 'verify:product-schema', '--', '--fail-on-warn'])
+run('npm', ['run', 'predeploy:prod'])
 
 const token = resolveVercelToken()
 const args = ['--prod', '--yes']
