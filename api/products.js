@@ -27,7 +27,7 @@ function normalizeProduct(product) {
   next.profitAudit = profitAudit
   if (profitAudit.status === 'FINANCIAL_LOSS') {
     next.status = 'inactive'
-    next.inactiveReason = 'FINANCIAL_LOSS'
+    next.inactiveReason = 'DATA_ERROR'
   }
   const signals = getFeatureSignals(next)
   next.hasVoice = signals.voice

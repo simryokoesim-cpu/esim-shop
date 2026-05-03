@@ -1,6 +1,4 @@
 export const LOW_MARGIN_THRESHOLD_USD = 0.3
-export const DYNAMIC_PRICE_MARKUP = 0.2
-export const DYNAMIC_PRICE_FEE_USD = 1
 
 export function parseUsd(value) {
   const n = Number(value)
@@ -34,31 +32,8 @@ export function hasAdvantageFeatures(product) {
   return !!(f.voice || f.sms)
 }
 
-export function dynamicRetailPriceFromCost(cost) {
-  const n = parseUsd(cost)
-  if (n === null) return null
-  return Number(Math.ceil((n * (1 + DYNAMIC_PRICE_MARKUP) + DYNAMIC_PRICE_FEE_USD) * 100) / 100).toFixed(2)
-}
-
 export function normalizePriceForProfit(product) {
-  const next = { ...product }
-  const cost = getWholesaleCost(next)
-  const price = getRetailPrice(next)
-  const margin = price === null || cost === null ? null : Number((price - cost).toFixed(2))
-  if (hasAdvantageFeatures(next) && cost !== null && (margin === null || margin <= 0)) {
-    const dynamicPrice = dynamicRetailPriceFromCost(cost)
-    next.originalPrice = next.price
-    next.price = dynamicPrice
-    next.dynamicPricing = {
-      applied: true,
-      reason: 'ADVANTAGE_FEATURE_MARGIN_RECOVERY',
-      formula: 'ceil((Wholesale_Cost * 1.20 + 1.00) * 100) / 100',
-      originalPriceUsd: price,
-      wholesaleCostUsd: cost,
-      adjustedPriceUsd: Number(dynamicPrice),
-    }
-  }
-  return next
+  return { ...product }
 }
 
 export function auditProfit(product) {
@@ -79,8 +54,8 @@ export function auditProfit(product) {
     retailPriceUsd,
     wholesaleCostUsd,
     marginUsd,
-    source: normalized.dynamicPricing?.applied ? 'dynamic-price-cost-plus' : 'price-agentPrice',
-    dynamicPricing: normalized.dynamicPricing || { applied: false },
+    source: 'rrp-minus-agentPrice',
+    dynamicPricing: { applied: false },
   }
 }
 

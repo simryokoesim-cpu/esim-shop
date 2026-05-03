@@ -5,12 +5,12 @@ import { fetchProducts } from '../api/esim'
 const cache = {}
 const CACHE_TTL = 10 * 60 * 1000 // 10 minutes
 
-const LS_CACHE_KEY = 'esim_products_cache_v8'
+const LS_CACHE_KEY = 'esim_products_cache_v9'
 const LS_CACHE_TTL = 60 * 60 * 1000 // 1 hour
 const VOICE_SMS_UNSUPPORTED_NOTE = '(Note: Voice/SMS features not supported by underlying metadata)'
 
 // 清理所有旧版本缓存
-;['v1','v2','v3','v4','v5','v6','v7'].forEach(v => {
+;['v1','v2','v3','v4','v5','v6','v7','v8'].forEach(v => {
   try { localStorage.removeItem(`esim_products_cache_${v}`) } catch(e) {}
 })
 
@@ -27,19 +27,16 @@ function normalizeProduct(p) {
   const featureText = [p.name, p.nameEn, p.description, p.descriptionEn, ...(Array.isArray(p.features) ? p.features : [])]
     .filter(Boolean).join(' ').replaceAll(VOICE_SMS_UNSUPPORTED_NOTE, '')
   const textSuggestsVoiceOrSms = /\b(SMS|Min|Minute|Minutes|Voice|Call|Calls|Text|Texts)\b|语音|短信|通话/i.test(featureText)
-  const metadataConfirmsVoiceOrSms = !!(p.hasVoice || p.thirdPartyData?.voice || p.thirdPartyData?.text)
-  const forceDataOnly = textSuggestsVoiceOrSms && !metadataConfirmsVoiceOrSms
-  const hasVoice = forceDataOnly ? false : !!(p.hasVoice || p.thirdPartyData?.voice)
-  const features = forceDataOnly
-    ? (Array.isArray(p.features) ? p.features : []).filter(feature => !/语音|短信|通话|\b(SMS|Voice|Calls?|Texts?|Minutes?)\b/i.test(String(feature || '')))
-    : p.features
-  const normalizedFeatures = forceDataOnly && !features.some(feature => /仅数据|data only/i.test(String(feature)))
-    ? ['仅数据流量', ...features]
-    : features
-  const description = forceDataOnly && !String(p.description || '').includes(VOICE_SMS_UNSUPPORTED_NOTE)
-    ? `${String(p.description || '').replace(/。?包含语音通话/g, '').replace(/，?包含语音通话/g, '').replace(/。?包含短信服务/g, '').replace(/，?包含短信服务/g, '').trim()} ${VOICE_SMS_UNSUPPORTED_NOTE}`.trim()
-    : p.description
-  return { ...p, dataSize, validDays, countries, price, isUnlimited, hasVoice, features: normalizedFeatures, description, name: p.name ?? '', capability: p.capability || { data: true, voice: hasVoice, sms: !!p.thirdPartyData?.text, source: 'thirdPartyData' } }
+  const hasVoice = !!(p.hasVoice || p.thirdPartyData?.voice || /\b(Min|Minute|Minutes|Voice|Call|Calls)\b|语音|通话/i.test(featureText))
+  const hasSms = !!(p.thirdPartyData?.text || /\b(SMS|Text|Texts)\b|短信/i.test(featureText))
+  const rawFeatures = Array.isArray(p.features) ? [...p.features] : []
+  if (hasVoice && !rawFeatures.some(feature => /语音|通话|\b(Voice|Calls?|Minutes?)\b/i.test(String(feature || '')))) rawFeatures.unshift('包含语音通话')
+  if (hasSms && !rawFeatures.some(feature => /短信|\b(SMS|Texts?)\b/i.test(String(feature || '')))) rawFeatures.unshift('包含短信服务')
+  const normalizedFeatures = rawFeatures.filter(feature => !/Voice\/SMS features not supported/i.test(String(feature || '')))
+  const description = String(p.description || '')
+    .replaceAll(VOICE_SMS_UNSUPPORTED_NOTE, '')
+    .trim()
+  return { ...p, dataSize, validDays, countries, price, isUnlimited, hasVoice, features: normalizedFeatures, description, name: p.name ?? '', capability: p.capability || { data: true, voice: hasVoice, sms: hasSms, source: textSuggestsVoiceOrSms ? 'copy-first-feature-defense' : 'thirdPartyData' } }
 }
 
 // 从后端代理分页拉取所有产品（禁止在前端直连供应商 API 或携带凭证）

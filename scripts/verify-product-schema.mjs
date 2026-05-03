@@ -73,7 +73,7 @@ function normalizeProduct(product) {
   next.profitAudit = profitAudit
   if (profitAudit.status === 'FINANCIAL_LOSS') {
     next.status = 'inactive'
-    next.inactiveReason = 'FINANCIAL_LOSS'
+    next.inactiveReason = 'DATA_ERROR'
   }
   const signals = getFeatureSignals(next)
   if ((signals.voice || signals.sms) && (!product?.hasVoice && !product?.thirdPartyData?.voice && !product?.thirdPartyData?.text)) stats.featureDefenseRestored += 1
@@ -173,7 +173,7 @@ const result = {
   stats,
   financial: {
     currency: financial.currency,
-    source: 'price(agent retail USD) - agentPrice(wholesale USD); no FX conversion applied because supplier returns both fields in USD',
+    source: 'RRP(agent retail USD) - agentPrice(wholesale USD); no FX conversion applied because supplier returns both fields in USD; no dynamic/AI repricing allowed',
     onlineProfitableProducts: products.length,
     financialLossBlocked: financial.financialLossCount,
     lowMarginWarnings: financial.lowMarginCount,

@@ -13,7 +13,7 @@ const products = loaded.products
 const report = {
   generatedAt: new Date().toISOString(),
   source: loaded.source,
-  note: 'Currency: USD. Margin = price - agentPrice. No FX conversion applied because supplier returns both retail price and wholesale/agent price in USD.',
+  note: 'Currency: USD. Margin = RRP price - agentPrice. No dynamic/AI repricing; financial-loss products must be blocked as DATA_ERROR.',
   ...summarizeProfit(products),
 }
 
