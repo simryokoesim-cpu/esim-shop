@@ -9,7 +9,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "verify:secrets": "node scripts/verify-secrets.mjs",
-    "probe:prod:initdata": "node scripts/probe-production-initdata.mjs"
+    "probe:prod:initdata": "node scripts/probe-production-initdata.mjs",
+    "verify:product-schema": "node scripts/verify-product-schema.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.100.0",
