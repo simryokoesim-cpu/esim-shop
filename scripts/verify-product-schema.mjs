@@ -20,7 +20,9 @@ const stats = {
   voiceOrSms: 0,
   thirdPartyDataPresent: 0,
   thirdPartyDataMissing: 0,
+  correctedVoiceSmsConflicts: 0,
 }
+const VOICE_SMS_UNSUPPORTED_NOTE = '(Note: Voice/SMS features not supported by underlying metadata)'
 
 function addError(product, code, message, extra = {}) {
   errors.push({ id: product?.id ?? null, code, message, ...extra })
@@ -45,7 +47,7 @@ function getFeatureText(product) {
     product?.description,
     product?.descriptionEn,
     ...(Array.isArray(product?.features) ? product.features : []),
-  ].filter(Boolean).join(' ')
+  ].filter(Boolean).join(' ').replaceAll(VOICE_SMS_UNSUPPORTED_NOTE, '')
 }
 
 function hasVoiceOrSmsText(product) {
@@ -59,6 +61,35 @@ function isVoiceOrSms(product) {
     product?.thirdPartyData?.text ||
     hasVoiceOrSmsText(product)
   )
+}
+
+function stripVoiceSmsClaims(text) {
+  return String(text || '')
+    .replace(/。?包含语音通话/g, '')
+    .replace(/，?包含语音通话/g, '')
+    .replace(/。?包含短信服务/g, '')
+    .replace(/，?包含短信服务/g, '')
+    .replace(/\b(Voice|SMS|Calls?|Texts?|Minutes?)\b/gi, '')
+    .replace(/\s{2,}/g, ' ')
+    .trim()
+}
+
+function normalizeProduct(product) {
+  const next = { ...product }
+  const thirdPartyData = product?.thirdPartyData
+  const textSuggestsVoiceOrSms = hasVoiceOrSmsText(product)
+  const thirdPartyConfirmsVoiceOrSms = !!(thirdPartyData?.voice || thirdPartyData?.text || product?.hasVoice)
+  if (textSuggestsVoiceOrSms && !thirdPartyConfirmsVoiceOrSms) {
+    stats.correctedVoiceSmsConflicts += 1
+    next.hasVoice = false
+    next.description = `${stripVoiceSmsClaims(next.description)} ${VOICE_SMS_UNSUPPORTED_NOTE}`.trim()
+    next.descriptionEn = `${stripVoiceSmsClaims(next.descriptionEn)} ${VOICE_SMS_UNSUPPORTED_NOTE}`.trim()
+    next.features = (Array.isArray(next.features) ? next.features : [])
+      .filter(feature => !/语音|短信|通话|\b(SMS|Voice|Calls?|Texts?|Minutes?)\b/i.test(String(feature || '')))
+    if (!next.features.some(feature => /仅数据|data only/i.test(String(feature)))) next.features.unshift('仅数据流量')
+    next.capability = { data: true, voice: false, sms: false, source: 'thirdPartyData' }
+  }
+  return next
 }
 
 function classify(product) {
@@ -92,7 +123,7 @@ function validateProduct(product, seenIds, countryCodes) {
 
   const textSuggestsVoiceOrSms = hasVoiceOrSmsText(product)
   const thirdPartyConfirmsVoiceOrSms = !!(thirdPartyData?.voice || thirdPartyData?.text || product.hasVoice)
-  if (textSuggestsVoiceOrSms && !thirdPartyConfirmsVoiceOrSms) {
+  if (textSuggestsVoiceOrSms && !thirdPartyConfirmsVoiceOrSms && !String(product.description || '').includes(VOICE_SMS_UNSUPPORTED_NOTE)) {
     addError(product, 'NEEDS_TG_CONFIRMATION', '[待确认] Voice/SMS feature is ambiguous; block upload until TG confirmation', {
       action: 'TG_PENDING_CONFIRMATION_REQUIRED',
       name: product.name,
@@ -153,7 +184,7 @@ async function loadProducts() {
   return all
 }
 
-const products = await loadProducts()
+const products = (await loadProducts()).map(normalizeProduct)
 const seenIds = new Set()
 const countryCodes = new Set()
 for (const product of products) validateProduct(product, seenIds, countryCodes)

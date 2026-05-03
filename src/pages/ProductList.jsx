@@ -93,7 +93,7 @@ export default function ProductList() {
     const groups = { single: [], regional: [], global: [] }
     covering.forEach(p => {
       if (p.countries?.length === 1) groups.single.push(p)
-      else if (p.type === 'global' || p.countries?.length > 30) groups.global.push(p)
+      else if (p.type === 'global') groups.global.push(p)
       else groups.regional.push(p)
     })
 
@@ -109,7 +109,7 @@ export default function ProductList() {
   // 区域套餐
   const regionalProducts = useMemo(() => {
     if (!selectedRegion) return []
-    const regionalAll = products.filter(p => p.type === 'regional' || (p.countries?.length > 1 && p.countries?.length <= 30 && p.type !== 'global'))
+    const regionalAll = products.filter(p => p.type === 'regional' || ((p.countries?.length || 0) > 1 && p.type !== 'global'))
     if (selectedRegion.id === 'other') {
       return regionalAll.filter(p => !REGIONS.slice(0,-1).some(r => r.keywords.some(kw => p.name.includes(kw))))
     }

@@ -16,6 +16,62 @@ let tokenExpiry = 0
 let cachedProducts = null
 let productsCacheExpiry = 0
 const PRODUCTS_CACHE_TTL = 10 * 60 * 1000
+const VOICE_SMS_UNSUPPORTED_NOTE = '(Note: Voice/SMS features not supported by underlying metadata)'
+
+function getFeatureText(product) {
+  return [
+    product?.name,
+    product?.nameEn,
+    product?.description,
+    product?.descriptionEn,
+    ...(Array.isArray(product?.features) ? product.features : []),
+  ].filter(Boolean).join(' ').replaceAll(VOICE_SMS_UNSUPPORTED_NOTE, '')
+}
+
+function textSuggestsVoiceOrSms(product) {
+  return /\b(SMS|Min|Minute|Minutes|Voice|Call|Calls|Text|Texts)\b|语音|短信|通话/i.test(getFeatureText(product))
+}
+
+function metadataConfirmsVoiceOrSms(product) {
+  return !!(product?.hasVoice || product?.thirdPartyData?.voice || product?.thirdPartyData?.text)
+}
+
+function stripVoiceSmsClaims(text) {
+  return String(text || '')
+    .replace(/。?包含语音通话/g, '')
+    .replace(/，?包含语音通话/g, '')
+    .replace(/。?包含短信服务/g, '')
+    .replace(/，?包含短信服务/g, '')
+    .replace(/\b(Voice|SMS|Calls?|Texts?|Minutes?)\b/gi, '')
+    .replace(/\s{2,}/g, ' ')
+    .trim()
+}
+
+function normalizeProduct(product) {
+  const next = { ...product }
+  const textConflict = textSuggestsVoiceOrSms(product) && !metadataConfirmsVoiceOrSms(product)
+  if (textConflict) {
+    next.hasVoice = false
+    next.description = `${stripVoiceSmsClaims(next.description)} ${VOICE_SMS_UNSUPPORTED_NOTE}`.trim()
+    next.descriptionEn = `${stripVoiceSmsClaims(next.descriptionEn)} ${VOICE_SMS_UNSUPPORTED_NOTE}`.trim()
+    next.features = (Array.isArray(next.features) ? next.features : [])
+      .filter(feature => !/语音|短信|通话|\b(SMS|Voice|Calls?|Texts?|Minutes?)\b/i.test(String(feature || '')))
+    if (!next.features.some(feature => /仅数据|data only/i.test(String(feature)))) next.features.unshift('仅数据流量')
+    next.capability = { data: true, voice: false, sms: false, source: 'thirdPartyData' }
+  } else {
+    next.capability = {
+      data: true,
+      voice: !!(next.hasVoice || next.thirdPartyData?.voice),
+      sms: !!next.thirdPartyData?.text,
+      source: 'thirdPartyData',
+    }
+  }
+  return next
+}
+
+function normalizeProducts(products) {
+  return (products || []).map(normalizeProduct)
+}
 
 async function login() {
   const res = await fetch(`${API_BASE}/agent/login`, {
@@ -72,9 +128,9 @@ async function fetchAllProducts(token) {
     page += 1
   }
 
-  cachedProducts = allProducts
+  cachedProducts = normalizeProducts(allProducts)
   productsCacheExpiry = Date.now() + PRODUCTS_CACHE_TTL
-  return allProducts
+  return cachedProducts
 }
 
 function getKeywordScore(product, keyword) {
@@ -151,6 +207,7 @@ export default async function handler(req, res) {
     const params = new URLSearchParams({ page, limit })
     if (country) params.set('country', country)
     const data = await fetchSupplierProducts(token, params)
+    if (data?.data?.list) data.data.list = normalizeProducts(data.data.list)
     return res.status(200).json(data)
     
   } catch (error) {

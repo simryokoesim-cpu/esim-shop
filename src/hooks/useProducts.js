@@ -7,6 +7,7 @@ const CACHE_TTL = 10 * 60 * 1000 // 10 minutes
 
 const LS_CACHE_KEY = 'esim_products_cache_v7'
 const LS_CACHE_TTL = 60 * 60 * 1000 // 1 hour
+const VOICE_SMS_UNSUPPORTED_NOTE = '(Note: Voice/SMS features not supported by underlying metadata)'
 
 // 清理所有旧版本缓存
 ;['v1','v2','v3','v4','v5','v6'].forEach(v => {
@@ -23,8 +24,22 @@ function normalizeProduct(p) {
   const countries = p.countries ?? (p.country ? [{ code: p.country, cn: p.country, en: p.country }] : [])
   const price = p.price ?? p.retailPrice ?? 0
   const isUnlimited = p.isUnlimited ?? p.thirdPartyData?.isUnlimited ?? (dataSize === 0)
-  const hasVoice = !!(p.hasVoice || (p.thirdPartyData?.voice) || /SMS|Min/i.test(p.nameEn || ''))
-  return { ...p, dataSize, validDays, countries, price, isUnlimited, hasVoice, name: p.name ?? '' }
+  const featureText = [p.name, p.nameEn, p.description, p.descriptionEn, ...(Array.isArray(p.features) ? p.features : [])]
+    .filter(Boolean).join(' ').replaceAll(VOICE_SMS_UNSUPPORTED_NOTE, '')
+  const textSuggestsVoiceOrSms = /\b(SMS|Min|Minute|Minutes|Voice|Call|Calls|Text|Texts)\b|语音|短信|通话/i.test(featureText)
+  const metadataConfirmsVoiceOrSms = !!(p.hasVoice || p.thirdPartyData?.voice || p.thirdPartyData?.text)
+  const forceDataOnly = textSuggestsVoiceOrSms && !metadataConfirmsVoiceOrSms
+  const hasVoice = forceDataOnly ? false : !!(p.hasVoice || p.thirdPartyData?.voice)
+  const features = forceDataOnly
+    ? (Array.isArray(p.features) ? p.features : []).filter(feature => !/语音|短信|通话|\b(SMS|Voice|Calls?|Texts?|Minutes?)\b/i.test(String(feature || '')))
+    : p.features
+  const normalizedFeatures = forceDataOnly && !features.some(feature => /仅数据|data only/i.test(String(feature)))
+    ? ['仅数据流量', ...features]
+    : features
+  const description = forceDataOnly && !String(p.description || '').includes(VOICE_SMS_UNSUPPORTED_NOTE)
+    ? `${String(p.description || '').replace(/。?包含语音通话/g, '').replace(/，?包含语音通话/g, '').replace(/。?包含短信服务/g, '').replace(/，?包含短信服务/g, '').trim()} ${VOICE_SMS_UNSUPPORTED_NOTE}`.trim()
+    : p.description
+  return { ...p, dataSize, validDays, countries, price, isUnlimited, hasVoice, features: normalizedFeatures, description, name: p.name ?? '', capability: p.capability || { data: true, voice: hasVoice, sms: !!p.thirdPartyData?.text, source: 'thirdPartyData' } }
 }
 
 // 从后端代理分页拉取所有产品（禁止在前端直连供应商 API 或携带凭证）

@@ -12,7 +12,8 @@
     "probe:prod:initdata": "node scripts/probe-production-initdata.mjs",
     "verify:product-schema": "node scripts/verify-product-schema.mjs",
     "deploy:prod": "vercel --prod --yes",
-    "predeploy:prod": "npm run verify:product-schema -- --fail-on-warn && node scripts/write-deploy-version.mjs"
+    "predeploy:prod": "npm run verify:product-schema -- --fail-on-warn && node scripts/write-deploy-version.mjs",
+    "stats:three-axis": "node scripts/three-axis-stats.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.100.0",
