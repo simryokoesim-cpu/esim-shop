@@ -5,8 +5,15 @@ import fs from 'node:fs'
 const projectRoot = new URL('..', import.meta.url).pathname
 const localTokenFile = '/home/adobe/.openclaw/workspace/secrets/local/vercel-token-current.txt'
 
+function printableArgs(args) {
+  return args.map((arg, index) => {
+    if (args[index - 1] === '--token') return '<redacted>'
+    return /\s/.test(arg) ? JSON.stringify(arg) : arg
+  })
+}
+
 function run(command, args, options = {}) {
-  console.log(`\n$ ${[command, ...args.map(arg => /\s/.test(arg) ? JSON.stringify(arg) : arg)].join(' ')}`)
+  console.log(`\n$ ${[command, ...printableArgs(args)].join(' ')}`)
   const result = spawnSync(command, args, {
     cwd: projectRoot,
     stdio: 'inherit',
