@@ -45,5 +45,7 @@ await browser.close()
 
 const ok = results.every(r => r.ok)
 const output = { ok, generatedAt: new Date().toISOString(), baseUrl, results }
+await fs.writeFile(`${outDir}/latest.json`, JSON.stringify(output, null, 2))
+await fs.writeFile('/home/adobe/.openclaw/workspace/reports/miniapp-visual-audit-latest.json', JSON.stringify(output, null, 2))
 console.log(JSON.stringify(output, null, 2))
 if (!ok) process.exit(1)

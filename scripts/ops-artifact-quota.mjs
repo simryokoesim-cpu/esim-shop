@@ -37,12 +37,14 @@ async function walk(dir, files = []) {
 const used = diskUsedPercent()
 const shouldClean = force || used >= 80
 const candidates = []
-for (const root of roots) {
-  for (const file of await walk(root)) {
-    const ext = path.extname(file).toLowerCase()
-    if (!exts.has(ext)) continue
-    const st = await fs.stat(file)
-    if (shouldClean || now - st.mtimeMs > maxAgeMs) candidates.push({ file, bytes: st.size, ageDays: Number(((now - st.mtimeMs)/(24*60*60*1000)).toFixed(2)) })
+if (shouldClean) {
+  for (const root of roots) {
+    for (const file of await walk(root)) {
+      const ext = path.extname(file).toLowerCase()
+      if (!exts.has(ext)) continue
+      const st = await fs.stat(file)
+      if (force || now - st.mtimeMs > maxAgeMs) candidates.push({ file, bytes: st.size, ageDays: Number(((now - st.mtimeMs)/(24*60*60*1000)).toFixed(2)) })
+    }
   }
 }
 let deletedBytes = 0
