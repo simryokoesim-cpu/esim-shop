@@ -78,7 +78,7 @@ export default function ProductList() {
     if (matched) setSelectedCountry(matched)
   }, [initCountryCode, allCountries])
 
-  const isVoiceProduct = (p) => !!(p.hasVoice || (p.thirdPartyData?.voice) || /SMS|Min/i.test(p.nameEn || p.name || ''))
+  const isVoiceProduct = (p) => !!(p.capability?.voice || p.capability?.sms || p.hasVoice || p.thirdPartyData?.voice || p.thirdPartyData?.text)
 
   // 按国家筛选并分组：单国套餐、覆盖该国的区域套餐、覆盖该国的全球套餐分开展示
   const countryProductGroups = useMemo(() => {
@@ -92,8 +92,8 @@ export default function ProductList() {
 
     const groups = { single: [], regional: [], global: [] }
     covering.forEach(p => {
-      if (p.countries?.length === 1) groups.single.push(p)
-      else if (p.type === 'global') groups.global.push(p)
+      if (p.type === 'global') groups.global.push(p)
+      else if (p.countries?.length === 1) groups.single.push(p)
       else groups.regional.push(p)
     })
 

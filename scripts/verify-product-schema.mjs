@@ -94,8 +94,6 @@ function normalizeProduct(product) {
 
 function classify(product) {
   if (product.type === 'global') return 'global'
-  if (product.type === 'regional') return 'regional'
-  if (product.type === 'local') return 'local'
   const count = product.countries?.length || 0
   if (count === 1) return 'local'
   if (count > 1) return 'regional'

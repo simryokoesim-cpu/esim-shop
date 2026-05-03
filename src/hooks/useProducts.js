@@ -5,12 +5,12 @@ import { fetchProducts } from '../api/esim'
 const cache = {}
 const CACHE_TTL = 10 * 60 * 1000 // 10 minutes
 
-const LS_CACHE_KEY = 'esim_products_cache_v7'
+const LS_CACHE_KEY = 'esim_products_cache_v8'
 const LS_CACHE_TTL = 60 * 60 * 1000 // 1 hour
 const VOICE_SMS_UNSUPPORTED_NOTE = '(Note: Voice/SMS features not supported by underlying metadata)'
 
 // 清理所有旧版本缓存
-;['v1','v2','v3','v4','v5','v6'].forEach(v => {
+;['v1','v2','v3','v4','v5','v6','v7'].forEach(v => {
   try { localStorage.removeItem(`esim_products_cache_${v}`) } catch(e) {}
 })
 
@@ -94,22 +94,19 @@ async function getAllProducts() {
   if (allProductsLoading) return allProductsLoading
 
   allProductsLoading = (async () => {
-    // 1. 先用本地缓存文件立刻返回（最快，打包在内）
+    // 1. 先从后端代理获取规范化产品。产品能力/描述以服务端 schema gate 为准。
     try {
-      const local = await loadLocalProducts()
-      if (local && local.length > 0) {
-        console.log(`[Products] Loaded ${local.length} from local bundle cache`)
-        allProductsCache = local
-        // 后台异步更新 localStorage（不阻塞UI）
-        fetchAllProductsFromProxy().then(raw => {
-          try {
-            localStorage.setItem(LS_CACHE_KEY, JSON.stringify({ ts: Date.now(), data: raw }))
-          } catch(e) {}
-        }).catch(() => {})
-        return allProductsCache
-      }
+      console.log('[Products] Fetching normalized products from API...')
+      const raw = await fetchAllProductsFromProxy()
+      console.log(`[Products] Fetched ${raw.length} from API`)
+      const products = raw.map(normalizeProduct)
+      try {
+        localStorage.setItem(LS_CACHE_KEY, JSON.stringify({ ts: Date.now(), data: raw }))
+      } catch (e) {}
+      allProductsCache = products
+      return products
     } catch (e) {
-      console.warn('[Products] Local bundle load failed:', e)
+      console.warn('[Products] API fetch failed:', e)
     }
 
     // 2. 检查 localStorage 缓存
@@ -127,22 +124,7 @@ async function getAllProducts() {
       console.warn('[Products] localStorage read failed:', e)
     }
 
-    // 3. 从供应商API拉取（兜底）
-    try {
-      console.log('[Products] Fetching from API...')
-      const raw = await fetchAllProductsFromProxy()
-      console.log(`[Products] Fetched ${raw.length} from API`)
-      const products = raw.map(normalizeProduct)
-      try {
-        localStorage.setItem(LS_CACHE_KEY, JSON.stringify({ ts: Date.now(), data: raw }))
-      } catch (e) {}
-      allProductsCache = products
-      return products
-    } catch (e) {
-      console.error('[Products] API fetch failed:', e)
-    }
-
-    // 3. 兜底：本地缓存
+    // 3. 兜底：本地打包缓存（只在 API/localStorage 都不可用时使用）
     const fallback = await loadLocalProducts()
     allProductsCache = fallback
     return fallback
