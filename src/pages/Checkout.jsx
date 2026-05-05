@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useAllProducts } from '../hooks/useProducts'
 import { useOrders, createOrder } from '../hooks/useOrders'
-import { formatData, formatDays, formatPrice, getCountryName, USDT_ADDRESS, TON_ADDRESS } from '../utils/format'
+import { formatData, formatDays, formatPrice, getCountryName, USDT_ADDRESS } from '../utils/format'
 import { ORDER_STATUS, normalizeOrderStatus } from '../utils/orderStatus'
 
 const COUNTDOWN = 30 * 60 // 30 minutes
@@ -49,7 +49,6 @@ export default function Checkout() {
   const [order, setOrder] = useState(null)
   const [timeLeft, setTimeLeft] = useState(COUNTDOWN)
   const [copied, setCopied] = useState(false)
-  const [copiedTon, setCopiedTon] = useState(false)
   const [orderIdCopied, setOrderIdCopied] = useState(false)
   const [paymentMethod, setPaymentMethod] = useState('usdt')
   const [termsAccepted, setTermsAccepted] = useState(false)
@@ -58,7 +57,7 @@ export default function Checkout() {
 
   const product = products.find(p => p.id === parseInt(id))
   const price = product ? formatPrice(product.price) : '0.00'
-  const settlement = product ? getSettlementInfo(product, paymentMethod) : { amount: 0, currency: paymentMethod === 'ton' ? 'TON' : 'USDT' }
+  const settlement = product ? getSettlementInfo(product, paymentMethod) : { amount: 0, currency: 'USDT' }
   const settlementDisplay = formatSettlementDisplay(settlement.amount, settlement.currency)
   const usdReference = formatUsdReference(price)
 
@@ -328,22 +327,6 @@ export default function Checkout() {
             >
               USDT (TRC20)
             </button>
-            <button
-              onClick={() => setPaymentMethod('ton')}
-              style={{
-                flex: 1,
-                background: paymentMethod === 'ton' ? 'linear-gradient(135deg, #0088cc, #0066aa)' : 'rgba(255,255,255,0.04)',
-                border: '1px solid rgba(255,255,255,0.08)',
-                borderRadius: '12px',
-                color: paymentMethod === 'ton' ? '#fff' : 'rgba(255,255,255,0.6)',
-                fontSize: '13px',
-                fontWeight: 600,
-                padding: '12px',
-                cursor: 'pointer',
-              }}
-            >
-              TON
-            </button>
           </div>
         </div>
 
@@ -429,91 +412,6 @@ export default function Checkout() {
           </div>
         )}
 
-        {!expired && paymentMethod === 'ton' && (
-          <div style={{
-            background: 'rgba(255,255,255,0.04)',
-            border: '1px solid rgba(255,255,255,0.08)',
-            borderRadius: '20px',
-            padding: '20px',
-            marginBottom: '16px',
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-              <div style={{
-                width: '32px',
-                height: '32px',
-                borderRadius: '50%',
-                background: 'linear-gradient(135deg, #0088cc, #0066aa)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '16px',
-                fontWeight: 700,
-                color: '#fff',
-              }}>T</div>
-              <div>
-                <div style={{ fontSize: '14px', fontWeight: 600, color: '#fff' }}>TON 付款</div>
-                <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)' }}>请按下方结算金额付款</div>
-              </div>
-            </div>
-
-            <div style={{
-              background: 'rgba(59,130,246,0.1)',
-              borderRadius: '12px',
-              padding: '12px 14px',
-              marginBottom: '14px',
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
-                <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)' }}>付款金额</span>
-                <span style={{ fontSize: '20px', fontWeight: 700, color: '#60a5fa' }}>
-                  {settlementDisplay}
-                </span>
-              </div>
-              <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)' }}>参考：{usdReference}</div>
-            </div>
-
-            <div style={{ marginBottom: '14px' }}>
-              <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)', marginBottom: '8px' }}>收款地址</div>
-              <div style={{
-                background: 'rgba(255,255,255,0.06)',
-                borderRadius: '12px',
-                padding: '12px',
-                fontFamily: 'monospace',
-                fontSize: '11px',
-                color: 'rgba(255,255,255,0.8)',
-                wordBreak: 'break-all',
-                lineHeight: 1.6,
-              }}>
-                {TON_ADDRESS}
-              </div>
-            </div>
-
-            <button
-              onClick={() => {
-                navigator.clipboard.writeText(TON_ADDRESS)
-                setCopiedTon(true)
-                setTimeout(() => setCopiedTon(false), 2000)
-              }}
-              style={{
-                width: '100%',
-                background: copiedTon ? 'rgba(16,185,129,0.2)' : 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
-                border: copiedTon ? '1px solid rgba(16,185,129,0.4)' : 'none',
-                borderRadius: '12px',
-                color: '#fff',
-                fontSize: '14px',
-                fontWeight: 600,
-                padding: '13px',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px',
-                WebkitTapHighlightColor: 'transparent',
-              }}
-            >
-              {copiedTon ? <>✓ 地址已复制</> : <>📋 复制收款地址</>}
-            </button>
-          </div>
-        )}
 
         {!expired && (
           <div style={{
@@ -610,17 +508,12 @@ export default function Checkout() {
           <div style={{ fontSize: '13px', fontWeight: 600, color: 'rgba(255,255,255,0.5)', marginBottom: '14px' }}>
             付款步骤
           </div>
-          {(paymentMethod === 'usdt' ? [
+          {[
             { step: '1', text: '复制上方 USDT (TRC20) 收款地址', done: copied },
             { step: '2', text: `按结算金额转账 ${settlementDisplay} 至该地址`, done: false },
             { step: '3', text: `USD 参考金额：${usdReference}`, done: false },
             { step: '4', text: '付款完成后返回订单详情页等待自动同步', done: false },
-          ] : [
-            { step: '1', text: '复制上方 TON 收款地址', done: copiedTon },
-            { step: '2', text: `按结算金额转账 ${settlementDisplay} 至该地址`, done: false },
-            { step: '3', text: `USD 参考金额：${usdReference}`, done: false },
-            { step: '4', text: '付款完成后返回订单详情页等待自动同步', done: false },
-          ]).map((s, i) => (
+          ].map((s, i) => (
             <div key={i} style={{
               display: 'flex',
               gap: '12px',

@@ -39,7 +39,7 @@ const faqItems = [
   },
   {
     q: '支持哪些支付方式？',
-    a: '目前支持 USDT（TRC20）和 TON 两种加密货币支付，安全快捷，无需绑卡。',
+    a: '目前支持 USDT（TRC20）加密货币支付，安全快捷，无需绑卡。',
   },
   {
     q: '多久能收到 eSIM？',
@@ -415,7 +415,7 @@ export default function Home() {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
             {[
               { icon: '⚡', title: '即买即用', desc: '2分钟内完成激活' },
-              { icon: '🔒', title: '安全支付', desc: 'USDT/TON加密支付' },
+              { icon: '🔒', title: '安全支付', desc: 'USDT加密支付' },
               { icon: '🌍', title: '全球覆盖', desc: '200+国家地区' },
               { icon: '↩️', title: '未激活退款', desc: '未使用可申请退款' },
               { icon: '📱', title: '无需换卡', desc: '手机扫码即可使用' },
