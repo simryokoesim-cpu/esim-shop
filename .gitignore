@@ -26,3 +26,6 @@ dist-ssr
 
 # Generated during production deploy; do not track stale build evidence
 public/deploy-version.json
+
+# Generated idle SEO schema cache
+data/seo-schema/
