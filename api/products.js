@@ -1,6 +1,7 @@
 // Backend proxy for eSIM products API
 // This keeps credentials secure on the server side
 
+import fs from 'node:fs'
 import { auditProfit, getFeatureSignals, normalizePriceForProfit } from '../scripts/skill-audit.js'
 import { generateProductJsonLd, generateProductMeta } from '../scripts/skill-seo.js'
 
@@ -18,8 +19,10 @@ let cachedToken = null
 let tokenExpiry = 0
 let cachedProducts = null
 let productsCacheExpiry = 0
+let localSeedProducts = null
 const PRODUCTS_CACHE_TTL = 10 * 60 * 1000
 const VOICE_SMS_UNSUPPORTED_NOTE = '(Note: Voice/SMS features not supported by underlying metadata)'
+const LOCAL_PRODUCTS_CACHE_URL = new URL('../src/data/products-cache.json', import.meta.url)
 
 function normalizeProduct(product) {
   const next = normalizePriceForProfit({ ...product })
@@ -46,6 +49,14 @@ function normalizeProduct(product) {
 function normalizeProducts(products, { filterFinancialLoss = true } = {}) {
   const normalized = (products || []).map(normalizeProduct)
   return filterFinancialLoss ? normalized.filter(product => product.profitAudit?.status !== 'FINANCIAL_LOSS') : normalized
+}
+
+function getLocalSeedProducts() {
+  if (localSeedProducts) return localSeedProducts
+  const raw = JSON.parse(fs.readFileSync(LOCAL_PRODUCTS_CACHE_URL, 'utf8'))
+  const products = Array.isArray(raw) ? raw : (raw.products || raw.data?.list || raw.data || raw.list || [])
+  localSeedProducts = normalizeProducts(products, { filterFinancialLoss: true })
+  return localSeedProducts
 }
 
 async function login() {
@@ -102,16 +113,35 @@ async function fetchAllRawProducts(token) {
   return allProducts
 }
 
-async function fetchAllProducts(token) {
+async function fetchAllProducts(token = null) {
   if (cachedProducts && Date.now() < productsCacheExpiry) {
     return cachedProducts
   }
 
+  const seededProducts = getLocalSeedProducts()
+  if (seededProducts.length) {
+    cachedProducts = seededProducts
+    productsCacheExpiry = Date.now() + Math.min(PRODUCTS_CACHE_TTL, 2 * 60 * 1000)
+    getToken()
+      .then(refreshProductsFromSupplier)
+      .catch(error => {
+        console.warn('Background product refresh failed:', error.message)
+      })
+    return cachedProducts
+  }
+
+  token = token || await getToken()
   const allProducts = await fetchAllRawProducts(token)
 
   cachedProducts = normalizeProducts(allProducts, { filterFinancialLoss: true })
   productsCacheExpiry = Date.now() + PRODUCTS_CACHE_TTL
   return cachedProducts
+}
+
+async function refreshProductsFromSupplier(token) {
+  const allProducts = await fetchAllRawProducts(token)
+  cachedProducts = normalizeProducts(allProducts, { filterFinancialLoss: true })
+  productsCacheExpiry = Date.now() + PRODUCTS_CACHE_TTL
 }
 
 function getKeywordScore(product, keyword) {
@@ -152,8 +182,6 @@ export default async function handler(req, res) {
   }
   
   try {
-    const token = await getToken()
-    
     // Forward query params
     const { page = 1, limit = 20, search = '', keyword = '', country = '', id = '', includeFinancialLoss = '' } = req.query
     const keywordValue = search || keyword
@@ -161,8 +189,8 @@ export default async function handler(req, res) {
 
     if (id || keywordValue || country) {
       let products = allowFinancialAudit
-        ? normalizeProducts(await fetchAllRawProducts(token), { filterFinancialLoss: false })
-        : await fetchAllProducts(token)
+        ? normalizeProducts(await fetchAllRawProducts(await getToken()), { filterFinancialLoss: false })
+        : await fetchAllProducts()
       if (id) {
         products = products.filter(product => String(product.id) === String(id))
       }
@@ -189,8 +217,8 @@ export default async function handler(req, res) {
     }
 
     const products = allowFinancialAudit
-      ? normalizeProducts(await fetchAllRawProducts(token), { filterFinancialLoss: false })
-      : await fetchAllProducts(token)
+      ? normalizeProducts(await fetchAllRawProducts(await getToken()), { filterFinancialLoss: false })
+      : await fetchAllProducts()
     return res.status(200).json({
       success: true,
       data: {
