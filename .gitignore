@@ -23,3 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 .vercel
+
+# Generated during production deploy; do not track stale build evidence
+public/deploy-version.json
