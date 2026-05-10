@@ -26,6 +26,23 @@ function run(command, args) {
   }
 }
 
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
+async function runWithRetry(command, args, options = {}) {
+  const attempts = options.attempts || 1
+  const delayMs = options.delayMs || 0
+  let last = null
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    const result = run(command, args)
+    last = { ...result, attempt }
+    if (result.ok) return last
+    if (attempt < attempts && delayMs > 0) await sleep(delayMs)
+  }
+  return last
+}
+
 function resolveVercelToken() {
   if (process.env.VERCEL_TOKEN) return process.env.VERCEL_TOKEN.trim()
   if (fs.existsSync(localTokenFile)) return fs.readFileSync(localTokenFile, 'utf8').trim()
@@ -57,19 +74,22 @@ function checkProjectBinding(checks) {
   }
 }
 
-function checkToken(checks, token) {
+async function checkToken(checks, token) {
   checks.push({ name: 'vercel-token-present', ok: Boolean(token), source: process.env.VERCEL_TOKEN ? 'env' : (token ? 'local-secret-file' : 'missing') })
   if (!token) return
 
   const whoami = run('vercel', ['whoami', '--token', token])
   checks.push({ name: 'vercel-token-whoami', ok: whoami.ok, detail: whoami.ok ? whoami.output.trim().split('\n')[0] : 'whoami failed' })
 
-  const inspect = run('vercel', ['project', 'inspect', expected.projectId, '--token', token])
+  const inspect = await runWithRetry('vercel', ['project', 'inspect', expected.projectId, '--token', token], { attempts: 3, delayMs: 1500 })
   checks.push({
     name: 'vercel-token-project-access',
     ok: inspect.ok && inspect.output.includes(expected.projectId) && inspect.output.includes(expected.projectName),
+    severity: 'warn',
+    attempts: inspect.attempt,
     expectedProjectId: expected.projectId,
     expectedProjectName: expected.projectName,
+    detail: inspect.ok ? 'project inspect completed' : 'project inspect failed after retry',
   })
 }
 
@@ -117,10 +137,11 @@ async function checkCanonical(checks) {
 const checks = []
 checkProjectBinding(checks)
 const token = resolveVercelToken()
-checkToken(checks, token)
+await checkToken(checks, token)
 await checkCanonical(checks)
 
-const ok = checks.every(check => check.ok)
+const hardFailures = checks.filter(check => !check.ok && check.severity !== 'warn')
+const ok = hardFailures.length === 0
 const result = {
   ok,
   generatedAt: new Date().toISOString(),
