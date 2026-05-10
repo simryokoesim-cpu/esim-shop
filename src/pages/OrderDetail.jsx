@@ -30,9 +30,9 @@ export default function OrderDetail() {
 
   async function fetchFromDB() {
     try {
-      const tgId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id?.toString() || '0'
+      const initData = window.Telegram?.WebApp?.initData || ''
       const res = await fetch(`/api/orders?id=${encodeURIComponent(orderId)}`, {
-        headers: { 'X-Telegram-Id': tgId }
+        headers: { 'X-Telegram-Init-Data': initData }
       })
 
       if (res.status === 403) {

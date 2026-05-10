@@ -5,11 +5,12 @@ import { fetchProducts } from '../api/esim'
 const cache = {}
 const CACHE_TTL = 10 * 60 * 1000 // 10 minutes
 
-const LS_CACHE_KEY = 'esim_products_cache_v7'
+const LS_CACHE_KEY = 'esim_products_cache_v9'
 const LS_CACHE_TTL = 60 * 60 * 1000 // 1 hour
+const VOICE_SMS_UNSUPPORTED_NOTE = '(Note: Voice/SMS features not supported by underlying metadata)'
 
 // 清理所有旧版本缓存
-;['v1','v2','v3','v4','v5','v6'].forEach(v => {
+;['v1','v2','v3','v4','v5','v6','v7','v8'].forEach(v => {
   try { localStorage.removeItem(`esim_products_cache_${v}`) } catch(e) {}
 })
 
@@ -23,8 +24,19 @@ function normalizeProduct(p) {
   const countries = p.countries ?? (p.country ? [{ code: p.country, cn: p.country, en: p.country }] : [])
   const price = p.price ?? p.retailPrice ?? 0
   const isUnlimited = p.isUnlimited ?? p.thirdPartyData?.isUnlimited ?? (dataSize === 0)
-  const hasVoice = !!(p.hasVoice || (p.thirdPartyData?.voice) || /SMS|Min/i.test(p.nameEn || ''))
-  return { ...p, dataSize, validDays, countries, price, isUnlimited, hasVoice, name: p.name ?? '' }
+  const featureText = [p.name, p.nameEn, p.description, p.descriptionEn, ...(Array.isArray(p.features) ? p.features : [])]
+    .filter(Boolean).join(' ').replaceAll(VOICE_SMS_UNSUPPORTED_NOTE, '')
+  const textSuggestsVoiceOrSms = /\b(SMS|Min|Minute|Minutes|Voice|Call|Calls|Text|Texts)\b|语音|短信|通话/i.test(featureText)
+  const hasVoice = !!(p.hasVoice || p.thirdPartyData?.voice || /\b(Min|Minute|Minutes|Voice|Call|Calls)\b|语音|通话/i.test(featureText))
+  const hasSms = !!(p.thirdPartyData?.text || /\b(SMS|Text|Texts)\b|短信/i.test(featureText))
+  const rawFeatures = Array.isArray(p.features) ? [...p.features] : []
+  if (hasVoice && !rawFeatures.some(feature => /语音|通话|\b(Voice|Calls?|Minutes?)\b/i.test(String(feature || '')))) rawFeatures.unshift('包含语音通话')
+  if (hasSms && !rawFeatures.some(feature => /短信|\b(SMS|Texts?)\b/i.test(String(feature || '')))) rawFeatures.unshift('包含短信服务')
+  const normalizedFeatures = rawFeatures.filter(feature => !/Voice\/SMS features not supported/i.test(String(feature || '')))
+  const description = String(p.description || '')
+    .replaceAll(VOICE_SMS_UNSUPPORTED_NOTE, '')
+    .trim()
+  return { ...p, dataSize, validDays, countries, price, isUnlimited, hasVoice, features: normalizedFeatures, description, name: p.name ?? '', capability: p.capability || { data: true, voice: hasVoice, sms: hasSms, source: textSuggestsVoiceOrSms ? 'copy-first-feature-defense' : 'thirdPartyData' } }
 }
 
 // 从后端代理分页拉取所有产品（禁止在前端直连供应商 API 或携带凭证）
@@ -79,22 +91,19 @@ async function getAllProducts() {
   if (allProductsLoading) return allProductsLoading
 
   allProductsLoading = (async () => {
-    // 1. 先用本地缓存文件立刻返回（最快，打包在内）
+    // 1. 先从后端代理获取规范化产品。产品能力/描述以服务端 schema gate 为准。
     try {
-      const local = await loadLocalProducts()
-      if (local && local.length > 0) {
-        console.log(`[Products] Loaded ${local.length} from local bundle cache`)
-        allProductsCache = local
-        // 后台异步更新 localStorage（不阻塞UI）
-        fetchAllProductsFromProxy().then(raw => {
-          try {
-            localStorage.setItem(LS_CACHE_KEY, JSON.stringify({ ts: Date.now(), data: raw }))
-          } catch(e) {}
-        }).catch(() => {})
-        return allProductsCache
-      }
+      console.log('[Products] Fetching normalized products from API...')
+      const raw = await fetchAllProductsFromProxy()
+      console.log(`[Products] Fetched ${raw.length} from API`)
+      const products = raw.map(normalizeProduct)
+      try {
+        localStorage.setItem(LS_CACHE_KEY, JSON.stringify({ ts: Date.now(), data: raw }))
+      } catch (e) {}
+      allProductsCache = products
+      return products
     } catch (e) {
-      console.warn('[Products] Local bundle load failed:', e)
+      console.warn('[Products] API fetch failed:', e)
     }
 
     // 2. 检查 localStorage 缓存
@@ -112,22 +121,7 @@ async function getAllProducts() {
       console.warn('[Products] localStorage read failed:', e)
     }
 
-    // 3. 从供应商API拉取（兜底）
-    try {
-      console.log('[Products] Fetching from API...')
-      const raw = await fetchAllProductsFromProxy()
-      console.log(`[Products] Fetched ${raw.length} from API`)
-      const products = raw.map(normalizeProduct)
-      try {
-        localStorage.setItem(LS_CACHE_KEY, JSON.stringify({ ts: Date.now(), data: raw }))
-      } catch (e) {}
-      allProductsCache = products
-      return products
-    } catch (e) {
-      console.error('[Products] API fetch failed:', e)
-    }
-
-    // 3. 兜底：本地缓存
+    // 3. 兜底：本地打包缓存（只在 API/localStorage 都不可用时使用）
     const fallback = await loadLocalProducts()
     allProductsCache = fallback
     return fallback

@@ -7,7 +7,22 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "verify:secrets": "node scripts/verify-secrets.mjs",
+    "probe:prod:initdata": "node scripts/probe-production-initdata.mjs",
+    "verify:product-schema": "node scripts/verify-product-schema.mjs",
+    "verify:prod-binding": "node scripts/verify-prod-binding.mjs",
+    "deploy:prod": "node scripts/deploy-prod.mjs",
+    "predeploy:prod": "node scripts/skill-deploy.js --predeploy",
+    "stats:three-axis": "node scripts/three-axis-stats.mjs",
+    "audit:profit": "node scripts/profit-audit-report.mjs",
+    "deactivate:financial-loss": "node scripts/deactivate-financial-loss-products.mjs",
+    "audit:visual": "node scripts/visual-audit-tg.mjs",
+    "audit:price-volatility": "node scripts/audit-price-volatility.mjs",
+    "ops:artifact-quota": "node scripts/ops-artifact-quota.mjs",
+    "heartbeat:checkout": "node scripts/checkout-heartbeat.mjs",
+    "seo:schema-idle": "node scripts/seo-schema-idle.mjs",
+    "ops:weekly-brief": "node scripts/weekly-ops-brief.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.100.0",

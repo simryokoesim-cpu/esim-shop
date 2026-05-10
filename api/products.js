@@ -1,6 +1,10 @@
 // Backend proxy for eSIM products API
 // This keeps credentials secure on the server side
 
+import fs from 'node:fs'
+import { auditProfit, getFeatureSignals, normalizePriceForProfit } from '../scripts/skill-audit.js'
+import { generateProductJsonLd, generateProductMeta } from '../scripts/skill-seo.js'
+
 const API_BASE = 'https://ciuh32wky.xigrocoltd.com/api'
 function getCredentials() {
   const username = process.env.ESIM_API_USERNAME
@@ -15,7 +19,45 @@ let cachedToken = null
 let tokenExpiry = 0
 let cachedProducts = null
 let productsCacheExpiry = 0
+let localSeedProducts = null
 const PRODUCTS_CACHE_TTL = 10 * 60 * 1000
+const VOICE_SMS_UNSUPPORTED_NOTE = '(Note: Voice/SMS features not supported by underlying metadata)'
+const LOCAL_PRODUCTS_CACHE_URL = new URL('../src/data/products-cache.json', import.meta.url)
+
+function normalizeProduct(product) {
+  const next = normalizePriceForProfit({ ...product })
+  const profitAudit = auditProfit(next)
+  next.profitAudit = profitAudit
+  if (profitAudit.status === 'FINANCIAL_LOSS') {
+    next.status = 'inactive'
+    next.inactiveReason = 'DATA_ERROR'
+  }
+  const signals = getFeatureSignals(next)
+  next.hasVoice = signals.voice
+  next.capability = signals
+  const features = Array.isArray(next.features) ? [...next.features] : []
+  if (signals.voice && !features.some(f => /语音|通话|Voice|Call/i.test(String(f)))) features.unshift('包含语音通话')
+  if (signals.sms && !features.some(f => /短信|SMS|Text/i.test(String(f)))) features.unshift('包含短信服务')
+  next.features = features.filter(feature => !/Voice\/SMS features not supported/i.test(String(feature)))
+  next.description = String(next.description || '').replace(VOICE_SMS_UNSUPPORTED_NOTE, '').replace(/，\s*$/,'').trim()
+  next.descriptionEn = String(next.descriptionEn || '').replace(VOICE_SMS_UNSUPPORTED_NOTE, '').trim()
+  next.seo = generateProductMeta(next)
+  next.jsonLd = generateProductJsonLd(next)
+  return next
+}
+
+function normalizeProducts(products, { filterFinancialLoss = true } = {}) {
+  const normalized = (products || []).map(normalizeProduct)
+  return filterFinancialLoss ? normalized.filter(product => product.profitAudit?.status !== 'FINANCIAL_LOSS') : normalized
+}
+
+function getLocalSeedProducts() {
+  if (localSeedProducts) return localSeedProducts
+  const raw = JSON.parse(fs.readFileSync(LOCAL_PRODUCTS_CACHE_URL, 'utf8'))
+  const products = Array.isArray(raw) ? raw : (raw.products || raw.data?.list || raw.data || raw.list || [])
+  localSeedProducts = normalizeProducts(products, { filterFinancialLoss: true })
+  return localSeedProducts
+}
 
 async function login() {
   const res = await fetch(`${API_BASE}/agent/login`, {
@@ -55,11 +97,7 @@ async function fetchSupplierProducts(token, params) {
   return apiRes.json()
 }
 
-async function fetchAllProducts(token) {
-  if (cachedProducts && Date.now() < productsCacheExpiry) {
-    return cachedProducts
-  }
-
+async function fetchAllRawProducts(token) {
   const allProducts = []
   let page = 1
   while (true) {
@@ -72,9 +110,38 @@ async function fetchAllProducts(token) {
     page += 1
   }
 
-  cachedProducts = allProducts
-  productsCacheExpiry = Date.now() + PRODUCTS_CACHE_TTL
   return allProducts
+}
+
+async function fetchAllProducts(token = null) {
+  if (cachedProducts && Date.now() < productsCacheExpiry) {
+    return cachedProducts
+  }
+
+  const seededProducts = getLocalSeedProducts()
+  if (seededProducts.length) {
+    cachedProducts = seededProducts
+    productsCacheExpiry = Date.now() + Math.min(PRODUCTS_CACHE_TTL, 2 * 60 * 1000)
+    getToken()
+      .then(refreshProductsFromSupplier)
+      .catch(error => {
+        console.warn('Background product refresh failed:', error.message)
+      })
+    return cachedProducts
+  }
+
+  token = token || await getToken()
+  const allProducts = await fetchAllRawProducts(token)
+
+  cachedProducts = normalizeProducts(allProducts, { filterFinancialLoss: true })
+  productsCacheExpiry = Date.now() + PRODUCTS_CACHE_TTL
+  return cachedProducts
+}
+
+async function refreshProductsFromSupplier(token) {
+  const allProducts = await fetchAllRawProducts(token)
+  cachedProducts = normalizeProducts(allProducts, { filterFinancialLoss: true })
+  productsCacheExpiry = Date.now() + PRODUCTS_CACHE_TTL
 }
 
 function getKeywordScore(product, keyword) {
@@ -115,14 +182,15 @@ export default async function handler(req, res) {
   }
   
   try {
-    const token = await getToken()
-    
     // Forward query params
-    const { page = 1, limit = 20, search = '', keyword = '', country = '', id = '' } = req.query
+    const { page = 1, limit = 20, search = '', keyword = '', country = '', id = '', includeFinancialLoss = '' } = req.query
     const keywordValue = search || keyword
+    const allowFinancialAudit = includeFinancialLoss === '1' && req.headers['x-profit-audit-secret'] && process.env.PROFIT_AUDIT_SECRET && req.headers['x-profit-audit-secret'] === process.env.PROFIT_AUDIT_SECRET
 
-    if (id || keywordValue) {
-      let products = await fetchAllProducts(token)
+    if (id || keywordValue || country) {
+      let products = allowFinancialAudit
+        ? normalizeProducts(await fetchAllRawProducts(await getToken()), { filterFinancialLoss: false })
+        : await fetchAllProducts()
       if (id) {
         products = products.filter(product => String(product.id) === String(id))
       }
@@ -134,7 +202,8 @@ export default async function handler(req, res) {
           .map(item => item.product)
       }
       if (country) {
-        products = products.filter(product => (product.countries || []).some(c => c.code === country))
+        const countryCode = String(country).toUpperCase()
+        products = products.filter(product => (product.countries || []).some(c => String(c.code || '').toUpperCase() === countryCode))
       }
       return res.status(200).json({
         success: true,
@@ -147,10 +216,18 @@ export default async function handler(req, res) {
       })
     }
 
-    const params = new URLSearchParams({ page, limit })
-    if (country) params.set('country', country)
-    const data = await fetchSupplierProducts(token, params)
-    return res.status(200).json(data)
+    const products = allowFinancialAudit
+      ? normalizeProducts(await fetchAllRawProducts(await getToken()), { filterFinancialLoss: false })
+      : await fetchAllProducts()
+    return res.status(200).json({
+      success: true,
+      data: {
+        list: paginate(products, page, limit),
+        total: products.length,
+        page: parseInt(page, 10) || 1,
+        limit: parseInt(limit, 10) || 20,
+      },
+    })
     
   } catch (error) {
     console.error('API Error:', error)
